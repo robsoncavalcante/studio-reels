@@ -1,0 +1,14 @@
+{
+ "note": "Licenças mudam. Confira a página de cada faixa no momento do download e guarde o comprovante (print/URL/data). 'Livre' não significa sem regras. Pesquisa feita em nov/2026.",
+ "sources": [
+  {"nome": "Áudio original do Studio Reels (gerado aqui)", "url": "", "licenca": "Sem direitos de terceiros: sintetizado localmente por este motor", "atribuicao": "não", "uso_comercial": "sim", "obs": "Qualidade de trilha de fundo/demonstração; para músicas 'de artista' use as fontes abaixo ou o áudio do próprio Instagram"},
+  {"nome": "Biblioteca de áudio do Instagram (dentro do app)", "url": "https://www.instagram.com", "licenca": "Licenciada pela Meta para uso no app", "atribuicao": "não", "uso_comercial": "verificar", "obs": "Contas comerciais costumam ter catálogo mais restrito; adicione o áudio na hora de publicar, não no arquivo exportado"},
+  {"nome": "Pixabay Music", "url": "https://pixabay.com/music/", "licenca": "Pixabay Content License", "atribuicao": "não exigida", "uso_comercial": "sim", "obs": "Sem redistribuição isolada; há relatos de reivindicações automáticas (Content ID): guarde o comprovante da faixa"},
+  {"nome": "YouTube Audio Library", "url": "https://studio.youtube.com/channel/UC/music", "licenca": "Varia por faixa (algumas exigem crédito)", "atribuicao": "algumas", "uso_comercial": "depende", "obs": "Pensada para YouTube; confira a faixa para uso em outras plataformas"},
+  {"nome": "Free Music Archive", "url": "https://freemusicarchive.org", "licenca": "Creative Commons por faixa (CC0, CC BY, CC BY-NC…)", "atribuicao": "depende", "uso_comercial": "só as faixas sem NC", "obs": "Filtre por licença; evite 'NC' (não comercial) em trabalho de cliente"},
+  {"nome": "FreePD", "url": "https://freepd.com", "licenca": "CC0 (domínio público)", "atribuicao": "não", "uso_comercial": "sim", "obs": "Catálogo menor"},
+  {"nome": "Incompetech (Kevin MacLeod)", "url": "https://incompetech.com", "licenca": "CC BY 4.0", "atribuicao": "obrigatória", "uso_comercial": "sim, com crédito", "obs": "Coloque o crédito na legenda"},
+  {"nome": "Uppbeat (plano grátis)", "url": "https://uppbeat.io", "licenca": "Licença própria do plano grátis", "atribuicao": "obrigatória", "uso_comercial": "limitado", "obs": "Leia as condições do plano"},
+  {"nome": "Bensound", "url": "https://www.bensound.com", "licenca": "Licença própria (grátis com crédito)", "atribuicao": "obrigatória", "uso_comercial": "com crédito/ plano pago", "obs": "Verifique o tipo de projeto permitido"}
+ ]
+}

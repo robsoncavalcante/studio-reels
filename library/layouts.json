@@ -1,0 +1,1109 @@
+[
+ {
+  "id": "full-bleed-bottom",
+  "name": "Foto cheia · título embaixo",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto em tela cheia com degradê e título grande na base. Clássico de capa.",
+  "tags": [
+   "capa",
+   "marketing",
+   "negócios",
+   "estilo de vida"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Guia completo",
+   "title": "Como crescer no *Instagram* em 2026",
+   "subtitle": "7 passos práticos para aparecer mais",
+   "cta": "Arraste",
+   "badge": "Novo"
+  }
+ },
+ {
+  "id": "full-bleed-center",
+  "name": "Foto cheia · título central",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto escurecida com título centralizado gigante.",
+  "tags": [
+   "capa",
+   "viagem",
+   "motivação"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Verão 2026",
+   "title": "O *melhor* verão da sua vida",
+   "subtitle": "Começa agora",
+   "cta": "Saiba mais"
+  }
+ },
+ {
+  "id": "framed-photo",
+  "name": "Foto emoldurada",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto com cantos arredondados e título abaixo — limpo e editorial.",
+  "tags": [
+   "portfólio",
+   "minimalista",
+   "negócios"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Projeto",
+   "title": "Casa *Aurora*",
+   "subtitle": "Arquitetura contemporânea em João Pessoa"
+  }
+ },
+ {
+  "id": "arch-window",
+  "name": "Janela em arco",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto recortada em arco com contorno deslocado. Visual boho/elegante.",
+  "tags": [
+   "beleza",
+   "amor",
+   "estilo"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Coleção",
+   "title": "Luz *natural*",
+   "subtitle": "Ensaio de outono"
+  }
+ },
+ {
+  "id": "circle-orbit",
+  "name": "Círculo com texto orbitando",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto circular com texto girando ao redor (gira no reel).",
+  "tags": [
+   "promo",
+   "comida",
+   "estilo"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "badge": "Novidade",
+   "title": "Chegou o *nosso* novo sabor",
+   "subtitle": "Disponível em todas as lojas"
+  }
+ },
+ {
+  "id": "polaroid",
+  "name": "Polaroid com fita",
+  "kind": "memória",
+  "photos": 1,
+  "desc": "Polaroid levemente inclinada com fita adesiva e legenda manuscrita.",
+  "tags": [
+   "memórias",
+   "amor",
+   "viagem"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Memórias",
+   "title": "Dias que ficam",
+   "caption": "verão • 2026"
+  }
+ },
+ {
+  "id": "magazine-cover",
+  "name": "Capa de revista",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Masthead gigante, chamadas de capa e data da edição.",
+  "tags": [
+   "capa",
+   "editorial",
+   "negócios"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "masthead": "CRIATIVE",
+   "kicker": "Edição especial",
+   "title": "Design que *vende*",
+   "date": "NOV 2026",
+   "badge": "Nº 12",
+   "items": [
+    {
+     "title": "Branding em 30 dias"
+    },
+    {
+     "title": "Sites que convertem"
+    },
+    {
+     "title": "O novo tráfego"
+    }
+   ]
+  }
+ },
+ {
+  "id": "split-vertical",
+  "name": "Foto + painel colorido",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto no topo e painel de cor sólida com título embaixo.",
+  "tags": [
+   "marketing",
+   "educativo"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Dica rápida",
+   "title": "Pare de postar *sem estratégia*",
+   "subtitle": "Veja como organizar seu conteúdo"
+  }
+ },
+ {
+  "id": "split-diagonal",
+  "name": "Corte diagonal",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Foto com faixa diagonal de cor e título dinâmico.",
+  "tags": [
+   "promo",
+   "esporte",
+   "motivação"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Oferta",
+   "title": "Só até *domingo*",
+   "subtitle": "Condições especiais para novos clientes"
+  }
+ },
+ {
+  "id": "cutout-behind",
+  "name": "Texto atrás do recorte",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Palavra gigante atrás de uma pessoa recortada (PNG transparente em `cutout`).",
+  "tags": [
+   "moda",
+   "beleza",
+   "estilo"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Nova coleção",
+   "title": "MODA",
+   "subtitle": "@suamarca"
+  }
+ },
+ {
+  "id": "ticket",
+  "name": "Ingresso de evento",
+  "kind": "evento",
+  "photos": 1,
+  "desc": "Cartão em formato de ingresso com data, hora, local e código de barras.",
+  "tags": [
+   "evento",
+   "festa",
+   "negócios"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Convite",
+   "title": "Noite *Criativa*",
+   "subtitle": "Networking + música ao vivo",
+   "date": "12 DEZ",
+   "time": "19h",
+   "place": "Manaíra, João Pessoa",
+   "badge": "Gratuito"
+  }
+ },
+ {
+  "id": "sticker-pop",
+  "name": "Foto + adesivos de preço",
+  "kind": "promo",
+  "photos": 1,
+  "desc": "Foto com adesivo redondo de preço e etiqueta inclinada.",
+  "tags": [
+   "promo",
+   "produto",
+   "marketing"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Oferta da semana",
+   "title": "Cadeira *Aurora*",
+   "subtitle": "Madeira maciça, entrega grátis",
+   "number": "R$ 899",
+   "label": "por apenas",
+   "badge": "-30%"
+  }
+ },
+ {
+  "id": "collage-2",
+  "name": "Colagem · 2 fotos",
+  "kind": "colagem",
+  "photos": 2,
+  "desc": "Duas fotos sobrepostas e levemente inclinadas.",
+  "tags": [
+   "memórias",
+   "estilo de vida",
+   "amor"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Antes e depois do fim de semana",
+   "title": "Nosso *refúgio*",
+   "subtitle": "Fins de semana que valem a pena"
+  }
+ },
+ {
+  "id": "collage-3-mosaic",
+  "name": "Colagem · mosaico 3 fotos",
+  "kind": "colagem",
+  "photos": 3,
+  "desc": "Uma foto grande + duas menores em mosaico.",
+  "tags": [
+   "portfólio",
+   "negócios",
+   "estilo de vida"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Portfólio",
+   "title": "Projetos *recentes*",
+   "subtitle": "Residencial · Comercial · Interiores"
+  }
+ },
+ {
+  "id": "collage-4-grid",
+  "name": "Colagem · grade 2×2",
+  "kind": "colagem",
+  "photos": 4,
+  "desc": "Quatro fotos em grade com título flutuante no centro.",
+  "tags": [
+   "memórias",
+   "recap",
+   "estilo de vida"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Recap",
+   "title": "*4* momentos",
+   "subtitle": "O melhor do mês",
+   "date": "OUT 26"
+  }
+ },
+ {
+  "id": "collage-5-scrapbook",
+  "name": "Scrapbook · 5 fotos",
+  "kind": "colagem",
+  "photos": 5,
+  "desc": "Fotos com borda branca, fita e bilhete manuscrito.",
+  "tags": [
+   "viagem",
+   "memórias",
+   "amor"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Diário de viagem",
+   "title": "Cinco dias em *Pipa*",
+   "caption": "saudade já"
+  }
+ },
+ {
+  "id": "film-strip",
+  "name": "Tira de filme",
+  "kind": "memória",
+  "photos": 3,
+  "desc": "Tira de negativo 35mm com 3 quadros levemente inclinada.",
+  "tags": [
+   "memórias",
+   "viagem",
+   "filme"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Rolo 01",
+   "title": "Em *35mm*",
+   "subtitle": "Fotografia analógica"
+  }
+ },
+ {
+  "id": "polaroid-stack",
+  "name": "Pilha de polaroids",
+  "kind": "memória",
+  "photos": 3,
+  "desc": "Três polaroids sobrepostas com legendas manuscritas.",
+  "tags": [
+   "memórias",
+   "amor",
+   "viagem"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Álbum",
+   "title": "Momentos *soltos*",
+   "items": [
+    {
+     "title": "praia"
+    },
+    {
+     "title": "amigos"
+    },
+    {
+     "title": "pôr do sol"
+    }
+   ]
+  }
+ },
+ {
+  "id": "grid-9",
+  "name": "Grade 3×3",
+  "kind": "colagem",
+  "photos": 9,
+  "desc": "Nove quadros em grade — ótimo para recap do ano/mês.",
+  "tags": [
+   "recap",
+   "memórias",
+   "estilo de vida"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "2026",
+   "title": "Meu ano em *9* fotos",
+   "subtitle": "Obrigado por tudo"
+  }
+ },
+ {
+  "id": "staggered-columns",
+  "name": "Colunas escalonadas",
+  "kind": "colagem",
+  "photos": 6,
+  "desc": "Duas colunas desalinhadas estilo Pinterest.",
+  "tags": [
+   "inspiração",
+   "estilo de vida",
+   "beleza"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Inspiração",
+   "title": "Referências de *decoração*",
+   "subtitle": "Salve para depois"
+  }
+ },
+ {
+  "id": "contact-sheet",
+  "name": "Folha de contato",
+  "kind": "memória",
+  "photos": 12,
+  "desc": "Folha de provas fotográficas 12 quadros com marcação em vermelho.",
+  "tags": [
+   "filme",
+   "portfólio",
+   "moda"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Ensaio",
+   "title": "Contact *sheet*",
+   "subtitle": "Seleção da sessão"
+  }
+ },
+ {
+  "id": "quote",
+  "name": "Citação",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Aspas gigantes, frase com destaque e autor (foto opcional).",
+  "tags": [
+   "motivação",
+   "inspiração",
+   "educativo"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "quote": "Design não é só como parece. Design é como *funciona*.",
+   "author": "Steve Jobs",
+   "role": "Co-fundador da Apple"
+  }
+ },
+ {
+  "id": "big-number",
+  "name": "Número gigante",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Estatística em destaque com rótulo e explicação.",
+  "tags": [
+   "dados",
+   "marketing",
+   "negócios"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Você sabia?",
+   "number": "87%",
+   "label": "dos clientes pesquisam antes de comprar",
+   "title": "Seu *Instagram* é o novo cartão de visitas",
+   "subtitle": "Fonte: pesquisa interna 2026"
+  }
+ },
+ {
+  "id": "tips-list",
+  "name": "Lista numerada",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Até 5 itens numerados com título e descrição.",
+  "tags": [
+   "educativo",
+   "marketing",
+   "dicas"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "kicker": "Checklist",
+   "title": "5 passos para um *post* melhor",
+   "items": [
+    {
+     "title": "Defina o objetivo",
+     "text": "Uma ideia por post."
+    },
+    {
+     "title": "Capriche na capa",
+     "text": "Os 3 primeiros segundos decidem."
+    },
+    {
+     "title": "Escreva para uma pessoa",
+     "text": "Fale direto com o cliente."
+    },
+    {
+     "title": "Use uma chamada clara",
+     "text": "Diga o que fazer depois."
+    },
+    {
+     "title": "Poste com constância",
+     "text": "Consistência vence o acaso."
+    }
+   ]
+  }
+ },
+ {
+  "id": "checklist",
+  "name": "Checklist com caixas",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Lista com caixas marcadas (ou vazias com done:false).",
+  "tags": [
+   "educativo",
+   "negócios",
+   "dicas"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "kicker": "Antes de postar",
+   "title": "Revisão *final*",
+   "items": [
+    {
+     "title": "Logo aplicada"
+    },
+    {
+     "title": "Texto revisado",
+     "text": "Sem erros de português"
+    },
+    {
+     "title": "Hashtags escolhidas"
+    },
+    {
+     "title": "Chamada para ação"
+    }
+   ],
+   "subtitle": "Marque tudo e publique"
+  }
+ },
+ {
+  "id": "before-after",
+  "name": "Antes e depois",
+  "kind": "conteúdo",
+  "photos": 2,
+  "desc": "Duas fotos lado a lado com divisor e rótulos.",
+  "tags": [
+   "beleza",
+   "portfólio",
+   "esporte"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Transformação",
+   "title": "Resultado em *30 dias*",
+   "label_a": "Antes",
+   "label_b": "Depois",
+   "subtitle": "Projeto real de cliente"
+  }
+ },
+ {
+  "id": "announcement",
+  "name": "Anúncio / lançamento",
+  "kind": "promo",
+  "photos": 1,
+  "desc": "Selo, título gigante, foto inclinada, adesivo de preço e botão.",
+  "tags": [
+   "promo",
+   "produto",
+   "marketing"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "badge": "Lançamento",
+   "title": "Nova linha *Verão*",
+   "subtitle": "Peças leves para dias quentes",
+   "number": "R$ 99",
+   "label": "a partir de",
+   "cta": "Quero ver"
+  }
+ },
+ {
+  "id": "countdown",
+  "name": "Contagem / data",
+  "kind": "evento",
+  "photos": 0,
+  "desc": "Dia gigante, mês, título do evento e chips de hora/local.",
+  "tags": [
+   "evento",
+   "festa",
+   "sazonal"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Salve a data",
+   "title": "Inauguração *oficial*",
+   "date": "12 DEZ",
+   "time": "19h",
+   "place": "Av. Cabo Branco, 100",
+   "cta": "Confirmar presença"
+  }
+ },
+ {
+  "id": "typographic",
+  "name": "Tipográfico puro",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Só texto: frase gigante que preenche o quadro.",
+  "tags": [
+   "manifesto",
+   "minimalista",
+   "motivação"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Manifesto",
+   "title": "Faça o *simples* bem feito.",
+   "subtitle": "Princípio da casa nº 1"
+  }
+ },
+ {
+  "id": "cta-follow",
+  "name": "Chamada final (seguir/salvar)",
+  "kind": "cta",
+  "photos": 1,
+  "desc": "Cartão final com avatar, @, ícones curtir/comentar/enviar/salvar e botão.",
+  "tags": [
+   "cta",
+   "marketing"
+  ],
+  "roles": [
+   "end"
+  ],
+  "sample": {
+   "title": "Gostou? *Salve* e envie para quem precisa",
+   "subtitle": "Siga para mais conteúdo toda semana",
+   "cta": "Seguir",
+   "handle": "@suamarca"
+  }
+ },
+ {
+  "id": "question-poll",
+  "name": "Enquete (estilo story)",
+  "kind": "interativo",
+  "photos": 1,
+  "desc": "Foto escurecida com cartão de enquete e duas opções.",
+  "tags": [
+   "story",
+   "interação"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Interaja",
+   "title": "Você prefere *praia* ou *campo*?",
+   "label": "Enquete",
+   "option_a": "Praia",
+   "option_b": "Campo"
+  }
+ },
+ {
+  "id": "step-process",
+  "name": "Passo a passo (linha do tempo)",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Passos conectados por linha vertical.",
+  "tags": [
+   "educativo",
+   "negócios",
+   "processo"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "kicker": "Como funciona",
+   "title": "Do briefing à *entrega*",
+   "items": [
+    {
+     "title": "Conversa inicial",
+     "text": "Entendemos seu negócio."
+    },
+    {
+     "title": "Proposta",
+     "text": "Escopo, prazo e investimento."
+    },
+    {
+     "title": "Criação",
+     "text": "Direção de arte e aprovação."
+    },
+    {
+     "title": "Publicação",
+     "text": "Entrega e acompanhamento."
+    }
+   ]
+  }
+ },
+ {
+  "id": "testimonial",
+  "name": "Depoimento",
+  "kind": "prova social",
+  "photos": 1,
+  "desc": "Cartão com avatar, estrelas, depoimento e nome.",
+  "tags": [
+   "prova social",
+   "negócios"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Clientes",
+   "quote": "Em dois meses o *Instagram* virou nosso principal canal de vendas.",
+   "author": "Marina Alves",
+   "role": "Dona da Loja Brisa",
+   "rating": 5
+  }
+ },
+ {
+  "id": "menu-price",
+  "name": "Cardápio / tabela de preços",
+  "kind": "promo",
+  "photos": 1,
+  "desc": "Itens com linha pontilhada e preço à direita.",
+  "tags": [
+   "comida",
+   "promo",
+   "negócios"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Cardápio",
+   "title": "Pratos do *dia*",
+   "items": [
+    {
+     "title": "Risoto de camarão",
+     "value": "R$ 58",
+     "text": "Arroz arbóreo, camarão e limão siciliano"
+    },
+    {
+     "title": "Filé ao molho madeira",
+     "value": "R$ 62"
+    },
+    {
+     "title": "Salada tropical",
+     "value": "R$ 34"
+    },
+    {
+     "title": "Petit gâteau",
+     "value": "R$ 26"
+    }
+   ],
+   "subtitle": "Segunda a sexta · 11h às 15h"
+  }
+ },
+ {
+  "id": "profile-card",
+  "name": "Cartão de perfil / sobre",
+  "kind": "institucional",
+  "photos": 1,
+  "desc": "Foto, nome, cargo, 3 números e lista de destaques.",
+  "tags": [
+   "institucional",
+   "negócios",
+   "sobre"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Quem somos",
+   "title": "Ana *Souza*",
+   "subtitle": "Arquiteta e urbanista",
+   "stats": [
+    {
+     "value": "12",
+     "label": "anos"
+    },
+    {
+     "value": "240",
+     "label": "projetos"
+    },
+    {
+     "value": "4.9",
+     "label": "nota"
+    }
+   ],
+   "items": [
+    {
+     "title": "Residencial e comercial"
+    },
+    {
+     "title": "Projeto + obra"
+    },
+    {
+     "title": "Atendimento em todo o NE"
+    }
+   ],
+   "cta": "Agendar visita"
+  }
+ },
+ {
+  "id": "tip-single",
+  "name": "Dica única (número grande)",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Um slide por dica: número gigante, título e texto.",
+  "tags": [
+   "educativo",
+   "dicas"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "number": "01",
+   "total": "05",
+   "title": "Comece pelo *objetivo*",
+   "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post? Salvar, comentar, clicar ou comprar."
+  }
+ },
+ {
+  "id": "myth-fact",
+  "name": "Mito x Verdade",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Dois cartões: mito riscado e a verdade em destaque.",
+  "tags": [
+   "educativo",
+   "marketing"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "label_a": "Mito",
+   "label_b": "Verdade",
+   "title": "Postar todo dia é obrigatório.",
+   "body": "O que pesa é consistência e qualidade. Três posts bons por semana vencem sete improvisados."
+  }
+ },
+ {
+  "id": "property-card",
+  "name": "Cartão de imóvel",
+  "kind": "promo",
+  "photos": 1,
+  "desc": "Foto grande, nome, características em chips e preço.",
+  "tags": [
+   "imobiliário",
+   "promo",
+   "negócios"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "badge": "Lançamento",
+   "kicker": "Cabo Branco · João Pessoa",
+   "title": "Residencial *Mar Azul*",
+   "items": [
+    {
+     "title": "3 suítes"
+    },
+    {
+     "title": "120 m²"
+    },
+    {
+     "title": "2 vagas"
+    },
+    {
+     "title": "Varanda gourmet"
+    }
+   ],
+   "number": "R$ 890 mil",
+   "label": "a partir de",
+   "cta": "Agendar visita"
+  }
+ },
+ {
+  "id": "service-grid",
+  "name": "Grade de serviços",
+  "kind": "conteúdo",
+  "photos": 0,
+  "desc": "Quatro cartões 2×2 com ícone numerado, título e texto.",
+  "tags": [
+   "negócios",
+   "serviços",
+   "institucional"
+  ],
+  "roles": [
+   "body",
+   "cover"
+  ],
+  "sample": {
+   "kicker": "Serviços",
+   "title": "O que *fazemos*",
+   "items": [
+    {
+     "title": "Branding",
+     "text": "Marca e identidade visual."
+    },
+    {
+     "title": "Sites",
+     "text": "WordPress sob medida."
+    },
+    {
+     "title": "Tráfego",
+     "text": "Google e Meta Ads."
+    },
+    {
+     "title": "Conteúdo",
+     "text": "Posts, reels e vídeos."
+    }
+   ],
+   "subtitle": "Tudo no mesmo lugar"
+  }
+ },
+ {
+  "id": "ds-cover",
+  "name": "Criative · capa com foto",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-point",
+  "name": "Criative · ponto + card",
+  "kind": "corpo",
+  "photos": 0,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-myth",
+  "name": "Criative · mito x verdade",
+  "kind": "corpo",
+  "photos": 0,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-steps",
+  "name": "Criative · passos (timeline)",
+  "kind": "corpo",
+  "photos": 0,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-checklist",
+  "name": "Criative · checklist",
+  "kind": "corpo",
+  "photos": 0,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-cta",
+  "name": "Criative · CTA final",
+  "kind": "fim",
+  "photos": 0,
+  "desc": "Criative design system",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "end"
+  ],
+  "sample": {
+   "title": "Título com *destaque*",
+   "body": "Texto de apoio."
+  }
+ },
+ {
+  "id": "ds-story-list",
+  "name": "Criative · story lista (mito x verdade)",
+  "kind": "capa",
+  "photos": 1,
+  "desc": "Story único com foto, título e lista",
+  "tags": [
+   "criative"
+  ],
+  "roles": [
+   "cover"
+  ],
+  "sample": {
+   "title": "Título *teste*",
+   "items": []
+  }
+ }
+]

@@ -1,0 +1,14 @@
+<style>
+.L-collage-4-grid .g4{flex:1 1 0;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2.4cqw;position:relative}
+.L-collage-4-grid .g4 .photo{position:relative}
+.L-collage-4-grid .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;text-align:center;width:70%}
+.L-collage-4-grid .mid .t{font-size:8.6cqw;max-height:22cqh;background:var(--bg);padding:2.4cqw 3cqw;border-radius:var(--card-radius);box-shadow:0 1.4cqw 4cqw rgba(0,0,0,.28);--tc:var(--fg)}
+.L-collage-4-grid .head{display:flex;justify-content:space-between;align-items:flex-end;gap:3cqw}
+.L-collage-4-grid .s{margin-top:.6cqw}
+</style>
+<div class="pad col gap3">
+  <div class="head">{% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}{% if c.date %}<div class="k" style="color:var(--fg)">{{ c.date }}</div>{% endif %}</div>
+  <div class="g4">{{ photo(0) }}{{ photo(1) }}{{ photo(2) }}{{ photo(3) }}
+    <div class="mid"><div class="t fit">{{ rich(c.title) }}</div></div></div>
+  {% if c.subtitle %}<div class="s tc">{{ c.subtitle }}</div>{% endif %}
+</div>

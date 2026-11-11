@@ -1,0 +1,761 @@
+"""
+STUDIO REELS — core
+Motor local: layouts (HTML/Jinja) x temas (JSON) x movimentos (CSS) -> PNG / MP4.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import math
+import os
+import re
+import shutil
+import subprocess
+import uuid
+from html import escape as hesc
+from pathlib import Path
+
+from jinja2 import Environment, FileSystemLoader
+from markupsafe import Markup
+
+ROOT = Path(__file__).resolve().parent.parent
+LIB = ROOT / "library"
+CACHE = ROOT / ".cache"
+CACHE.mkdir(exist_ok=True)
+
+FORMATS = {
+    "story": dict(w=1080, h=1920, label="Story 9:16"),
+    "reel": dict(w=1080, h=1920, label="Reel 9:16"),
+    "post": dict(w=1080, h=1350, label="Post 4:5"),
+    "square": dict(w=1080, h=1080, label="Quadrado 1:1"),
+    "grid": dict(w=1080, h=1440, label="Capa de grid 3:4"),
+}
+STATIC_FORMATS = ["story", "post", "square", "grid"]
+
+OVER_DECOR = {"grain", "vignette", "scanlines", "film-edge", "lightleak", "glass-shine", "noise-soft", "paper", "corner-marks"}
+
+# transições suportadas pelo ffmpeg xfade (verificadas em runtime pelo comando `doctor`)
+TRANSITIONS = [
+    "fade", "fadeblack", "fadewhite", "dissolve", "wipeleft", "wiperight", "wipeup", "wipedown",
+    "slideleft", "slideright", "slideup", "slidedown", "smoothleft", "smoothright", "smoothup", "smoothdown",
+    "circleopen", "circleclose", "circlecrop", "rectcrop", "vertopen", "vertclose", "horzopen", "horzclose",
+    "radial", "pixelize", "diagtl", "diagtr", "diagbl", "diagbr", "hlslice", "hrslice", "vuslice", "vdslice",
+    "squeezeh", "squeezev", "zoomin", "distance", "hblur",
+]
+TRANSITION_POOL = ["slideleft", "smoothleft", "wipeleft", "circleopen", "zoomin", "radial", "slideup", "fade", "pixelize", "diagtl", "hlslice", "squeezeh"]
+
+
+# --------------------------------------------------------------------------- registry
+def _load(p):
+    return json.loads(Path(p).read_text(encoding="utf-8"))
+
+
+class Registry:
+    def __init__(self):
+        self.reload()
+
+    def reload(self):
+        self.layouts = {l["id"]: l for l in _load(LIB / "layouts.json")}
+        self.themes = {}
+        for f in sorted((LIB / "themes").glob("*.json")):
+            for t in _load(f):
+                self.themes[t["id"]] = t
+        self.carousels = {c["id"]: c for c in _load(LIB / "carousels.json")}
+        self.reels = {r["id"]: r for r in _load(LIB / "reels.json")}
+        self.motions = {m["id"]: m for m in _load(LIB / "motions.json")}
+        self.bridges = _load(LIB / "bridges.json")
+
+
+REG = Registry()
+
+
+# --------------------------------------------------------------------------- texto
+def rich(text) -> Markup:
+    """Escapa, converte \\n em <br> e *palavra* em <em>. (Em reels o JS envolve cada palavra em .w/.wi.)"""
+    if text is None:
+        return Markup("")
+    out = []
+    for seg in re.split(r"(\*[^*]+\*)", str(text)):
+        if not seg:
+            continue
+        em = seg.startswith("*") and seg.endswith("*") and len(seg) > 2
+        if em:
+            seg = seg[1:-1]
+        h = hesc(seg).replace("\n", "<br>")
+        out.append(f"<em>{h}</em>" if em else h)
+    return Markup("".join(out))
+
+
+def plain(text) -> str:
+    return re.sub(r"\*", "", str(text or ""))
+
+
+def _lum(hexcolor: str) -> float:
+    m = re.fullmatch(r"#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})", (hexcolor or "").strip())
+    if not m:
+        return 0.0
+    h = m.group(1)
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+
+
+def on_color(bg: str) -> str:
+    # escolhe a cor de texto (branco/quase-preto) com MAIOR contraste, não um limiar fixo
+    lb = _lum(bg)
+    cw = 1.05 / (lb + 0.05)
+    cd = (lb + 0.05) / (_lum("#111111") + 0.05)
+    return "#ffffff" if cw >= cd else "#111111"
+
+
+# --------------------------------------------------------------------------- tema
+def bg_css(t: dict) -> str:
+    k = t.get("bg_kind", "solid")
+    a = t.get("angle", "160deg")
+    if k == "solid":
+        return "var(--bg)"
+    if k == "linear":
+        return f"linear-gradient({a},var(--bg),var(--bg2))"
+    if k == "radial":
+        return "radial-gradient(130% 90% at 20% 8%,var(--bg2),var(--bg) 68%)"
+    if k == "mesh":
+        return ("radial-gradient(60% 45% at 0% 0%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 70%),"
+                "radial-gradient(55% 45% at 100% 20%,color-mix(in srgb,var(--accent2) 50%,transparent),transparent 70%),"
+                "radial-gradient(70% 50% at 50% 110%,color-mix(in srgb,var(--bg2) 90%,transparent),transparent 70%),var(--bg)")
+    if k == "sunset":
+        return f"linear-gradient({a},var(--bg),var(--bg2) 62%,color-mix(in srgb,var(--bg2) 72%,var(--accent)))"
+    if k == "conic":
+        return "conic-gradient(from 210deg at 50% 60%,var(--bg),var(--bg2),var(--accent),var(--bg))"
+    if k == "split":
+        return "linear-gradient(180deg,var(--bg) 0 50%,var(--bg2) 50% 100%)"
+    if k == "custom":
+        return t["bg_custom"]
+    return "var(--bg)"
+
+
+def resolve_theme(theme_id: str, brand: dict | None = None) -> dict:
+    if theme_id not in REG.themes:
+        raise SystemExit(f"Tema '{theme_id}' não existe. Use: studio.py list themes")
+    t = copy.deepcopy(REG.themes[theme_id])
+    brand = brand or {}
+    colors = brand.get("colors", {}) or {}
+    if t.get("brand") or brand.get("override_theme"):
+        for k in ("bg", "bg2", "fg", "muted", "accent", "accent2", "line", "surface"):
+            if colors.get(k):
+                t[k] = colors[k]
+        if brand.get("font_display"):
+            t["font_display"] = brand["font_display"]
+        if brand.get("font_body"):
+            t["font_body"] = brand["font_body"]
+    # segurança de legibilidade: o 2º tom do fundo nunca pode enfraquecer o texto principal
+    try:
+        if t.get("bg2") and t.get("fg", "").startswith("#"):
+            t["bg2"] = ensure_contrast(t["bg2"], t["fg"], 4.0)
+    except Exception:
+        pass
+    if brand.get("font_pair"):
+        from . import fonts as _fonts
+        pr = _fonts.resolve_pair(brand["font_pair"])
+        if not pr:
+            raise SystemExit(f"Par de fontes '{brand['font_pair']}' não existe. Use: studio.py fonts pair")
+        t["font_display"], t["font_body"] = pr["display"], pr["body"]
+        if pr.get("adjust"):
+            t["body_adjust"] = pr["adjust"]
+    return t
+
+
+try:
+    from .color import ensure_contrast
+except Exception:
+    ensure_contrast = lambda f, b, r=4.5: f
+
+
+def theme_css_vars(t: dict) -> str:
+    fg = t.get("fg", "#ffffff")
+    accent = t.get("accent", "#ff3366")
+    accent2 = t.get("accent2", accent)
+    v = {
+        "--bg": t.get("bg", "#111111"),
+        "--bg2": t.get("bg2", t.get("bg", "#111111")),
+        "--fg": fg,
+        "--muted": t.get("muted", "color-mix(in srgb,var(--fg) 84%,transparent)"),
+        "--accent": accent,
+        "--accent2": accent2,
+        "--accent-text": ensure_contrast(accent, t.get("bg", "#111111"), 4.5),
+        "--accent2-text": ensure_contrast(accent2, t.get("bg", "#111111"), 4.5),
+        "--line": t.get("line", "color-mix(in srgb,var(--fg) 22%,transparent)"),
+        "--surface": t.get("surface", "color-mix(in srgb,var(--fg) 7%,transparent)"),
+        "--on-accent": t.get("on_accent", on_color(accent)),
+        "--on-accent2": t.get("on_accent2", on_color(accent2)),
+        "--font-display": f"'{t.get('font_display', 'Inter')}'",
+        "--font-body": f"'{t.get('font_body', 'Inter')}'",
+        "--body-adjust": t.get("body_adjust", "none"),
+        "--dw": t.get("dw", 800),
+        "--dcase": t.get("dcase", "none"),
+        "--dls": t.get("dls", "-0.01em"),
+        "--dlh": t.get("dlh", 1.02),
+        "--ph-radius": t.get("ph_radius", "2.2cqw"),
+        "--ph-border": t.get("ph_border", "0"),
+        "--ph-shadow": t.get("ph_shadow", "none"),
+        "--ph-filter": t.get("ph_filter", "none"),
+        "--btn-radius": t.get("btn_radius", "99cqw"),
+        "--btn-shadow": t.get("btn_shadow", "none"),
+        "--card-radius": t.get("card_radius", "3cqw"),
+        "--bg-css": bg_css(t),
+    }
+    return ";".join(f"{k}:{val}" for k, val in v.items())
+
+
+# --------------------------------------------------------------------------- conteúdo
+VIDEO_EXT = (".mp4", ".mov", ".webm", ".m4v")
+
+
+def resolve_media(p, base_dir: Path | None) -> str | None:
+    if not p:
+        return None
+    p = str(p)
+    if re.match(r"^(https?:|data:|file:)", p):
+        return p
+    path = Path(p).expanduser()
+    if not path.is_absolute():
+        cand = (base_dir or Path.cwd()) / path
+        if not cand.exists() and (LIB.parent / path).exists():
+            cand = LIB.parent / path  # relativo à raiz do motor (marcas/logos da biblioteca)
+        path = cand
+    elif not path.exists() and "library" in path.parts:
+        alt = LIB.parent / Path(*path.parts[path.parts.index("library"):])
+        if alt.exists():
+            path = alt  # caminho absoluto de outra máquina -> raiz atual do motor
+    if not path.exists():
+        print(f"  ! mídia não encontrada: {path}")
+        return None
+    return path.resolve().as_uri()
+
+
+def normalize_content(content: dict, base_dir: Path | None) -> dict:
+    c = dict(content or {})
+    if "text" in c and "body" not in c:
+        c["body"] = c["text"]
+    c["photos"] = [resolve_media(p, base_dir) for p in (c.get("photos") or [])]
+    if c.get("cutout"):
+        c["cutout"] = resolve_media(c["cutout"], base_dir)
+    c["items"] = [dict(i) if isinstance(i, dict) else {"title": str(i)} for i in (c.get("items") or [])]
+    return c
+
+
+SIL_SVG = ('<svg viewBox="0 0 400 640" xmlns="http://www.w3.org/2000/svg" style="height:100%;width:auto"><defs>'
+           '<linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".96"/><stop offset="1" stop-color="#fff" stop-opacity=".72"/></linearGradient></defs>'
+           '<circle cx="200" cy="168" r="98" fill="url(#sg)"/><path d="M26 640 C26 452 112 372 200 372 S374 452 374 640Z" fill="url(#sg)"/></svg>')
+PH_ICON = '<svg viewBox="0 0 64 64" class="phi"><circle cx="46" cy="18" r="6"/><path d="M4 56 L24 28 L38 46 L46 36 L60 56 Z"/></svg>'
+
+
+def make_helpers(c: dict):
+    photos = c.get("photos", [])
+
+    def photo(i=0, cls="", style=""):
+        src = photos[i] if i < len(photos) else None
+        if src:
+            if src.lower().split("?")[0].endswith(VIDEO_EXT):
+                inner = f'<video src="{src}" muted playsinline preload="auto"></video>'
+            else:
+                inner = f'<img src="{src}" alt="">'
+        else:
+            inner = f'<div class="ph ph{i % 4}">{PH_ICON}</div>'
+        return Markup(f'<div class="photo {cls}" style="{style}">{inner}</div>')
+
+    def cutout(cls="", style=""):
+        src = c.get("cutout")
+        inner = f'<img src="{src}" alt="">' if src else SIL_SVG
+        return Markup(f'<div class="cutout {cls}" style="{style}">{inner}</div>')
+
+    def stars(n=5):
+        return Markup("★" * int(n) + "☆" * (5 - int(n)))
+
+    def icon(name, cls="", sw=1.75):
+        f = LIB / "icons" / "lucide" / f"{name}.svg"
+        if not f.exists():
+            return Markup("")
+        svg = re.sub(r"<!--.*?-->|\s+class=\"[^\"]*\"|\s+width=\"24\"|\s+height=\"24\"", "", f.read_text(encoding="utf-8"), flags=re.S)
+        svg = re.sub(r'stroke-width="[^"]*"', f'stroke-width="{sw}"', svg)
+        svg = svg.replace("<svg", f'<svg class="ico {cls}"', 1)
+        return Markup(re.sub(r"\s+", " ", svg))
+
+    return dict(photo=photo, cutout=cutout, stars=stars, rich=rich, plain=plain, icon=icon)
+
+
+_env = Environment(loader=FileSystemLoader(str(LIB / "layouts")), autoescape=True, trim_blocks=True, lstrip_blocks=True)
+
+
+# --------------------------------------------------------------------------- HTML
+PREP_JS = r"""
+window.__prep=function(){
+  const cv=document.querySelector('.canvas');
+  document.querySelectorAll('.fit').forEach(el=>{
+    const blocky=[...el.children].some(c=>{const d=getComputedStyle(c).display;return d!=='inline'&&d!=='inline-block'&&c.tagName!=='BR'&&c.tagName!=='EM'});
+    let inner=null;
+    if(!blocky){inner=document.createElement('span');inner.className='fit-in';while(el.firstChild)inner.appendChild(el.firstChild);el.appendChild(inner);}
+    let fs=parseFloat(getComputedStyle(el).fontSize),min=fs*0.32,n=0;
+    const brokenWord=()=>{ if(!el.classList.contains('t')) return false;
+      const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+      while(w.nextNode()){const n=w.currentNode,re=/\S+/g;let m;
+        while((m=re.exec(n.textContent))){const r=document.createRange();r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);
+          const tops=new Set([...r.getClientRects()].filter(q=>q.width>1).map(q=>Math.round(q.top/(fs*0.45))));
+          if(tops.size>1) return true;}}
+      return false;};
+    const over=()=>brokenWord()||(inner?(inner.offsetHeight>el.clientHeight+2||inner.scrollWidth>el.clientWidth+2):(el.scrollHeight>el.clientHeight+Math.max(2,fs*0.03)||el.scrollWidth>el.clientWidth+2));
+    while(over()&&fs>min&&n++<70){fs*=0.95;el.style.fontSize=fs+'px';}
+  });
+  if(cv.classList.contains('reel')&&cv.classList.contains('mw')){
+    const wrap=(node)=>{
+      [...node.childNodes].forEach(ch=>{
+        if(ch.nodeType===3){
+          const parts=ch.textContent.split(/(\s+)/);const f=document.createDocumentFragment();
+          parts.forEach(p=>{ if(!p) return; if(/^\s+$/.test(p)){f.appendChild(document.createTextNode(' '));}
+            else if(cv.classList.contains('mc')){const nb=document.createElement('span');nb.className='nb';
+              [...p].forEach(chr=>{const w=document.createElement('span');w.className='w';const wi=document.createElement('span');wi.className='wi';wi.textContent=chr;w.appendChild(wi);nb.appendChild(w);});f.appendChild(nb);}
+            else{const w=document.createElement('span');w.className='w';const wi=document.createElement('span');wi.className='wi';wi.textContent=p;w.appendChild(wi);f.appendChild(w);} });
+          node.replaceChild(f,ch);
+        }else if(ch.nodeType===1&&ch.tagName!=='BR'){wrap(ch);}
+      });
+    };
+    document.querySelectorAll('.canvas .t').forEach(wrap);
+    if(cv.classList.contains('mc')){ /* reajusta títulos depois de envolver letras (palavra inteira não quebra) */
+      document.querySelectorAll('.canvas .t.fit').forEach(el=>{
+        const inner=el.querySelector('.fit-in');let fs=parseFloat(getComputedStyle(el).fontSize),n=0;
+        const over=()=>(inner?inner.offsetHeight>el.clientHeight+2:el.scrollHeight>el.clientHeight+2)||el.scrollWidth>el.clientWidth+2;
+        while(over()&&n++<60){fs*=0.95;el.style.fontSize=fs+'px';}
+      });
+    }
+  }
+  if(cv.classList.contains('reel')){
+    const words=cv.classList.contains('mw');
+    const sel='.k,.t,.s,.b,.photo,.item,.badge,.cta,.sticker,.chip,.surface,[data-a]';
+    let i=0;
+    cv.querySelectorAll(sel).forEach(el=>{
+      if(el.closest('.no-anim')||el.parentElement.closest('.photo')) return;
+      if(words&&el.classList.contains('t')){
+        el.querySelectorAll('.w').forEach(w=>{w.style.setProperty('--i',i);w.setAttribute('data-i','');i++;});
+      }else{el.style.setProperty('--i',i);el.setAttribute('data-i','');i++;}
+    });
+  }
+  const counters=[];
+  if(cv.classList.contains('cu')){
+    cv.querySelectorAll('.t.num,[data-count]').forEach(el=>{
+      const tgt=el.querySelector('.fit-in')||el;const m=tgt.textContent.trim().match(/^(\D*)(\d[\d.,]*)(.*)$/);
+      if(!m) return; const raw=m[2];const dec=(raw.split(/[.,]/)[1]||'').length;const sep=raw.includes(',')&&!raw.includes('.')?',':'.';
+      const val=parseFloat(raw.replace(',','.'));counters.push({el:tgt,pre:m[1],suf:m[3],val,dec,sep,orig:tgt.textContent});
+    });
+  }
+  window.__seek=function(t){
+    document.getAnimations().forEach(a=>{a.pause();a.currentTime=t;});
+    counters.forEach(c=>{
+      const host=c.el.closest('[data-i]')||c.el;const dl=parseFloat(getComputedStyle(host).animationDelay)||0;
+      const p=Math.min(1,Math.max(0,(t-dl)/1.1));const e=1-Math.pow(1-p,3);
+      c.el.textContent=p>=1?c.orig:c.pre+(c.val*e).toFixed(c.dec).replace('.',c.sep)+c.suf;
+    });
+  };
+  return true;
+};
+"""
+
+
+def decor_html(t: dict, enabled=True) -> tuple[str, str]:
+    if not enabled:
+        return "", ""
+    under, over = [], []
+    for d in t.get("decor", []):
+        cls = f"dc dc-{d} " + ("over" if d in OVER_DECOR else "under")
+        (over if d in OVER_DECOR else under).append(f'<div class="{cls}"></div>')
+    return "".join(under), "".join(over)
+
+
+def brandbar_html(brand: dict | None, base_dir) -> str:
+    if not brand:
+        return ""
+    name, handle, logo = brand.get("name"), brand.get("handle"), resolve_media(brand.get("logo"), base_dir)
+    if not (name or handle or logo):
+        return ""
+    left = (f'<img src="{logo}" alt="">' if logo else "") + (f"<span>{hesc(name)}</span>" if name and not logo else "")
+    right = f'<span class="bh">{hesc(handle)}</span>' if handle else ""
+    return f'<div class="brandbar"><div class="bn">{left}</div>{right}</div>'
+
+
+def pager_html(idx: int, total: int, label="Arraste") -> str:
+    if total <= 1:
+        return ""
+    dots = "".join(f'<i class="{"on" if i == idx else ""}"></i>' for i in range(total))
+    last = idx == total - 1
+    right = "" if last else f'<span class="sw">{hesc(label)} <span class="arrow"></span></span>'
+    return f'<div class="pager"><span>{idx + 1:02d}/{total:02d}</span><span class="dots">{dots}</span>{right or "<span></span>"}</div>'
+
+
+def head_html(reel=False) -> str:
+    css = [f'<link rel="stylesheet" href="{(ROOT / "fonts" / "fonts.css").as_uri()}">',
+           f'<link rel="stylesheet" href="{(ROOT / "engine" / "base.css").as_uri()}">']
+    if reel:
+        css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "easings.css").as_uri()}">')
+        css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "motions.css").as_uri()}">')
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' + "".join(css)
+
+
+def slide_canvas(layout_id: str, theme_id: str, fmt: str, content: dict, brand: dict | None = None, *,
+                 base_dir: Path | None = None, reel: dict | None = None, pager: tuple | None = None,
+                 decor=True, transparent=False, sample=False, show_brand=True) -> str:
+    """Retorna o HTML do <div class=canvas> (sem <html>)."""
+    if layout_id not in REG.layouts:
+        raise SystemExit(f"Layout '{layout_id}' não existe. Use: studio.py list layouts")
+    lay = REG.layouts[layout_id]
+    t = resolve_theme(theme_id, brand)
+    F = FORMATS[fmt]
+    c = normalize_content(content if not sample else {**lay.get("sample", {}), **content}, base_dir)
+    ctx = dict(c=c, fmt=fmt, brand=brand or {}, theme=t, **make_helpers(c))
+    inner = _env.get_template(f"{layout_id}.html.j2").render(**ctx)
+    under, over = decor_html(t, decor)
+    classes = ["canvas", f"fmt-{fmt}", f"fx-{t.get('title_fx', 'plain')}", f"L-{layout_id}"]
+    style = f"--W:{F['w']}px;--H:{F['h']}px;" + theme_css_vars(t)
+    if transparent:
+        classes.append("transparent")
+    if reel:
+        m = REG.motions[reel.get("motion", "fade-up")]
+        from . import motion as _motion
+        xc, xs = _motion.style_for(m, reel)
+        classes += ["reel", f"m-{m['id']}"] + (["mw"] if m.get("words") else []) + (["mc"] if m.get("chars") else []) + xc
+        style += xs
+    bar = brandbar_html(brand, base_dir) if show_brand else ""
+    pg = pager_html(*pager) if pager else ""
+    return f'<div class="{" ".join(classes)}" style="{style}">{under}<div class="content">{inner}</div>{bar}{pg}{over}</div>'
+
+
+def page_html(canvas_html: str, reel=False) -> str:
+    return head_html(reel) + f"</head><body>{canvas_html}<script>{PREP_JS}</script></body></html>"
+
+
+# --------------------------------------------------------------------------- navegador
+def _chrome_path():
+    for p in (os.environ.get("CHROME_PATH"), "/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser",
+              "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+              r"C:\Program Files\Google\Chrome\Application\chrome.exe"):
+        if p and Path(p).exists():
+            return p
+    return None
+
+
+class Renderer:
+    """Mantém um Chrome aberto e renderiza HTML -> PNG/JPEG/MP4."""
+
+    def __init__(self, scale: float = 1.0):
+        self.scale = scale
+        self._pw = self._browser = self._ctx = self._page = None
+        self._tmp = CACHE / f"r_{uuid.uuid4().hex[:8]}.html"
+
+    def __enter__(self):
+        from playwright.sync_api import sync_playwright
+        self._pw = sync_playwright().start()
+        kw = dict(args=["--no-sandbox", "--font-render-hinting=none", "--force-color-profile=srgb", "--allow-file-access-from-files"])
+        cp = _chrome_path()
+        if cp:
+            kw["executable_path"] = cp
+        self._browser = self._pw.chromium.launch(**kw)
+        self._ctx = self._browser.new_context(device_scale_factor=self.scale, viewport={"width": 1080, "height": 1920})
+        self._page = self._ctx.new_page()
+        return self
+
+    def __exit__(self, *a):
+        try:
+            self._browser.close()
+            self._pw.stop()
+        finally:
+            self._tmp.unlink(missing_ok=True)
+
+    def load(self, html: str, w: int, h: int):
+        self._page.set_viewport_size({"width": w, "height": h})
+        self._tmp.write_text(html, encoding="utf-8")
+        self._page.goto(self._tmp.as_uri(), wait_until="load")
+        self._page.evaluate("document.fonts.ready.then(()=>true)")
+        self._page.evaluate("Promise.all([...document.images].map(i=>i.decode().catch(()=>0)))")
+        self._page.evaluate("window.__prep()")
+        return self._page
+
+    def shoot(self, html, out, w, h, kind="png", quality=92, clip=None):
+        pg = self.load(html, w, h)
+        opts = dict(path=str(out), type=kind, clip=clip or {"x": 0, "y": 0, "width": w, "height": h})
+        if kind == "jpeg":
+            opts["quality"] = quality
+        pg.screenshot(**opts)
+        return out
+
+
+# --------------------------------------------------------------------------- API: estático
+def render_static(layout, theme, fmt, content, out, *, brand=None, base_dir=None, scale=1.0, sample=False, renderer=None, kind="png"):
+    F = FORMATS[fmt]
+    html = page_html(slide_canvas(layout, theme, fmt, content, brand, base_dir=base_dir, sample=sample))
+    own = renderer is None
+    r = renderer or Renderer(scale).__enter__()
+    try:
+        r.shoot(html, out, F["w"], F["h"], kind=kind)
+    finally:
+        if own:
+            r.__exit__()
+    return out
+
+
+# --------------------------------------------------------------------------- API: carrossel
+def plan_carousel(recipe_id: str, content: dict) -> list[dict]:
+    rec = REG.carousels[recipe_id]
+    body_layouts = rec["body"]
+    slides = content.get("slides") or []
+    plan = []
+    if content.get("cover", True) is not False:
+        cover = {k: content.get(k) for k in ("kicker", "title", "subtitle", "body", "badge", "cta", "photos", "cutout", "date", "place", "number", "label") if content.get(k) is not None}
+        cover.setdefault("handle", None)
+        plan.append(dict(layout=content.get("cover_layout") or rec["cover"], content=cover))
+    total_body = len(slides)
+    for i, s in enumerate(slides):
+        d = dict(s)
+        lay = d.pop("layout", None) or body_layouts[i % len(body_layouts)]
+        if lay in ("ds-point", "ds-myth") or (lay == "tip-single"):
+            d.setdefault("number", f"{i + 1:02d}")
+            d.setdefault("total", f"{total_body:02d}")
+        plan.append(dict(layout=lay, content=d))
+    end = content.get("end", content.get("cta"))
+    if end is not False and rec.get("end"):
+        e = dict(end) if isinstance(end, dict) else {}
+        e.setdefault("title", "Gostou? *Salve* e compartilhe")
+        e.setdefault("cta", "Seguir")
+        plan.append(dict(layout=e.pop("layout", None) or rec["end"], content=e))
+    return plan
+
+
+def bridge_overlay(bridge: str, n: int, W: int, H: int, photos=None) -> str:
+    """Elemento contínuo que atravessa as N páginas (px)."""
+    total = n * W
+    if bridge == "ribbon":
+        txt = "   ★   ".join(["ARRASTE PARA O LADO"] * 12)
+        return (f'<div style="position:absolute;left:-60px;top:{H * 0.945:.0f}px;width:{total + 120}px;height:{H * 0.045:.0f}px;transform:rotate(-1deg);transform-origin:0 50%;'
+                f'background:var(--accent);color:var(--on-accent);display:flex;align-items:center;overflow:hidden;font:800 {W * 0.022:.0f}px var(--font-body),Inter;letter-spacing:.2em;white-space:nowrap">'
+                f'<span style="padding-left:30px">{txt}{txt}{txt}</span></div>')
+    if bridge == "wave-line":
+        pts = []
+        steps = n * 4
+        for i in range(steps + 1):
+            x = i * total / steps
+            y = H * 0.9 + (math.sin(i * math.pi / 2) * H * 0.018)
+            pts.append((x, y))
+        d = f"M{pts[0][0]:.0f} {pts[0][1]:.0f} " + " ".join(f"T{x:.0f} {y:.0f}" for x, y in pts[1:])
+        return (f'<svg style="position:absolute;left:0;top:0" width="{total}" height="{H}" viewBox="0 0 {total} {H}"><path d="{d}" fill="none" stroke="var(--accent)" stroke-width="{W * 0.012:.0f}" stroke-linecap="round"/>'
+                f'<path d="{d}" fill="none" stroke="var(--accent2)" stroke-width="{W * 0.004:.0f}" stroke-linecap="round" transform="translate(0,{H * 0.022:.0f})"/></svg>')
+    if bridge == "big-circle":
+        out = []
+        for i in range(1, n):
+            r = W * (0.30 if i % 2 else 0.2)
+            cy = H * (0.12 if i % 2 else 0.9)
+            col = "var(--accent)" if i % 2 else "var(--accent2)"
+            out.append(f'<div style="position:absolute;left:{i * W - r:.0f}px;top:{cy - r:.0f}px;width:{2 * r:.0f}px;height:{2 * r:.0f}px;border-radius:50%;background:{col};opacity:.9;mix-blend-mode:normal"></div>')
+        return "".join(out)
+    if bridge == "photo-strip":
+        ph = photos or []
+        cells = []
+        sz = W * 0.28
+        for i in range(n * 3 + 1):
+            src = ph[i % len(ph)] if ph else None
+            inner = f'<img src="{src}" style="width:100%;height:100%;object-fit:cover">' if src else '<div class="ph ph' + str(i % 4) + '" style="width:100%;height:100%"></div>'
+            cells.append(f'<div class="photo" style="flex:none;width:{sz:.0f}px;height:{sz * 1.25:.0f}px;border-radius:14px;transform:rotate({(-3, 2.5, -1.5, 3)[i % 4]}deg)">{inner}</div>')
+        return (f'<div style="position:absolute;left:-20px;top:{H * 0.74:.0f}px;display:flex;gap:{W * 0.03:.0f}px;width:{total + 40}px">{"".join(cells)}</div>')
+    if bridge == "arrow-path":
+        d = f"M{W * 0.55:.0f} {H * 0.88:.0f} C{W * 0.9:.0f} {H * 0.78:.0f} {W * 1.1:.0f} {H * 0.98:.0f} {W * 1.45:.0f} {H * 0.86:.0f}"
+        return (f'<svg style="position:absolute;left:0;top:0" width="{total}" height="{H}" viewBox="0 0 {total} {H}"><path d="{d}" fill="none" stroke="var(--accent)" stroke-width="{W * 0.008:.0f}" stroke-dasharray="{W * 0.025:.0f} {W * 0.02:.0f}" stroke-linecap="round"/>'
+                f'<path d="M{W * 1.40:.0f} {H * 0.835:.0f} L{W * 1.46:.0f} {H * 0.862:.0f} L{W * 1.395:.0f} {H * 0.89:.0f}" fill="none" stroke="var(--accent)" stroke-width="{W * 0.01:.0f}" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+    if bridge == "dots-path":
+        y = H * 0.93
+        els = [f'<div style="position:absolute;left:{W * 0.075:.0f}px;top:{y:.0f}px;width:{total - W * 0.15:.0f}px;height:{max(3, W * 0.004):.0f}px;background:var(--line)"></div>']
+        for i in range(n):
+            els.append(f'<div style="position:absolute;left:{i * W + W * 0.5 - 14:.0f}px;top:{y - 12:.0f}px;width:28px;height:28px;border-radius:50%;background:var(--accent);border:5px solid var(--bg)"></div>')
+        return "".join(els)
+    return ""
+
+
+def render_carousel(recipe_id, theme, fmt, content, outdir, *, brand=None, base_dir=None, bridge=None, scale=1.0,
+                    sample=False, renderer=None, pager=True, prefix="slide"):
+    outdir = Path(outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    if sample:
+        content = {**REG.carousels[recipe_id].get("sample", {}), **content}
+    plan = plan_carousel(recipe_id, content)
+    n = len(plan)
+    F = FORMATS[fmt]
+    W, H = F["w"], F["h"]
+    own = renderer is None
+    r = renderer or Renderer(scale).__enter__()
+    outs = []
+    try:
+        if not bridge or bridge == "none":
+            for i, p in enumerate(plan):
+                html = page_html(slide_canvas(p["layout"], theme, fmt, p["content"], brand, base_dir=base_dir, sample=sample, pager=(i, n) if pager else None))
+                out = outdir / f"{prefix}_{i + 1:02d}.png"
+                r.shoot(html, out, W, H)
+                outs.append(out)
+        else:
+            cells = []
+            for i, p in enumerate(plan):
+                cv = slide_canvas(p["layout"], theme, fmt, p["content"], brand, base_dir=base_dir, sample=sample, pager=(i, n) if (pager and bridge != "ribbon") else None)
+                cells.append(f'<div style="position:absolute;left:{i * W}px;top:0;width:{W}px;height:{H}px">{cv}</div>')
+            photos = [resolve_media(x, base_dir) for x in (content.get("photos") or [])]
+            ov = bridge_overlay(bridge, n, W, H, photos)
+            t = resolve_theme(theme, brand)
+            vars_ = theme_css_vars(t)
+            wrap = (f'<div id="pano" style="position:relative;width:{n * W}px;height:{H}px;{vars_}">{"".join(cells)}'
+                    f'<div style="position:absolute;inset:0;z-index:40;pointer-events:none">{ov}</div></div>')
+            html = head_html(False) + f'</head><body>{wrap}<script>{PREP_JS}</script></body></html>'
+            pg = r.load(html, n * W, H)
+            for i in range(n):
+                out = outdir / f"{prefix}_{i + 1:02d}.png"
+                pg.screenshot(path=str(out), type="png", clip={"x": i * W, "y": 0, "width": W, "height": H})
+                outs.append(out)
+    finally:
+        if own:
+            r.__exit__()
+    return outs
+
+
+# --------------------------------------------------------------------------- API: reel
+def _ffmpeg():
+    p = shutil.which("ffmpeg")
+    if not p:
+        raise SystemExit("ffmpeg não encontrado. Instale: https://ffmpeg.org/download.html")
+    return p
+
+
+def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: int, out: Path):
+    pg = r.load(html, w, h)
+    n = max(1, int(round(seconds * fps)))
+    cmd = [_ffmpeg(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(fps), "-c:v", "mjpeg", "-i", "-",
+           "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-r", str(fps), str(out)]
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+    try:
+        for i in range(n):
+            pg.evaluate("t=>{__seek(t);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}", i * 1000.0 / fps)
+            proc.stdin.write(pg.screenshot(type="jpeg", quality=94, clip={"x": 0, "y": 0, "width": w, "height": h}))
+    finally:
+        proc.stdin.close()
+        proc.wait()
+    return out
+
+
+def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td: float, fps: int, out: Path, audio: str | None = None):
+    total = sum(durs)
+    cmd = [_ffmpeg(), "-y", "-loglevel", "error"]
+    for c in clips:
+        cmd += ["-i", str(c)]
+    if audio:
+        cmd += ["-i", str(audio)]
+    if len(clips) == 1:
+        fc = f"[0:v]fps={fps},format=yuv420p[vout]"
+    else:
+        parts = [f"[{i}:v]settb=AVTB,fps={fps},format=yuv420p[s{i}]" for i in range(len(clips))]
+        prev, acc = "s0", 0.0
+        for i in range(1, len(clips)):
+            acc += durs[i - 1]
+            tag = f"x{i}"
+            parts.append(f"[{prev}][s{i}]xfade=transition={transitions[i - 1]}:duration={td}:offset={acc:.3f}[{tag}]")
+            prev = tag
+        parts.append(f"[{prev}]format=yuv420p[vout]")
+        fc = ";".join(parts)
+    cmd += ["-filter_complex", fc, "-map", "[vout]"]
+    if audio:
+        cmd += ["-map", f"{len(clips)}:a", "-c:a", "aac", "-b:a", "192k", "-af", f"afade=t=in:d=0.3,afade=t=out:st={max(0, total - 1):.2f}:d=1,loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.84:level=disabled"]
+    cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-t", f"{total:.3f}", str(out)]
+    subprocess.run(cmd, check=True)
+    return out
+
+
+def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
+    unit = 60.0 / bpm * beats / 2  # meio compasso
+    return max(unit, round(d / unit) * unit)
+
+
+def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade-up", transition="smooth", tdur=None, fps=30,
+                bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
+                pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
+                sync=False, music=None, sfx=None, key="A", music_vol=0.75):
+    """scenes: [{layout, content, dur?}]
+    music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
+    sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
+    sync: alinha stagger/duração do movimento/transição ao BPM (exige bpm)."""
+    from . import motion as _motion
+    F = FORMATS[fmt]
+    W, H = F["w"], F["h"]
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if music and not bpm:
+        from . import audio as _audio
+        bpm = _audio.STYLES[music]["bpm"]
+    if tdur is None:
+        tdur = _motion.PACE.get(pace or "standard", _motion.PACE["standard"])["tdur"]
+    if sync and bpm:
+        tdur = 60.0 / float(bpm) / 2
+    durs = []
+    for s in scenes:
+        d = float(s.get("dur", 3.0))
+        if bpm:
+            d = snap_to_beat(d, float(bpm))
+        durs.append(d)
+    tr_list = []
+    for i in range(max(0, len(scenes) - 1)):
+        if transition in ("smooth", "random", "mix"):
+            tr_list.append(TRANSITION_POOL[(i + sum(map(ord, theme))) % len(TRANSITION_POOL)])
+        elif "," in transition:
+            seq = transition.split(",")
+            tr_list.append(seq[i % len(seq)])
+        else:
+            tr_list.append(transition)
+    own = renderer is None
+    r = renderer or Renderer(1.0).__enter__()
+    tmpd = CACHE / f"reel_{uuid.uuid4().hex[:6]}"
+    tmpd.mkdir()
+    clips = []
+    try:
+        for i, s in enumerate(scenes):
+            seconds = durs[i] + (tdur if i < len(scenes) - 1 else 0.0)
+            html = page_html(slide_canvas(s["layout"], theme, fmt, s.get("content", {}), brand, base_dir=base_dir, sample=sample,
+                                          reel=dict(motion=s.get("motion", motion), scene_dur=durs[i] + tdur, extra_delay=(tdur if i > 0 else 0.0),
+                                                    pace=pace, speed=speed, stagger_scale=stagger_scale, intensity=intensity, ease=ease,
+                                                    kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm),
+                                          pager=(i, len(scenes)) if pager else None), reel=True)
+            clip = tmpd / f"s{i}.mp4"
+            if verbose:
+                print(f"  cena {i + 1}/{len(scenes)} · {s['layout']} · {seconds:.1f}s")
+            capture_scene(r, html, W, H, seconds, fps, clip)
+            clips.append(clip)
+        total = sum(durs)
+        starts = [sum(durs[:i]) for i in range(len(durs))]
+        events = []
+        if sfx:
+            for i in range(1, len(scenes)):
+                events.append(dict(t=max(0, starts[i] - .08), kind="whoosh", vol=.9))
+            if sfx == "full":
+                for i in range(len(scenes)):
+                    events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7))
+                events.append(dict(t=max(0, starts[-1] + tdur + .5), kind="shimmer", vol=.7))
+        if music or events or audio:
+            from . import audio as _audio
+            wav = out.with_suffix(".mix.wav")
+            _audio.build_track(total, music, bpm, events, wav, music_file=None if music else audio, music_vol=music_vol, key=key)
+            audio = str(wav)
+        join_scenes(clips, durs, tr_list, tdur, fps, out, audio)
+        if audio and str(audio).endswith(".mix.wav"):
+            Path(audio).unlink(missing_ok=True)
+        beat = 60.0 / float(bpm) if bpm else None
+        tl = dict(total=round(total, 3), fps=fps, format=fmt, theme=theme, motion=motion, pace=pace or "standard", ease=ease,
+                  bpm=bpm, beat=round(beat, 4) if beat else None, music=music, sfx=sfx, sync=bool(sync),
+                  scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3)) for i, s in enumerate(scenes)],
+                  transitions=[dict(at=round(starts[i], 3), dur=tdur, type=tr_list[i - 1]) for i in range(1, len(scenes))],
+                  sfx_events=events,
+                  beat_grid_first_bars=[round(b * beat, 3) for b in range(0, 33)] if beat else None)
+        out.with_suffix(".timeline.json").write_text(json.dumps(tl, ensure_ascii=False, indent=1), encoding="utf-8")
+    finally:
+        if own:
+            r.__exit__()
+        shutil.rmtree(tmpd, ignore_errors=True)
+    return out

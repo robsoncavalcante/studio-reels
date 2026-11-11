@@ -1,0 +1,14 @@
+<style>
+.L-split-diagonal .panel{position:absolute;left:0;right:0;bottom:0;height:56%;background:var(--accent);clip-path:polygon(0 17%,100% 0,100% 100%,0 100%);
+  --fg:var(--on-accent);--muted:color-mix(in srgb,var(--on-accent) 80%,transparent);padding:0 var(--px) var(--pb);display:flex;flex-direction:column;gap:2cqw;justify-content:flex-end}
+.L-split-diagonal .panel .k{color:var(--on-accent);opacity:.8}
+.L-split-diagonal .panel .t{font-size:10.6cqw;max-height:22cqh;flex:0 1 auto;min-height:0;--tc:var(--on-accent)}
+.L-split-diagonal .panel .t em{color:var(--on-accent);opacity:.7}
+.L-split-diagonal .stripe{position:absolute;left:0;right:0;bottom:0;height:60%;background:var(--accent2);clip-path:polygon(0 15%,100% -3%,100% 100%,0 100%)}
+</style>
+{{ photo(0,'flat bgph') }}<div class="stripe"></div>
+<div class="panel">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

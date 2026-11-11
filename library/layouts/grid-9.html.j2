@@ -1,0 +1,13 @@
+<style>
+.L-grid-9 .t{font-size:11cqw;max-height:22cqh;flex:0 1 auto;min-height:0}
+.L-grid-9 .g9{flex:1 1 0;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:1.8cqw}
+.L-grid-9 .g9 .photo{position:relative;border-radius:calc(var(--ph-radius) * .7)}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="g9">{% for i in range(9) %}{{ photo(i) }}{% endfor %}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

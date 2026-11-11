@@ -1,0 +1,17 @@
+<style>
+.L-announcement .pad{gap:2.6cqw}
+.L-announcement .t{font-size:15cqw;max-height:34cqh;flex:0 1 auto;min-height:0;line-height:.92}
+.L-announcement .stage .photo{inset:0 0 0 12%;border-radius:var(--ph-radius);transform:rotate(2deg)}
+.L-announcement .sticker.price{position:absolute;left:0;bottom:-2cqw;width:34cqw;height:34cqw;transform:rotate(-9deg);z-index:6;font-size:9cqw}
+.L-announcement .sticker.price small{display:block;font-size:2.4cqw;letter-spacing:.14em;margin-bottom:.8cqw;font-family:var(--font-body),Inter;font-weight:800}
+.L-announcement .row2{display:flex;align-items:center;justify-content:space-between;gap:3cqw}
+</style>
+<div class="pad col">
+  {% if c.badge %}<div><span class="badge">{{ c.badge }}</span></div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="stage">{{ photo(0) }}{% if c.number %}<div class="sticker price"><div><small>{{ c.label or 'a partir de' }}</small>{{ c.number }}</div></div>{% endif %}</div>
+  <div class="row2">
+    {% if c.subtitle %}<div class="s" style="max-width:56%">{{ c.subtitle }}</div>{% endif %}
+    {% if c.cta %}<span class="cta">{{ c.cta }} <i class="arrow"></i></span>{% endif %}
+  </div>
+</div>

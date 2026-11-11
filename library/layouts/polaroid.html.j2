@@ -1,0 +1,15 @@
+<style>
+.L-polaroid .pad{align-items:center;text-align:center}
+.L-polaroid .t{font-size:9.4cqw;max-height:22cqh;flex:0 1 auto;min-height:0;width:100%}
+.L-polaroid .stage{width:100%;display:flex;align-items:center;justify-content:center}
+.L-polaroid .pol{background:#fdfcf8;padding:3.4cqw 3.4cqw 12.5cqw;box-shadow:0 2.2cqw 5.5cqw rgba(0,0,0,.38);transform:rotate(-3.5deg);width:76cqw;position:relative}
+.L-polaroid .pol .photo{aspect-ratio:1/1;width:100%;border-radius:.5cqw;border:0;box-shadow:none}
+.L-polaroid .pol .cap{position:absolute;left:3cqw;right:3cqw;bottom:2.8cqw;text-align:center;font:700 6.8cqw/1 'Caveat';color:#232323}
+.L-polaroid .tape{position:absolute;top:-3.4cqw;left:50%;width:24cqw;height:7.5cqw;transform:translateX(-50%) rotate(2.5deg);background:color-mix(in srgb,var(--accent2) 50%,#fff);opacity:.88}
+.L-polaroid .s{margin-top:1cqw}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k" style="margin-bottom:2cqw">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="stage"><div class="pol"><i class="tape"></i>{{ photo(0) }}<div class="cap">{{ c.caption or c.subtitle or '' }}</div></div></div>
+</div>

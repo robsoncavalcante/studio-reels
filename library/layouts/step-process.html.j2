@@ -1,0 +1,20 @@
+<style>
+.L-step-process .t{font-size:10.2cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-step-process .steps{flex:1 1 0;min-height:0;display:flex;flex-direction:column;position:relative;font-size:3.5cqw}
+.L-step-process .st{display:flex;gap:4cqw;flex:1 1 0;min-height:0;position:relative}
+.L-step-process .st .rail{display:flex;flex-direction:column;align-items:center;flex:none}
+.L-step-process .st .rail .num-circle{width:3em;height:3em;z-index:2}
+.L-step-process .st .rail i{flex:1;width:.5cqw;background:var(--line);margin:.6cqw 0}
+.L-step-process .st:last-child .rail i{display:none}
+.L-step-process .st h4{font-size:1.2em;font-weight:800;line-height:1.15;margin:.4em 0 .25em}
+.L-step-process .st p{font-size:.92em;color:var(--muted);line-height:1.38}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="steps fit">
+    {% for it in c['items'][:5] %}<div class="st item"><div class="rail"><div class="num-circle">{{ loop.index }}</div><i></i></div><div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div></div>{% endfor %}
+  </div>
+</div>

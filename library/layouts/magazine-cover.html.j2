@@ -1,0 +1,18 @@
+<style>
+.L-magazine-cover .t.mast{font-size:25cqw;line-height:.82;text-align:center;white-space:nowrap;overflow:hidden;width:100%;flex:none;letter-spacing:-.02em;text-transform:uppercase}
+.L-magazine-cover .pad{padding-top:calc(var(--pt) - 4cqw);gap:2cqw}
+.L-magazine-cover .lines{margin-top:auto;display:flex;flex-direction:column;gap:2cqw;max-width:72%}
+.L-magazine-cover .t{font-size:8.6cqw;max-height:24cqh;flex:0 1 auto;min-height:0}
+.L-magazine-cover .ln{font-size:3.5cqw;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:1.1cqw 2.2cqw;background:var(--accent);color:var(--on-accent);width:max-content;max-width:100%}
+.L-magazine-cover .meta{display:flex;justify-content:space-between;font-size:3cqw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border-top:.35cqw solid var(--fg);border-bottom:.35cqw solid var(--fg);padding:1.2cqw 0;flex:none}
+</style>
+{{ photo(0,'flat bgph') }}<div class="scrim-t"></div><div class="scrim-b" style="opacity:.8"></div>
+<div class="pad col ondark">
+  <div class="meta"><span>{{ c.date or 'Edição especial' }}</span><span>{{ c.badge or 'Nº 01' }}</span></div>
+  <div class="t mast fit">{{ c.masthead or (brand.name if brand else None) or 'STUDIO' }}</div>
+  <div class="lines">
+    {% if c.kicker %}<div class="k" style="color:#fff">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+    {% for it in c['items'][:3] %}<div class="ln item">{{ it.title }}</div>{% endfor %}
+  </div>
+</div>

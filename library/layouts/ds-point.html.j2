@@ -1,0 +1,24 @@
+<style>
+.L-ds-point .pad{gap:5.2cqw;padding-top:17cqw}
+.L-ds-point .chip2{align-self:flex-start;display:inline-flex;align-items:center;gap:1.6cqw;padding:1.1cqw 2.6cqw;border-radius:99cqw;border:.25cqw solid var(--line);background:var(--surface);font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.L-ds-point .chip2 i{width:1.7cqw;height:1.7cqw;border-radius:50%;background:var(--accent2);display:block}
+.L-ds-point .t{font-size:10.8cqw;line-height:1.0;max-height:30cqh;flex:0 1 auto;min-height:0}
+.L-ds-point .b{font-size:4.5cqw;line-height:1.42;max-height:24cqh;flex:0 1 auto;min-height:0;color:var(--muted);opacity:1}
+.L-ds-point .dscard{margin-top:auto;display:flex;gap:3.4cqw;align-items:flex-start;padding:4.4cqw;border-radius:var(--card-radius);background:var(--surface);box-shadow:0 0 0 .25cqw var(--line)}
+.L-ds-point .ib{flex:none;width:11cqw;height:11cqw;border-radius:1.4cqw;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent-text,var(--accent2))}
+.L-ds-point .ib svg{width:5.8cqw;height:5.8cqw}
+.L-ds-point .cl{font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.L-ds-point .ct{font-size:3.7cqw;line-height:1.38;margin-top:1.6cqw;font-weight:500}
+.L-ds-point .pad>*{position:relative;z-index:1}
+</style>
+<div class="pad col">
+  <div class="chip2"><i></i>{{ c.label or 'Sinal' }} {{ c.number or '01' }}{% if c.total %}/{{ c.total }}{% endif %}</div>
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.body %}<div class="b fit">{{ c.body }}</div>{% endif %}
+  {% if c.card %}
+  <div class="dscard">
+    <div class="ib">{{ icon(c.card.icon or 'lightbulb') }}</div>
+    <div><div class="cl">{{ c.card.label or 'Como corrigir' }}</div><div class="ct">{{ c.card.text }}</div></div>
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,16 @@
+<style>
+.L-film-strip .pad{align-items:center;gap:2.4cqw}
+.L-film-strip .t{font-size:9.4cqw;max-height:20cqh;flex:0 1 auto;min-height:0;width:100%;text-align:center}
+.L-film-strip .wrap{flex:1 1 0;min-height:0;width:100%;display:flex;justify-content:center;align-items:center}
+.L-film-strip .strip{height:100%;max-height:100%;aspect-ratio:.42;max-width:70cqw;background:#0b0b0b;padding:2.6cqw 6.4cqw;display:flex;flex-direction:column;gap:2cqw;transform:rotate(-4deg);position:relative;box-shadow:0 2cqw 5cqw rgba(0,0,0,.4)}
+.L-film-strip .strip::before,.L-film-strip .strip::after{content:"";position:absolute;top:0;bottom:0;width:3cqw;background:repeating-linear-gradient(180deg,transparent 0 1.4cqw,#e9e3d3 1.4cqw 3.2cqw,transparent 3.2cqw 4.6cqw);background-size:100% 4.6cqw;border-radius:.6cqw}
+.L-film-strip .strip::before{left:1.6cqw}.L-film-strip .strip::after{right:1.6cqw}
+.L-film-strip .strip .photo{flex:1 1 0;min-height:0;position:relative;border-radius:.6cqw;border:0;filter:sepia(.15) contrast(1.05)}
+.L-film-strip .fno{position:absolute;bottom:-1cqw;left:7cqw;font:700 2cqw 'Space Grotesk';color:#e9a63a;letter-spacing:.2em}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k tc">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="wrap"><div class="strip">{{ photo(0) }}{{ photo(1) }}{{ photo(2) }}</div></div>
+  {% if c.subtitle %}<div class="s tc">{{ c.subtitle }}</div>{% endif %}
+</div>

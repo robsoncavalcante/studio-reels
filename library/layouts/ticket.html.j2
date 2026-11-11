@@ -1,0 +1,34 @@
+<style>
+.L-ticket .pad{align-items:center;justify-content:center}
+.L-ticket .tk{width:88cqw;max-height:100%;background:#fbfaf6;color:#161616;display:flex;flex-direction:column;border-radius:3cqw;
+  -webkit-mask:radial-gradient(circle at 0 66%,transparent 3.6cqw,#000 3.7cqw) left/51% 100% no-repeat,radial-gradient(circle at 100% 66%,transparent 3.6cqw,#000 3.7cqw) right/51% 100% no-repeat;
+  mask:radial-gradient(circle at 0 66%,transparent 3.6cqw,#000 3.7cqw) left/51% 100% no-repeat,radial-gradient(circle at 100% 66%,transparent 3.6cqw,#000 3.7cqw) right/51% 100% no-repeat;
+  filter:drop-shadow(0 2cqw 4cqw rgba(0,0,0,.35));--fg:#161616;--muted:rgba(22,22,22,.62);--line:rgba(22,22,22,.25)}
+.L-ticket .tk .ph-wrap{height:34cqw;margin:3.4cqw 3.4cqw 0;position:relative}
+.L-ticket .tk .ph-wrap .photo{position:absolute;inset:0;border-radius:1.6cqw}
+.L-ticket .tk .ph-wrap .badge{position:absolute;right:2cqw;top:2cqw;z-index:3}
+.L-ticket .tk .main{padding:4cqw 5cqw 5cqw;display:flex;flex-direction:column;gap:2cqw}
+.L-ticket .t{font-size:9.4cqw;max-height:22cqh;flex:0 1 auto;min-height:0;--tc:#161616}
+.L-ticket .dash{border-top:.5cqw dashed rgba(22,22,22,.35);margin:0 5cqw}
+.L-ticket .info{display:grid;grid-template-columns:1fr 1fr;gap:2.6cqw;padding:4.4cqw 5cqw 3cqw}
+.L-ticket .info div small{display:block;font-size:2.1cqw;letter-spacing:.2em;text-transform:uppercase;opacity:.55;font-weight:700}
+.L-ticket .info div b{font-size:3.7cqw;font-weight:800}
+.L-ticket .bar{height:9cqw;margin:0 5cqw 4.6cqw;background:repeating-linear-gradient(90deg,#161616 0 .5cqw,transparent .5cqw 1.1cqw,#161616 1.1cqw 2.1cqw,transparent 2.1cqw 2.6cqw,#161616 2.6cqw 3.1cqw,transparent 3.1cqw 4.2cqw)}
+</style>
+<div class="pad col">
+  <div class="tk">
+    <div class="ph-wrap">{{ photo(0) }}{% if c.badge %}<span class="badge">{{ c.badge }}</span>{% endif %}</div>
+    <div class="main">
+      {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+      <div class="t fit">{{ rich(c.title) }}</div>
+      {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+    </div>
+    <div class="dash"></div>
+    <div class="info">
+      <div><small>Data</small><b>{{ c.date or '—' }}</b></div>
+      <div><small>Horário</small><b>{{ c.time or '—' }}</b></div>
+      <div style="grid-column:1/-1"><small>Local</small><b>{{ c.place or '—' }}</b></div>
+    </div>
+    <div class="bar"></div>
+  </div>
+</div>

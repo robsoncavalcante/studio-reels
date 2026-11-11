@@ -1,0 +1,14 @@
+<style>
+.L-cutout-behind .big{position:absolute;left:0;right:0;top:calc(var(--pt) + 4cqw);text-align:center;font-size:30cqw;line-height:.82;max-height:50cqh;overflow:hidden;padding:0 3cqw;word-break:break-word;z-index:2}
+.L-cutout-behind .disc{position:absolute;left:50%;bottom:17%;width:84cqw;height:84cqw;transform:translateX(-50%);border-radius:50%;background:var(--accent);opacity:.9;z-index:1}
+.L-cutout-behind .cutout{z-index:3;height:70%;bottom:10%}
+.L-cutout-behind .foot{position:absolute;left:var(--px);right:var(--px);bottom:var(--pb);z-index:4;text-align:center;display:flex;flex-direction:column;gap:1.6cqw;align-items:center}
+.L-cutout-behind .k{background:var(--bg);padding:1cqw 2.6cqw;border-radius:99cqw}
+</style>
+<i class="disc"></i>
+<div class="t big fit">{{ rich(c.title) }}</div>
+{{ cutout() }}
+<div class="foot">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  {% if c.subtitle %}<div class="s" style="color:var(--fg)">{{ c.subtitle }}</div>{% endif %}
+</div>

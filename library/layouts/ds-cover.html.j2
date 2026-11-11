@@ -1,0 +1,17 @@
+<style>
+.L-ds-cover .pad{justify-content:flex-end;gap:4.6cqw}
+.L-ds-cover .dsb{align-self:flex-start;display:inline-flex;align-items:center;gap:1.6cqw;padding:1.2cqw 2.8cqw 1.2cqw 2cqw;border-radius:1.2cqw;background:rgba(12,9,12,.55);border:.25cqw solid rgba(255,255,255,.22);color:#FAFAFA;font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(1.2cqw)}
+.L-ds-cover .dsb i{width:1.6cqw;height:1.6cqw;border-radius:.4cqw;background:#FB2C36;display:block}
+.L-ds-cover .t{font-size:10.6cqw;line-height:.98;max-height:44cqh;flex:0 1 auto;min-height:0}
+.L-ds-cover .s{font-size:3.9cqw;color:#E6DEE7;max-width:88%}
+.L-ds-cover .rule{height:.25cqw;background:rgba(255,255,255,.2);width:100%;margin:1cqw 0 0}
+.canvas[class*="L-ds-"]{hyphens:none;-webkit-hyphens:none}
+.L-ds-cover .t em{color:#FF4B55}
+</style>
+{{ photo(0,'flat bgph') }}<div class="scrim-b"></div><div class="scrim-t"></div>
+<div class="pad ondark">
+  {% if c.kicker %}<div class="dsb"><i></i>{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  <div class="rule"></div>
+</div>

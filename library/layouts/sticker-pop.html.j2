@@ -1,0 +1,21 @@
+<style>
+.L-sticker-pop .pad{gap:3.2cqw}
+.L-sticker-pop .stage .photo{inset:0 2cqw 0 2cqw;border-radius:var(--ph-radius)}
+.L-sticker-pop .sticker.price{position:absolute;right:-1cqw;top:-3cqw;width:30cqw;height:30cqw;transform:rotate(10deg);z-index:6;font-size:7.4cqw}
+.L-sticker-pop .sticker.price small{display:block;font-size:2.3cqw;letter-spacing:.14em;font-weight:800;margin-bottom:.6cqw;font-family:var(--font-body),Inter}
+.L-sticker-pop .tag{position:absolute;left:-1cqw;bottom:6cqw;z-index:6;transform:rotate(-5deg)}
+.L-sticker-pop .tag .badge{font-size:3.2cqw;padding:2cqw 4.4cqw}
+.L-sticker-pop .t{font-size:10.5cqw;max-height:24cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col">
+  <div class="stage">
+    {{ photo(0) }}
+    {% if c.number %}<div class="sticker price"><div><small>{{ c.label or 'por apenas' }}</small>{{ c.number }}</div></div>{% endif %}
+    {% if c.badge %}<div class="tag"><span class="badge">{{ c.badge }}</span></div>{% endif %}
+  </div>
+  <div class="col gap2">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+    {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  </div>
+</div>

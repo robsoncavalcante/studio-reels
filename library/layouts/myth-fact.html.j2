@@ -1,0 +1,14 @@
+<style>
+.L-myth-fact .pad{justify-content:center;gap:4cqw}
+.L-myth-fact .cd{padding:6cqw 5.6cqw;border-radius:var(--card-radius);position:relative;display:flex;flex-direction:column;gap:2.4cqw;flex:0 1 auto;min-height:0}
+.L-myth-fact .cd.m{background:var(--surface);border:.5cqw dashed var(--line)}
+.L-myth-fact .cd.v{background:var(--accent);color:var(--on-accent);--fg:var(--on-accent);--muted:var(--on-accent)}
+.L-myth-fact .tag{font-size:2.7cqw;letter-spacing:.2em;font-weight:900;text-transform:uppercase;font-family:var(--font-body),Inter}
+.L-myth-fact .cd.m .tag{color:var(--accent2)}
+.L-myth-fact .st1{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:8.2cqw;line-height:1.08;text-decoration:line-through;text-decoration-thickness:.5cqw;text-decoration-color:var(--accent2);text-transform:var(--dcase);max-height:28cqh;flex:0 1 auto;min-height:0}
+.L-myth-fact .st2{font-size:4.2cqw;line-height:1.38;font-weight:600;max-height:32cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col">
+  <div class="cd m item"><div class="tag">✕ {{ c.label_a or 'Mito' }}</div><div class="st1 fit">{{ c.title }}</div></div>
+  <div class="cd v item"><div class="tag">✓ {{ c.label_b or 'Verdade' }}</div><div class="st2 fit">{{ c.body or c.subtitle }}</div></div>
+</div>

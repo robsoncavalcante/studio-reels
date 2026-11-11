@@ -1,0 +1,1606 @@
+[
+ {
+  "id": "clean-white",
+  "name": "Clean White",
+  "cats": [
+   "minimalista",
+   "negócios",
+   "editorial"
+  ],
+  "bg": "#ffffff",
+  "bg2": "#f1f1ef",
+  "fg": "#111111",
+  "accent": "#ff4d2e",
+  "accent2": "#111111",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-0.01em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "ph_radius": "2.6cqw"
+ },
+ {
+  "id": "editorial-cream",
+  "name": "Editorial Cream",
+  "cats": [
+   "editorial",
+   "estilo de vida",
+   "minimalista"
+  ],
+  "bg": "#f4efe6",
+  "bg2": "#e9e1d1",
+  "fg": "#1b1a17",
+  "accent": "#b4542f",
+  "accent2": "#1b1a17",
+  "font_display": "Playfair Display",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-0.02em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "paper",
+   "frame"
+  ],
+  "kind": "light",
+  "ph_radius": ".6cqw",
+  "bg_kind": "solid"
+ },
+ {
+  "id": "mono-black",
+  "name": "Mono Black",
+  "cats": [
+   "minimalista",
+   "editorial",
+   "tech"
+  ],
+  "bg": "#0b0b0b",
+  "bg2": "#1b1b1b",
+  "fg": "#ffffff",
+  "accent": "#f2f2f2",
+  "accent2": "#8a8a8a",
+  "font_display": "Anton",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "ph_radius": "0",
+  "btn_radius": "0.8cqw"
+ },
+ {
+  "id": "swiss-grid",
+  "name": "Swiss Grid",
+  "cats": [
+   "minimalista",
+   "editorial",
+   "negócios"
+  ],
+  "bg": "#efefec",
+  "bg2": "#e4e4df",
+  "fg": "#111111",
+  "accent": "#e10600",
+  "accent2": "#111111",
+  "font_display": "Archivo Black",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": "-.01em",
+  "dlh": 0.96,
+  "title_fx": "plain",
+  "decor": [
+   "grid"
+  ],
+  "kind": "light",
+  "ph_radius": "0",
+  "btn_radius": "0"
+ },
+ {
+  "id": "soft-greige",
+  "name": "Soft Greige",
+  "cats": [
+   "minimalista",
+   "estilo de vida",
+   "beleza"
+  ],
+  "bg": "#e9e4dc",
+  "bg2": "#d9d1c4",
+  "fg": "#2c2925",
+  "accent": "#8a6f5a",
+  "accent2": "#cbb8a4",
+  "font_display": "Fraunces",
+  "font_body": "DM Sans",
+  "dw": 600,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "noise-soft"
+  ],
+  "kind": "light",
+  "bg_kind": "radial",
+  "ph_radius": "3.2cqw"
+ },
+ {
+  "id": "paper-ink",
+  "name": "Paper & Ink",
+  "cats": [
+   "editorial",
+   "educativo",
+   "negócios"
+  ],
+  "bg": "#fbf8f1",
+  "bg2": "#efe9da",
+  "fg": "#1a1a2e",
+  "accent": "#2540d9",
+  "accent2": "#ffcf33",
+  "font_display": "DM Serif Display",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 1.02,
+  "title_fx": "highlight",
+  "decor": [
+   "paper",
+   "corner-marks"
+  ],
+  "kind": "light",
+  "ph_radius": ".8cqw"
+ },
+ {
+  "id": "neon-night",
+  "name": "Neon Night",
+  "cats": [
+   "tendência",
+   "festa",
+   "tech"
+  ],
+  "bg": "#0a0716",
+  "bg2": "#1b0b3a",
+  "fg": "#ffffff",
+  "accent": "#ff2bd6",
+  "accent2": "#00e5ff",
+  "font_display": "Syne",
+  "font_body": "Space Grotesk",
+  "dw": 800,
+  "dcase": "uppercase",
+  "dls": ".01em",
+  "dlh": 0.98,
+  "title_fx": "glow",
+  "decor": [
+   "stars",
+   "vignette",
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "3cqw",
+  "ph_border": ".5cqw solid #ff2bd6",
+  "ph_shadow": "0 0 5cqw #ff2bd6aa",
+  "btn_shadow": "0 0 3cqw #ff2bd6"
+ },
+ {
+  "id": "neon-lime",
+  "name": "Neon Lime",
+  "cats": [
+   "tendência",
+   "esporte",
+   "tech"
+  ],
+  "bg": "#08110a",
+  "bg2": "#0f2a14",
+  "fg": "#f4ffe9",
+  "accent": "#b6ff00",
+  "accent2": "#00ffa3",
+  "font_display": "Unbounded",
+  "font_body": "Space Grotesk",
+  "dw": 800,
+  "dcase": "uppercase",
+  "dls": "-.01em",
+  "dlh": 1.0,
+  "title_fx": "glow",
+  "decor": [
+   "grid",
+   "scanlines"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "1.4cqw",
+  "ph_border": ".4cqw solid #b6ff00",
+  "ph_shadow": "0 0 4cqw #b6ff0088"
+ },
+ {
+  "id": "y2k-chrome",
+  "name": "Y2K Chrome",
+  "cats": [
+   "tendência",
+   "beleza",
+   "festa"
+  ],
+  "bg": "#c9d6ff",
+  "bg2": "#f0e6ff",
+  "fg": "#1c1f4a",
+  "accent": "#5b6cff",
+  "accent2": "#ff7ad9",
+  "font_display": "Unbounded",
+  "font_body": "DM Sans",
+  "dw": 900,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.0,
+  "title_fx": "chrome",
+  "decor": [
+   "sparkle",
+   "glass-shine"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "5.4cqw",
+  "ph_border": ".9cqw solid #ffffff",
+  "ph_shadow": "0 1.4cqw 3.6cqw rgba(60,60,160,.35)",
+  "btn_shadow": "inset 0 -.8cqw 1.6cqw rgba(0,0,0,.18), inset 0 .8cqw 1.6cqw rgba(255,255,255,.7)"
+ },
+ {
+  "id": "plastic-bubble",
+  "name": "Plastic Bubble",
+  "cats": [
+   "tendência",
+   "kids",
+   "beleza"
+  ],
+  "bg": "#ffd6f0",
+  "bg2": "#c8f1ff",
+  "fg": "#3a1a6e",
+  "accent": "#ff4fa8",
+  "accent2": "#5bd6ff",
+  "font_display": "Righteous",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": ".01em",
+  "dlh": 1.0,
+  "title_fx": "bubble",
+  "decor": [
+   "blobs",
+   "glass-shine"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "150deg",
+  "ph_radius": "6.4cqw",
+  "ph_border": "1cqw solid #ffffff",
+  "ph_shadow": "0 1.6cqw 4cqw rgba(160,60,160,.3)",
+  "btn_shadow": "inset 0 -1cqw 1.8cqw rgba(0,0,0,.18), inset 0 1cqw 1.8cqw rgba(255,255,255,.8)"
+ },
+ {
+  "id": "retro-90s-memphis",
+  "name": "Retrô 90s Memphis",
+  "cats": [
+   "retrô",
+   "festa",
+   "tendência"
+  ],
+  "bg": "#fff6d6",
+  "bg2": "#ffe9a6",
+  "fg": "#1c1c1c",
+  "accent": "#ff4fa3",
+  "accent2": "#00c2ff",
+  "font_display": "Archivo Black",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "shadow",
+  "decor": [
+   "memphis",
+   "dots"
+  ],
+  "kind": "light",
+  "ph_radius": "1cqw",
+  "ph_border": ".7cqw solid #1c1c1c",
+  "ph_shadow": "1.5cqw 1.5cqw 0 #1c1c1c",
+  "btn_shadow": ".7cqw .7cqw 0 #1c1c1c",
+  "btn_radius": "1.2cqw"
+ },
+ {
+  "id": "vaporwave",
+  "name": "Vaporwave",
+  "cats": [
+   "retrô",
+   "tendência",
+   "festa"
+  ],
+  "bg": "#2b1055",
+  "bg2": "#ff6ec7",
+  "fg": "#ffffff",
+  "accent": "#00fff0",
+  "accent2": "#ffd1ff",
+  "font_display": "Righteous",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "none",
+  "dls": ".02em",
+  "dlh": 1.0,
+  "title_fx": "shadow",
+  "decor": [
+   "grid-perspective",
+   "stars",
+   "scanlines"
+  ],
+  "kind": "dark",
+  "bg_kind": "sunset",
+  "angle": "180deg",
+  "ph_radius": "1.6cqw",
+  "ph_border": ".5cqw solid #00fff0",
+  "ph_shadow": "0 0 4cqw #00fff088"
+ },
+ {
+  "id": "acid-graphic",
+  "name": "Acid Graphic",
+  "cats": [
+   "tendência",
+   "esporte",
+   "festa"
+  ],
+  "bg": "#d7ff2f",
+  "bg2": "#c3ee10",
+  "fg": "#0d0d0d",
+  "accent": "#0d0d0d",
+  "accent2": "#ff3df2",
+  "font_display": "Anton",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".005em",
+  "dlh": 0.96,
+  "title_fx": "plain",
+  "decor": [
+   "halftone",
+   "diag"
+  ],
+  "kind": "light",
+  "ph_radius": "0",
+  "ph_border": ".7cqw solid #0d0d0d",
+  "ph_shadow": "1.4cqw 1.4cqw 0 #ff3df2",
+  "btn_radius": "0",
+  "on_accent": "#d7ff2f"
+ },
+ {
+  "id": "brutalist",
+  "name": "Brutalist",
+  "cats": [
+   "tendência",
+   "editorial",
+   "tech"
+  ],
+  "bg": "#e9e9e4",
+  "bg2": "#dcdcd5",
+  "fg": "#0a0a0a",
+  "accent": "#ff3b00",
+  "accent2": "#0a0a0a",
+  "font_display": "Space Grotesk",
+  "font_body": "Space Grotesk",
+  "dw": 700,
+  "dcase": "uppercase",
+  "dls": "-.03em",
+  "dlh": 0.94,
+  "title_fx": "plain",
+  "decor": [
+   "grid",
+   "corner-marks"
+  ],
+  "kind": "light",
+  "ph_radius": "0",
+  "ph_border": ".8cqw solid #0a0a0a",
+  "btn_radius": "0",
+  "card_radius": "0"
+ },
+ {
+  "id": "cyber-grid",
+  "name": "Cyber Grid",
+  "cats": [
+   "tech",
+   "tendência",
+   "esporte"
+  ],
+  "bg": "#050914",
+  "bg2": "#0a1f44",
+  "fg": "#d9f3ff",
+  "accent": "#00e5ff",
+  "accent2": "#ff2e63",
+  "font_display": "Oswald",
+  "font_body": "Space Grotesk",
+  "dw": 700,
+  "dcase": "uppercase",
+  "dls": ".02em",
+  "dlh": 1.0,
+  "title_fx": "glow",
+  "decor": [
+   "grid-perspective",
+   "scanlines",
+   "vignette"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "ph_radius": ".8cqw",
+  "ph_border": ".3cqw solid #00e5ff",
+  "ph_shadow": "0 0 3cqw #00e5ff66"
+ },
+ {
+  "id": "gradient-aurora",
+  "name": "Gradient Aurora",
+  "cats": [
+   "tendência",
+   "tech",
+   "marketing"
+  ],
+  "bg": "#0e0b2c",
+  "bg2": "#3a1c71",
+  "fg": "#ffffff",
+  "accent": "#ffaf7b",
+  "accent2": "#d76d77",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.0,
+  "title_fx": "gradient",
+  "decor": [
+   "blobs",
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "mesh",
+  "ph_radius": "4cqw"
+ },
+ {
+  "id": "film-35mm",
+  "name": "Filme 35mm",
+  "cats": [
+   "filme",
+   "viagem",
+   "memórias"
+  ],
+  "bg": "#1a1612",
+  "bg2": "#2a221a",
+  "fg": "#f1e8d3",
+  "accent": "#e9a63a",
+  "accent2": "#c1502e",
+  "font_display": "Instrument Serif",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "film-edge",
+   "grain",
+   "vignette"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": ".5cqw",
+  "ph_filter": "sepia(.22) contrast(1.06) saturate(.92)"
+ },
+ {
+  "id": "kodak-warm",
+  "name": "Kodak Warm",
+  "cats": [
+   "filme",
+   "retrô",
+   "viagem"
+  ],
+  "bg": "#f6c945",
+  "bg2": "#f08c2e",
+  "fg": "#2a1305",
+  "accent": "#d62828",
+  "accent2": "#2a1305",
+  "font_display": "Archivo Black",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "shadow",
+  "decor": [
+   "grain",
+   "lightleak"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": ".8cqw",
+  "ph_border": ".9cqw solid #fff7e0",
+  "ph_filter": "sepia(.18) saturate(1.12) contrast(1.05)"
+ },
+ {
+  "id": "polaroid-70s",
+  "name": "Polaroid 70s",
+  "cats": [
+   "retrô",
+   "memórias",
+   "amor"
+  ],
+  "bg": "#efe3c8",
+  "bg2": "#e0d0ac",
+  "fg": "#3b2a1a",
+  "accent": "#c8553d",
+  "accent2": "#588b8b",
+  "font_display": "Pacifico",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "0",
+  "dlh": 1.08,
+  "title_fx": "plain",
+  "decor": [
+   "paper",
+   "noise-soft"
+  ],
+  "kind": "light",
+  "bg_kind": "radial",
+  "ph_radius": ".6cqw",
+  "ph_filter": "sepia(.28) saturate(1.05)"
+ },
+ {
+  "id": "sepia-newspaper",
+  "name": "Jornal Sépia",
+  "cats": [
+   "editorial",
+   "retrô",
+   "educativo"
+  ],
+  "bg": "#e8dcc2",
+  "bg2": "#d8c8a4",
+  "fg": "#1b140c",
+  "accent": "#7a1f12",
+  "accent2": "#1b140c",
+  "font_display": "Playfair Display",
+  "font_body": "Lora",
+  "dw": 900,
+  "dcase": "uppercase",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "paper",
+   "frame-double",
+   "halftone"
+  ],
+  "kind": "light",
+  "ph_radius": "0",
+  "ph_filter": "grayscale(.55) sepia(.3) contrast(1.1)",
+  "btn_radius": "0"
+ },
+ {
+  "id": "retro-diner",
+  "name": "Retro Diner",
+  "cats": [
+   "retrô",
+   "comida",
+   "festa"
+  ],
+  "bg": "#1f6f78",
+  "bg2": "#14464c",
+  "fg": "#fff4dc",
+  "accent": "#ff5a5f",
+  "accent2": "#ffd166",
+  "font_display": "Righteous",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": ".02em",
+  "dlh": 1.0,
+  "title_fx": "shadow",
+  "decor": [
+   "checker",
+   "dots"
+  ],
+  "kind": "dark",
+  "ph_radius": "3cqw",
+  "ph_border": ".8cqw solid #fff4dc",
+  "btn_shadow": ".6cqw .6cqw 0 #14464c"
+ },
+ {
+  "id": "vintage-travel",
+  "name": "Cartaz de Viagem",
+  "cats": [
+   "viagem",
+   "retrô",
+   "editorial"
+  ],
+  "bg": "#f2e6c9",
+  "bg2": "#e6d4a8",
+  "fg": "#1f3a5f",
+  "accent": "#d9531e",
+  "accent2": "#1f3a5f",
+  "font_display": "Bebas Neue",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".02em",
+  "dlh": 0.95,
+  "title_fx": "plain",
+  "decor": [
+   "paper",
+   "frame-double",
+   "sunburst"
+  ],
+  "kind": "light",
+  "ph_radius": ".4cqw",
+  "ph_border": ".8cqw solid #1f3a5f",
+  "ph_filter": "saturate(.85) sepia(.15)"
+ },
+ {
+  "id": "noir-bw",
+  "name": "Noir P&B",
+  "cats": [
+   "editorial",
+   "filme",
+   "moda"
+  ],
+  "bg": "#090909",
+  "bg2": "#242424",
+  "fg": "#f5f5f5",
+  "accent": "#f5f5f5",
+  "accent2": "#9a9a9a",
+  "font_display": "Playfair Display",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "uppercase",
+  "dls": ".02em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "grain",
+   "vignette",
+   "frame"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "0",
+  "ph_filter": "grayscale(1) contrast(1.15)"
+ },
+ {
+  "id": "hygge-cozy",
+  "name": "Hygge Cozy",
+  "cats": [
+   "estilo de vida",
+   "sazonal",
+   "amor"
+  ],
+  "bg": "#f3e9dc",
+  "bg2": "#e7d6c1",
+  "fg": "#4a3426",
+  "accent": "#b86b3f",
+  "accent2": "#8f9d7a",
+  "font_display": "Fraunces",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "paper"
+  ],
+  "kind": "light",
+  "ph_radius": "4.2cqw"
+ },
+ {
+  "id": "autumn-spice",
+  "name": "Outono Spice",
+  "cats": [
+   "sazonal",
+   "estilo de vida",
+   "comida"
+  ],
+  "bg": "#3a1f12",
+  "bg2": "#6b2f14",
+  "fg": "#fff1dc",
+  "accent": "#f2a541",
+  "accent2": "#d1481f",
+  "font_display": "DM Serif Display",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "grain",
+   "blobs"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "165deg",
+  "ph_radius": "3cqw"
+ },
+ {
+  "id": "summer-recap",
+  "name": "Summer Recap",
+  "cats": [
+   "sazonal",
+   "viagem",
+   "festa"
+  ],
+  "bg": "#ffe66d",
+  "bg2": "#ff9f1c",
+  "fg": "#1b1b1b",
+  "accent": "#ff3d5a",
+  "accent2": "#1b1b1b",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.03em",
+  "dlh": 0.98,
+  "title_fx": "shadow",
+  "decor": [
+   "waves",
+   "sparkle"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": "4cqw",
+  "ph_border": ".8cqw solid #fff"
+ },
+ {
+  "id": "sunset-gradient",
+  "name": "Sunset Gradient",
+  "cats": [
+   "viagem",
+   "amor",
+   "estilo de vida"
+  ],
+  "bg": "#2d1b69",
+  "bg2": "#ff5e78",
+  "fg": "#ffffff",
+  "accent": "#ffd166",
+  "accent2": "#ffe5d0",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.03em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "grain",
+   "glow"
+  ],
+  "kind": "dark",
+  "bg_kind": "sunset",
+  "angle": "180deg",
+  "ph_radius": "4cqw"
+ },
+ {
+  "id": "boho-terracotta",
+  "name": "Boho Terracota",
+  "cats": [
+   "estilo de vida",
+   "beleza",
+   "amor"
+  ],
+  "bg": "#e8d5c0",
+  "bg2": "#d9bea0",
+  "fg": "#4a2c1a",
+  "accent": "#c1633f",
+  "accent2": "#7a8450",
+  "font_display": "Cormorant Garamond",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "noise-soft",
+   "frame"
+  ],
+  "kind": "light",
+  "bg_kind": "radial",
+  "ph_radius": "3cqw"
+ },
+ {
+  "id": "sage-botanical",
+  "name": "Sage Botânico",
+  "cats": [
+   "estilo de vida",
+   "saúde",
+   "beleza"
+  ],
+  "bg": "#dfe5d6",
+  "bg2": "#c9d4bc",
+  "fg": "#25331f",
+  "accent": "#5f7a4c",
+  "accent2": "#d8a47f",
+  "font_display": "Fraunces",
+  "font_body": "DM Sans",
+  "dw": 600,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "paper"
+  ],
+  "kind": "light",
+  "bg_kind": "radial",
+  "ph_radius": "3.4cqw"
+ },
+ {
+  "id": "ocean-breeze",
+  "name": "Ocean Breeze",
+  "cats": [
+   "viagem",
+   "estilo de vida",
+   "saúde"
+  ],
+  "bg": "#e6f6ff",
+  "bg2": "#b7e3ff",
+  "fg": "#052a45",
+  "accent": "#0a84d6",
+  "accent2": "#ffb703",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.03em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "waves"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "175deg",
+  "ph_radius": "4.4cqw"
+ },
+ {
+  "id": "tropical",
+  "name": "Tropical",
+  "cats": [
+   "viagem",
+   "festa",
+   "comida"
+  ],
+  "bg": "#0b3d2e",
+  "bg2": "#0f6b4b",
+  "fg": "#fff7e0",
+  "accent": "#ffb703",
+  "accent2": "#ff4d6d",
+  "font_display": "Bebas Neue",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".03em",
+  "dlh": 0.95,
+  "title_fx": "plain",
+  "decor": [
+   "blobs",
+   "sparkle"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "2.4cqw",
+  "ph_border": ".6cqw solid #ffb703"
+ },
+ {
+  "id": "pastel-candy",
+  "name": "Pastel Candy",
+  "cats": [
+   "kids",
+   "festa",
+   "beleza"
+  ],
+  "bg": "#fff0f6",
+  "bg2": "#e6f3ff",
+  "fg": "#4a3b66",
+  "accent": "#ff8fb1",
+  "accent2": "#8ecae6",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "dots",
+   "confetti"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "5cqw",
+  "ph_border": ".8cqw solid #fff"
+ },
+ {
+  "id": "lavender-dream",
+  "name": "Lavender Dream",
+  "cats": [
+   "beleza",
+   "amor",
+   "estilo de vida"
+  ],
+  "bg": "#efe6ff",
+  "bg2": "#d9c9ff",
+  "fg": "#2d1b5e",
+  "accent": "#7b4dff",
+  "accent2": "#ff9ecd",
+  "font_display": "Instrument Serif",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "blobs",
+   "grain"
+  ],
+  "kind": "light",
+  "bg_kind": "mesh",
+  "ph_radius": "4.4cqw"
+ },
+ {
+  "id": "rose-romance",
+  "name": "Rose Romance",
+  "cats": [
+   "amor",
+   "beleza",
+   "sazonal"
+  ],
+  "bg": "#fde6ea",
+  "bg2": "#f9c6d0",
+  "fg": "#5a1a2b",
+  "accent": "#d6336c",
+  "accent2": "#7a1c3b",
+  "font_display": "Playfair Display",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "sparkle"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": "4cqw"
+ },
+ {
+  "id": "corporate-blue",
+  "name": "Corporate Blue",
+  "cats": [
+   "negócios",
+   "marketing"
+  ],
+  "bg": "#0b2a5b",
+  "bg2": "#123c85",
+  "fg": "#ffffff",
+  "accent": "#29b6f6",
+  "accent2": "#ffb703",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.04,
+  "title_fx": "plain",
+  "decor": [
+   "diag",
+   "dots"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "155deg",
+  "ph_radius": "2cqw"
+ },
+ {
+  "id": "startup-gradient",
+  "name": "Startup Gradient",
+  "cats": [
+   "marketing",
+   "tech",
+   "negócios"
+  ],
+  "bg": "#1a1040",
+  "bg2": "#5b2bff",
+  "fg": "#ffffff",
+  "accent": "#00e0ff",
+  "accent2": "#ff6ac1",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.03em",
+  "dlh": 1.0,
+  "title_fx": "gradient",
+  "decor": [
+   "blobs",
+   "grid"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "150deg",
+  "ph_radius": "3.4cqw"
+ },
+ {
+  "id": "luxury-gold",
+  "name": "Luxo Dourado",
+  "cats": [
+   "negócios",
+   "moda",
+   "beleza"
+  ],
+  "bg": "#0c0a08",
+  "bg2": "#1c1710",
+  "fg": "#f5ecd7",
+  "accent": "#d4af37",
+  "accent2": "#8c6d1f",
+  "font_display": "Cormorant Garamond",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "uppercase",
+  "dls": ".06em",
+  "dlh": 1.05,
+  "title_fx": "plain",
+  "decor": [
+   "frame-double",
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "0",
+  "ph_border": ".4cqw solid #d4af37",
+  "btn_radius": "0"
+ },
+ {
+  "id": "dark-premium",
+  "name": "Dark Premium",
+  "cats": [
+   "negócios",
+   "tech",
+   "marketing"
+  ],
+  "bg": "#0f1115",
+  "bg2": "#1a1e26",
+  "fg": "#f4f5f7",
+  "accent": "#6ee7b7",
+  "accent2": "#60a5fa",
+  "font_display": "Space Grotesk",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.03em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "grain",
+   "glow"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "3cqw",
+  "ph_border": ".25cqw solid rgba(255,255,255,.18)"
+ },
+ {
+  "id": "real-estate-navy",
+  "name": "Imobiliário Navy",
+  "cats": [
+   "imobiliário",
+   "negócios",
+   "luxo"
+  ],
+  "bg": "#0e1f3a",
+  "bg2": "#1b3358",
+  "fg": "#f6f1e7",
+  "accent": "#c9a86a",
+  "accent2": "#f6f1e7",
+  "font_display": "DM Serif Display",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "frame",
+   "noise-soft"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": ".8cqw",
+  "btn_radius": ".6cqw"
+ },
+ {
+  "id": "health-green",
+  "name": "Saúde Verde",
+  "cats": [
+   "saúde",
+   "negócios",
+   "estilo de vida"
+  ],
+  "bg": "#f0f7f1",
+  "bg2": "#d7ecd9",
+  "fg": "#11361f",
+  "accent": "#1f9d55",
+  "accent2": "#f2b134",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "blobs"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "165deg",
+  "ph_radius": "4.4cqw"
+ },
+ {
+  "id": "beauty-nude",
+  "name": "Beauty Nude",
+  "cats": [
+   "beleza",
+   "moda",
+   "estilo de vida"
+  ],
+  "bg": "#f2e4da",
+  "bg2": "#e6cdbd",
+  "fg": "#3a2820",
+  "accent": "#b0765a",
+  "accent2": "#3a2820",
+  "font_display": "Cormorant Garamond",
+  "font_body": "DM Sans",
+  "dw": 600,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 0.98,
+  "title_fx": "plain",
+  "decor": [
+   "noise-soft"
+  ],
+  "kind": "light",
+  "bg_kind": "radial",
+  "ph_radius": "3cqw"
+ },
+ {
+  "id": "fitness-impact",
+  "name": "Fitness Impact",
+  "cats": [
+   "esporte",
+   "motivação",
+   "tendência"
+  ],
+  "bg": "#0a0a0a",
+  "bg2": "#191919",
+  "fg": "#ffffff",
+  "accent": "#c6ff00",
+  "accent2": "#ff3d00",
+  "font_display": "Anton",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".01em",
+  "dlh": 0.96,
+  "title_fx": "plain",
+  "decor": [
+   "diag",
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "1cqw",
+  "btn_radius": "1cqw",
+  "on_accent": "#0a0a0a"
+ },
+ {
+  "id": "food-tasty",
+  "name": "Food Tasty",
+  "cats": [
+   "comida",
+   "promo",
+   "estilo de vida"
+  ],
+  "bg": "#fff3e0",
+  "bg2": "#ffd9a8",
+  "fg": "#3b1d0c",
+  "accent": "#e63946",
+  "accent2": "#f4a261",
+  "font_display": "Fraunces",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "dots",
+   "paper"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": "5cqw"
+ },
+ {
+  "id": "kids-fun",
+  "name": "Kids Fun",
+  "cats": [
+   "kids",
+   "festa"
+  ],
+  "bg": "#fff6bf",
+  "bg2": "#bde0fe",
+  "fg": "#2b2d42",
+  "accent": "#ff6b6b",
+  "accent2": "#4d96ff",
+  "font_display": "Righteous",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": ".01em",
+  "dlh": 1.0,
+  "title_fx": "shadow",
+  "decor": [
+   "confetti",
+   "dots"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "6cqw",
+  "ph_border": ".9cqw solid #fff"
+ },
+ {
+  "id": "halloween",
+  "name": "Halloween",
+  "cats": [
+   "sazonal",
+   "festa"
+  ],
+  "bg": "#130a1f",
+  "bg2": "#2a0f3d",
+  "fg": "#ffeedd",
+  "accent": "#ff7a00",
+  "accent2": "#7cff6b",
+  "font_display": "Permanent Marker",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "0",
+  "dlh": 1.05,
+  "title_fx": "plain",
+  "decor": [
+   "stars",
+   "vignette",
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "2cqw",
+  "ph_border": ".6cqw solid #ff7a00"
+ },
+ {
+  "id": "natal",
+  "name": "Natal",
+  "cats": [
+   "sazonal",
+   "festa",
+   "amor"
+  ],
+  "bg": "#0f4d2e",
+  "bg2": "#0b3a22",
+  "fg": "#ffffff",
+  "accent": "#e63946",
+  "accent2": "#f4d35e",
+  "font_display": "DM Serif Display",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": "-.01em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "sparkle",
+   "confetti"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": "3cqw",
+  "ph_border": ".8cqw solid #fff"
+ },
+ {
+  "id": "black-friday",
+  "name": "Black Friday",
+  "cats": [
+   "sazonal",
+   "promo",
+   "marketing"
+  ],
+  "bg": "#0a0a0a",
+  "bg2": "#1c1c1c",
+  "fg": "#ffffff",
+  "accent": "#ffd400",
+  "accent2": "#ff2d2d",
+  "font_display": "Anton",
+  "font_body": "Space Grotesk",
+  "dw": 400,
+  "dcase": "uppercase",
+  "dls": ".01em",
+  "dlh": 0.94,
+  "title_fx": "shadow",
+  "decor": [
+   "diag",
+   "halftone"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "ph_radius": "0",
+  "ph_border": ".7cqw solid #ffd400",
+  "btn_radius": "0",
+  "on_accent": "#0a0a0a"
+ },
+ {
+  "id": "carnaval",
+  "name": "Carnaval",
+  "cats": [
+   "sazonal",
+   "festa"
+  ],
+  "bg": "#2d0a4e",
+  "bg2": "#ff2d95",
+  "fg": "#ffffff",
+  "accent": "#ffd400",
+  "accent2": "#00e5a8",
+  "font_display": "Righteous",
+  "font_body": "DM Sans",
+  "dw": 400,
+  "dcase": "none",
+  "dls": ".02em",
+  "dlh": 1.02,
+  "title_fx": "shadow",
+  "decor": [
+   "confetti",
+   "blobs",
+   "sparkle"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "160deg",
+  "ph_radius": "4cqw",
+  "ph_border": ".8cqw solid #ffd400"
+ },
+ {
+  "id": "festa-junina",
+  "name": "Festa Junina",
+  "cats": [
+   "sazonal",
+   "festa",
+   "comida"
+  ],
+  "bg": "#fff0c9",
+  "bg2": "#ffd98a",
+  "fg": "#5a1a0e",
+  "accent": "#d62828",
+  "accent2": "#2a9d8f",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "checker",
+   "confetti",
+   "dots"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": "2.4cqw",
+  "ph_border": ".8cqw solid #5a1a0e",
+  "ph_shadow": "1.2cqw 1.2cqw 0 #d62828"
+ },
+ {
+  "id": "dia-das-maes",
+  "name": "Dia das Mães",
+  "cats": [
+   "sazonal",
+   "amor",
+   "beleza"
+  ],
+  "bg": "#fde8ee",
+  "bg2": "#ffd1de",
+  "fg": "#6b1a3a",
+  "accent": "#e0457b",
+  "accent2": "#ffb703",
+  "font_display": "Playfair Display",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "sparkle",
+   "blobs"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "170deg",
+  "ph_radius": "4.4cqw"
+ },
+ {
+  "id": "ano-novo",
+  "name": "Ano Novo",
+  "cats": [
+   "sazonal",
+   "festa"
+  ],
+  "bg": "#0b0b1e",
+  "bg2": "#1a1a3f",
+  "fg": "#ffffff",
+  "accent": "#f5d36b",
+  "accent2": "#9fb4ff",
+  "font_display": "Cormorant Garamond",
+  "font_body": "DM Sans",
+  "dw": 700,
+  "dcase": "uppercase",
+  "dls": ".05em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "stars",
+   "confetti",
+   "sparkle"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "ph_radius": ".6cqw",
+  "ph_border": ".4cqw solid #f5d36b"
+ },
+ {
+  "id": "pascoa",
+  "name": "Páscoa",
+  "cats": [
+   "sazonal",
+   "kids",
+   "comida"
+  ],
+  "bg": "#f6eaff",
+  "bg2": "#d9f7e8",
+  "fg": "#4b2c6b",
+  "accent": "#ff8c42",
+  "accent2": "#7bd3a8",
+  "font_display": "Fraunces",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.02em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "dots",
+   "confetti"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "165deg",
+  "ph_radius": "5cqw"
+ },
+ {
+  "id": "brand-light",
+  "name": "Marca · Claro",
+  "cats": [
+   "marca"
+  ],
+  "bg": "#ffffff",
+  "bg2": "#f3f4f6",
+  "fg": "#111111",
+  "accent": "#3b5bfd",
+  "accent2": "#111111",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "brand": true,
+  "ph_radius": "3cqw"
+ },
+ {
+  "id": "brand-dark",
+  "name": "Marca · Escuro",
+  "cats": [
+   "marca"
+  ],
+  "bg": "#0d0f14",
+  "bg2": "#151923",
+  "fg": "#ffffff",
+  "accent": "#3b5bfd",
+  "accent2": "#ff7a59",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "grain",
+   "glow"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "brand": true,
+  "ph_radius": "3cqw"
+ },
+ {
+  "id": "brand-vivid",
+  "name": "Marca · Vibrante",
+  "cats": [
+   "marca"
+  ],
+  "bg": "#3b5bfd",
+  "bg2": "#1a2a9c",
+  "fg": "#ffffff",
+  "accent": "#ffd23f",
+  "accent2": "#ff7a59",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [
+   "blobs",
+   "grain"
+  ],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "155deg",
+  "brand": true,
+  "ph_radius": "3.4cqw",
+  "on_accent": "#111111"
+ }
+]

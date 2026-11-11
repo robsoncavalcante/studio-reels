@@ -1,0 +1,18 @@
+<style>
+.L-ds-myth .pad{gap:4.8cqw;padding-top:17cqw}
+.L-ds-myth .cd{border-radius:var(--card-radius);padding:5cqw;display:flex;flex-direction:column;gap:2.6cqw;min-height:0}
+.L-ds-myth .cd.m{background:var(--surface);box-shadow:0 0 0 .25cqw var(--line);flex:0 1 auto}
+.L-ds-myth .cd.v{background:var(--accent);color:#FEF2F2;--fg:#FEF2F2;flex:1 1 auto}
+.L-ds-myth .tg{display:inline-flex;align-items:center;gap:1.4cqw;align-self:flex-start;font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.1em;text-transform:uppercase;padding:1cqw 2.4cqw;border-radius:99cqw}
+.L-ds-myth .tg svg{width:3.2cqw;height:3.2cqw}
+.L-ds-myth .cd.m .tg{border:.25cqw solid color-mix(in srgb,#FF6B73 60%,transparent);color:#FF6B73}
+.L-ds-myth .cd.v .tg{background:rgba(12,9,12,.32);color:#FEF2F2}
+.L-ds-myth .st1{font-family:var(--font-display);font-weight:500;font-size:8.4cqw;line-height:1.05;letter-spacing:-.03em;color:var(--muted);text-decoration:line-through;text-decoration-thickness:.4cqw;text-decoration-color:var(--accent2);max-height:24cqh;flex:0 1 auto;min-height:0}
+.L-ds-myth .st2{font-size:5cqw;line-height:1.4;font-weight:500;flex:1 1 auto;min-height:0;max-height:34cqh}
+.L-ds-myth .nn{font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+</style>
+<div class="pad col">
+  <div class="nn">{{ c.label_n or 'Mito' }} {{ c.number or '01' }}{% if c.total %}/{{ c.total }}{% endif %}</div>
+  <div class="cd m"><div class="tg">{{ icon('circle-x') }}{{ c.label_a or 'Mito' }}</div><div class="st1 fit">{{ c.title }}</div></div>
+  <div class="cd v"><div class="tg">{{ icon('circle-check') }}{{ c.label_b or 'Verdade' }}</div><div class="st2 fit">{{ c.body }}</div></div>
+</div>

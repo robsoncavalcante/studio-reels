@@ -1,0 +1,7 @@
+node_modules/
+gallery/
+samples/
+__pycache__/
+*.pyc
+out*/
+*.mp4

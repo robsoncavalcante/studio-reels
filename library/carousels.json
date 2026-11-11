@@ -1,0 +1,549 @@
+[
+ {
+  "id": "dicas",
+  "name": "Dicas (1 por slide)",
+  "desc": "Capa + N dicas com número gigante + chamada final",
+  "cover": "full-bleed-bottom",
+  "body": [
+   "tip-single"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "dots-path",
+  "cats": [
+   "educativo",
+   "marketing"
+  ],
+  "sample": {
+   "kicker": "Guia rápido",
+   "title": "5 dicas para um *post* que converte",
+   "subtitle": "Arraste e salve para depois",
+   "slides": [
+    {
+     "title": "Comece pelo *objetivo*",
+     "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post?"
+    },
+    {
+     "title": "A capa *decide* tudo",
+     "body": "Você tem 3 segundos. Use contraste, uma frase curta e muito respiro."
+    },
+    {
+     "title": "Um post, *uma* ideia",
+     "body": "Carrossel bom ensina uma coisa só — e ensina bem."
+    },
+    {
+     "title": "Fale como *gente*",
+     "body": "Troque o jargão por exemplos do dia a dia do seu cliente."
+    },
+    {
+     "title": "Termine com *chamada*",
+     "body": "Peça uma ação: salvar, comentar, enviar ou clicar no link."
+    }
+   ]
+  }
+ },
+ {
+  "id": "passo-a-passo",
+  "name": "Passo a passo",
+  "desc": "Capa com painel + etapas numeradas",
+  "cover": "split-vertical",
+  "body": [
+   "tip-single"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "dots-path",
+  "cats": [
+   "educativo",
+   "processo"
+  ],
+  "sample": {
+   "kicker": "Tutorial",
+   "title": "Como montar seu *funil* em 4 passos",
+   "subtitle": "Do zero ao primeiro lead",
+   "slides": [
+    {
+     "title": "Comece pelo *objetivo*",
+     "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post?"
+    },
+    {
+     "title": "A capa *decide* tudo",
+     "body": "Você tem 3 segundos. Use contraste, uma frase curta e muito respiro."
+    },
+    {
+     "title": "Um post, *uma* ideia",
+     "body": "Carrossel bom ensina uma coisa só — e ensina bem."
+    },
+    {
+     "title": "Fale como *gente*",
+     "body": "Troque o jargão por exemplos do dia a dia do seu cliente."
+    }
+   ]
+  }
+ },
+ {
+  "id": "lista-completa",
+  "name": "Listas e checklists",
+  "desc": "Capa tipográfica + listas numeradas/checklists",
+  "cover": "typographic",
+  "body": [
+   "tips-list",
+   "checklist"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "ribbon",
+  "cats": [
+   "educativo",
+   "negócios"
+  ],
+  "sample": {
+   "kicker": "Checklist",
+   "title": "Tudo que você precisa para *lançar*",
+   "subtitle": "Arraste →",
+   "slides": [
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "mitos-verdades",
+  "name": "Mitos e verdades",
+  "desc": "Cada slide derruba um mito",
+  "cover": "typographic",
+  "body": [
+   "myth-fact"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "ribbon",
+  "cats": [
+   "educativo",
+   "marketing"
+  ],
+  "sample": {
+   "kicker": "Você acredita nisso?",
+   "title": "3 mitos do *marketing* digital",
+   "subtitle": "Arraste para ver a verdade",
+   "slides": [
+    {
+     "title": "Postar todo dia é obrigatório.",
+     "body": "O que pesa é consistência e qualidade. Três posts bons por semana vencem sete improvisados."
+    },
+    {
+     "title": "Hashtag resolve o alcance.",
+     "body": "Elas ajudam a classificar o conteúdo, mas retenção e salvamentos pesam mais."
+    },
+    {
+     "title": "Reels é só para dançar.",
+     "body": "Bastidor, dica rápida e prova social funcionam muito melhor."
+    }
+   ]
+  }
+ },
+ {
+  "id": "antes-depois",
+  "name": "Antes e depois",
+  "desc": "Transformações lado a lado",
+  "cover": "full-bleed-center",
+  "body": [
+   "before-after"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "big-circle",
+  "cats": [
+   "beleza",
+   "portfólio"
+  ],
+  "sample": {
+   "kicker": "Resultados reais",
+   "title": "Transformações que *falam* por si",
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "lancamento",
+  "name": "Lançamento / produto",
+  "desc": "Anúncio + detalhes + preço",
+  "cover": "announcement",
+  "body": [
+   "framed-photo",
+   "collage-3-mosaic",
+   "big-number",
+   "sticker-pop"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "photo-strip",
+  "cats": [
+   "promo",
+   "produto"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "portfolio",
+  "name": "Portfólio / cases",
+  "desc": "Capa de revista + projetos",
+  "cover": "magazine-cover",
+  "body": [
+   "framed-photo",
+   "split-vertical",
+   "collage-2",
+   "arch-window"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "photo-strip",
+  "cats": [
+   "portfólio",
+   "negócios"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "depoimentos",
+  "name": "Depoimentos",
+  "desc": "Prova social em sequência",
+  "cover": "typographic",
+  "body": [
+   "testimonial"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "wave-line",
+  "cats": [
+   "prova social"
+  ],
+  "sample": {
+   "kicker": "Quem usa recomenda",
+   "title": "O que dizem nossos *clientes*",
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "manifesto",
+  "name": "Manifesto / storytelling",
+  "desc": "Frases fortes e citações",
+  "cover": "typographic",
+  "body": [
+   "typographic",
+   "quote"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "wave-line",
+  "cats": [
+   "manifesto",
+   "motivação"
+  ],
+  "sample": {
+   "kicker": "Nosso jeito",
+   "title": "Acreditamos em *menos* ruído",
+   "slides": [
+    {
+     "title": "Marca forte é *consistência*.",
+     "kicker": "Princípio 1"
+    },
+    {
+     "quote": "Simples é o *novo* sofisticado.",
+     "author": "Equipe Criative",
+     "role": "Direção criativa"
+    },
+    {
+     "title": "Faça o *básico* extraordinariamente bem.",
+     "kicker": "Princípio 3"
+    }
+   ]
+  }
+ },
+ {
+  "id": "recap-memorias",
+  "name": "Recap / memórias",
+  "desc": "Álbum de fotos em vários formatos",
+  "cover": "polaroid",
+  "body": [
+   "collage-4-grid",
+   "polaroid-stack",
+   "film-strip",
+   "collage-5-scrapbook",
+   "grid-9"
+  ],
+  "end": "quote",
+  "default_bridge": "photo-strip",
+  "cats": [
+   "memórias",
+   "viagem"
+  ],
+  "sample": {
+   "kicker": "Memórias",
+   "title": "O ano em *fotos*",
+   "caption": "2026",
+   "slides": [
+    {},
+    {},
+    {},
+    {}
+   ],
+   "end": {
+    "quote": "Que venha *2027*.",
+    "author": "Com carinho",
+    "role": ""
+   }
+  }
+ },
+ {
+  "id": "cardapio",
+  "name": "Cardápio / tabela de preços",
+  "desc": "Capa + páginas de menu",
+  "cover": "full-bleed-center",
+  "body": [
+   "menu-price"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "wave-line",
+  "cats": [
+   "comida",
+   "promo"
+  ],
+  "sample": {
+   "kicker": "Cardápio",
+   "title": "Sabores da *casa*",
+   "slides": [
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "evento",
+  "name": "Evento",
+  "desc": "Convite + data + programação",
+  "cover": "ticket",
+  "body": [
+   "countdown",
+   "tips-list",
+   "step-process"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "ribbon",
+  "cats": [
+   "evento",
+   "festa"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "numeros",
+  "name": "Números e dados",
+  "desc": "Estatísticas grandes em sequência",
+  "cover": "typographic",
+  "body": [
+   "big-number"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "dots-path",
+  "cats": [
+   "dados",
+   "negócios"
+  ],
+  "sample": {
+   "kicker": "Em números",
+   "title": "Nossa *história* em 3 dados",
+   "slides": [
+    {
+     "number": "12",
+     "label": "anos de estrada",
+     "title": "Experiência que *conta*"
+    },
+    {
+     "number": "240+",
+     "label": "projetos entregues",
+     "title": "Resultados *comprovados*"
+    },
+    {
+     "number": "4.9",
+     "label": "nota média dos clientes",
+     "title": "Satisfação *real*"
+    }
+   ]
+  }
+ },
+ {
+  "id": "imobiliario",
+  "name": "Imobiliário",
+  "desc": "Imóvel, galeria e diferenciais",
+  "cover": "property-card",
+  "body": [
+   "framed-photo",
+   "collage-3-mosaic",
+   "tips-list"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "photo-strip",
+  "cats": [
+   "imobiliário",
+   "promo"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "servicos",
+  "name": "Serviços da empresa",
+  "desc": "Quem somos, o que fazemos e como",
+  "cover": "magazine-cover",
+  "body": [
+   "service-grid",
+   "step-process",
+   "big-number"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "dots-path",
+  "cats": [
+   "negócios",
+   "institucional"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "viagem",
+  "name": "Viagem",
+  "desc": "Diário visual de viagem",
+  "cover": "full-bleed-bottom",
+  "body": [
+   "polaroid",
+   "film-strip",
+   "collage-5-scrapbook",
+   "circle-orbit"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "photo-strip",
+  "cats": [
+   "viagem",
+   "memórias"
+  ],
+  "sample": {
+   "kicker": "Diário de bordo",
+   "title": "Cinco dias em *Pipa*",
+   "slides": [
+    {},
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "inspiracao",
+  "name": "Inspiração / moodboard",
+  "desc": "Referências visuais e estilo",
+  "cover": "split-diagonal",
+  "body": [
+   "staggered-columns",
+   "arch-window",
+   "contact-sheet"
+  ],
+  "end": "cta-follow",
+  "default_bridge": "wave-line",
+  "cats": [
+   "inspiração",
+   "estilo de vida"
+  ],
+  "sample": {
+   "slides": [
+    {},
+    {},
+    {}
+   ]
+  }
+ },
+ {
+  "id": "criative-sinais",
+  "name": "Criative · criative-sinais",
+  "desc": "Carrossel Criative",
+  "cover": "ds-cover",
+  "body": [
+   "ds-point"
+  ],
+  "end": "ds-cta",
+  "default_bridge": "none",
+  "cats": [
+   "agência"
+  ],
+  "sample": {
+   "title": "Título *teste*",
+   "slides": []
+  }
+ },
+ {
+  "id": "criative-site",
+  "name": "Criative · criative-site",
+  "desc": "Carrossel Criative",
+  "cover": "ds-cover",
+  "body": [
+   "ds-point",
+   "ds-steps",
+   "ds-checklist"
+  ],
+  "end": "ds-cta",
+  "default_bridge": "none",
+  "cats": [
+   "agência"
+  ],
+  "sample": {
+   "title": "Título *teste*",
+   "slides": []
+  }
+ },
+ {
+  "id": "criative-mitos",
+  "name": "Criative · criative-mitos",
+  "desc": "Carrossel Criative",
+  "cover": "ds-cover",
+  "body": [
+   "ds-myth"
+  ],
+  "end": "ds-cta",
+  "default_bridge": "none",
+  "cats": [
+   "agência"
+  ],
+  "sample": {
+   "title": "Título *teste*",
+   "slides": []
+  }
+ }
+]

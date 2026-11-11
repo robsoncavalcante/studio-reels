@@ -1,0 +1,31 @@
+<style>
+.L-ds-story-list .hero{position:absolute;left:0;right:0;top:0;height:50%;-webkit-mask-image:linear-gradient(180deg,#000 52%,transparent 100%);mask-image:linear-gradient(180deg,#000 52%,transparent 100%)}
+.L-ds-story-list .hero .photo{position:absolute;inset:0;border-radius:0;border:0;box-shadow:none}
+.L-ds-story-list .hero .photo>img{filter:brightness(.7) saturate(.95)}
+.L-ds-story-list .pad{padding-top:35cqw;padding-bottom:31cqw;justify-content:flex-end;gap:3.8cqw}
+.L-ds-story-list .dsb{align-self:flex-start;display:inline-flex;align-items:center;gap:1.6cqw;padding:1.2cqw 2.8cqw 1.2cqw 2cqw;border-radius:1.2cqw;background:rgba(12,9,12,.6);border:.25cqw solid rgba(255,255,255,.22);color:#FAFAFA;font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase}
+.L-ds-story-list .dsb i{width:1.6cqw;height:1.6cqw;border-radius:.4cqw;background:#FB2C36;display:block}
+.L-ds-story-list .t{font-size:10.4cqw;line-height:.98;flex:none;max-height:30cqh;min-height:0}
+.L-ds-story-list .t em{color:#FF4B55}
+.L-ds-story-list .lst{display:flex;flex-direction:column;gap:2.6cqw;margin-top:1cqw}
+.L-ds-story-list .it{border-radius:var(--card-radius);background:var(--surface);box-shadow:0 0 0 .25cqw var(--line);padding:2.4cqw 4cqw;display:flex;flex-direction:column;gap:1.2cqw}
+.L-ds-story-list .my{display:flex;align-items:center;gap:2cqw;font-family:var(--font-display);font-size:4.2cqw;font-weight:500;letter-spacing:-.02em;color:var(--muted);text-decoration:line-through;text-decoration-thickness:.35cqw;text-decoration-color:#FF6B73}
+.L-ds-story-list .my svg{flex:none;width:4.6cqw;height:4.6cqw;color:#FF6B73}
+.L-ds-story-list .fc{display:flex;align-items:flex-start;gap:2cqw;font-size:3.7cqw;line-height:1.3;font-weight:500;color:var(--fg)}
+.L-ds-story-list .fc svg{flex:none;width:4.6cqw;height:4.6cqw;margin-top:.3cqw;color:#FF4B55}
+.L-ds-story-list .bt{align-self:flex-start;display:inline-flex;align-items:center;gap:2cqw;height:10.5cqw;padding:0 4.6cqw;border-radius:var(--btn-radius);background:var(--accent);color:#FEF2F2;font-size:3.8cqw;font-weight:500;margin-top:4cqw}
+.L-ds-story-list .bt svg{width:4.6cqw;height:4.6cqw}
+.canvas[class*="L-ds-"]{hyphens:none}
+.canvas.L-ds-story-list{--bbt:24cqw}
+</style>
+<div class="hero">{{ photo(0,'flat') }}</div><div class="scrim-t"></div>
+<div class="pad col">
+  <div class="dsb"><i></i>{{ c.kicker }}</div>
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="lst">
+  {% for it in c['items'] %}
+    <div class="it"><div class="my">{{ icon('circle-x') }}{{ it.myth }}</div><div class="fc">{{ icon('circle-check') }}<span>{{ it.fact }}</span></div></div>
+  {% endfor %}
+  </div>
+  <span class="bt">{{ icon('message-circle') }}{{ c.cta }}</span>
+</div>

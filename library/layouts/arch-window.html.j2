@@ -1,0 +1,13 @@
+<style>
+.L-arch-window .pad{align-items:center;text-align:center}
+.L-arch-window .t{font-size:9.6cqw;max-height:20cqh;flex:0 1 auto;min-height:0;width:100%}
+.L-arch-window .archwrap{position:relative;width:78cqw;flex:1 1 0;min-height:0;margin-top:3cqw}
+.L-arch-window .archwrap::before{content:"";position:absolute;inset:-2cqw -2cqw 0 -2cqw;border:.5cqw solid var(--accent);border-radius:40cqw 40cqw 2cqw 2cqw;transform:translate(1.8cqw,1.8cqw)}
+.L-arch-window .arch{position:absolute;inset:0;border-radius:39cqw 39cqw 1.5cqw 1.5cqw!important}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k" style="margin-bottom:2cqw">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="archwrap">{{ photo(0,'arch') }}</div>
+  {% if c.subtitle %}<div class="s" style="margin-top:3.4cqw">{{ c.subtitle }}</div>{% endif %}
+</div>

@@ -1,0 +1,16 @@
+<style>
+.L-quote .pad{justify-content:center;gap:4cqw}
+.L-quote .qm{font-family:var(--font-display),Inter;font-size:42cqw;line-height:.62;color:var(--accent-text,var(--accent));font-weight:900;height:20cqw;overflow:visible;flex:none}
+.L-quote .qt{font-family:var(--font-display),Inter;font-weight:var(--dw);text-transform:var(--dcase);font-size:7.8cqw;line-height:1.14;letter-spacing:var(--dls);flex:0 1 auto;min-height:0;max-height:56cqh;text-wrap:balance}
+.L-quote .qt em{font-style:normal;color:var(--accent-text,var(--accent))}
+.L-quote .by{display:flex;align-items:center;gap:3cqw;margin-top:1cqw}
+.L-quote .by .photo{width:15cqw;height:15cqw;border-radius:50%!important;flex:none}
+.L-quote .by b{display:block;font-size:3.6cqw;font-weight:800}
+.L-quote .by span{font-size:2.8cqw;color:var(--muted)}
+</style>
+<div class="pad col">
+  <div class="qm">“</div>
+  <div class="qt fit" style="--tc:var(--fg)">{{ rich(c.quote or c.title) }}</div>
+  <div class="hr-accent"></div>
+  <div class="by">{% if c.photos %}{{ photo(0) }}{% endif %}<div><b>{{ c.author or c.subtitle or '' }}</b><span>{{ c.role or '' }}</span></div></div>
+</div>

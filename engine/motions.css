@@ -1,0 +1,149 @@
+/* ============================================================
+   STUDIO REELS — motions.css
+   Só é carregado no modo reel. O JS (core.REEL_JS) marca os elementos
+   com data-i (ordem de entrada); o tempo é controlado por __seek(t).
+   ============================================================ */
+.reel [data-i]{
+  animation-duration:var(--md,.7s);
+  animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.14s));
+  animation-fill-mode:both;
+  animation-timing-function:var(--ease,cubic-bezier(.2,.8,.2,1));
+}
+.reel .w{display:inline-block}
+
+/* ----- keyframes ----- */
+@keyframes kf-fade-up{from{opacity:0;transform:translateY(calc(5.5cqw * var(--k,1)))}to{opacity:1;transform:none}}
+@keyframes kf-pop{0%{opacity:0;transform:scale(.45)}60%{opacity:1;transform:scale(1.09)}100%{opacity:1;transform:scale(1)}}
+@keyframes kf-slide-left{from{opacity:0;transform:translateX(calc(26cqw * var(--k,1)))}to{opacity:1;transform:none}}
+@keyframes kf-slide-right{from{opacity:0;transform:translateX(calc(-26cqw * var(--k,1)))}to{opacity:1;transform:none}}
+@keyframes kf-blur-in{from{opacity:0;filter:blur(2.6cqw);transform:scale(1.1)}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes kf-zoom-in{from{opacity:0;transform:scale(1.7)}to{opacity:1;transform:none}}
+@keyframes kf-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes kf-rotate-in{from{opacity:0;transform:rotate(-11deg) translateY(calc(9cqw * var(--k,1))) scale(.92)}to{opacity:1;transform:none}}
+@keyframes kf-flip{from{opacity:0;transform:perspective(70cqw) rotateX(-92deg)}to{opacity:1;transform:perspective(70cqw) rotateX(0)}}
+@keyframes kf-drop{0%{opacity:0;transform:translateY(calc(-32cqw * var(--k,1)))}55%{opacity:1;transform:translateY(calc(2.4cqw * var(--k,1)))}75%{transform:translateY(calc(-1cqw * var(--k,1)))}100%{opacity:1;transform:none}}
+@keyframes kf-elastic{0%{opacity:0;transform:scale(0)}28%{opacity:1;transform:scale(1.28)}46%{transform:scale(.88)}64%{transform:scale(1.06)}82%{transform:scale(.98)}100%{opacity:1;transform:scale(1)}}
+@keyframes kf-glitch{0%{opacity:0;transform:translateX(calc(-3.2cqw * var(--k,1))) skewX(22deg)}18%{opacity:1;transform:translateX(calc(2.4cqw * var(--k,1))) skewX(-14deg)}36%{transform:translateX(calc(-1.4cqw * var(--k,1))) skewX(8deg)}54%{transform:translateX(calc(1cqw * var(--k,1))) skewX(-4deg)}72%{transform:translateX(calc(-.4cqw * var(--k,1)))}100%{opacity:1;transform:none}}
+@keyframes kf-word-rise{from{transform:translateY(112%)}to{transform:none}}
+@keyframes kf-step{from{opacity:0}to{opacity:1}}
+@keyframes kf-swing{0%{opacity:0;transform:rotate(-14deg) translateY(calc(-6cqw * var(--k,1)));transform-origin:50% 0}55%{opacity:1;transform:rotate(5deg)}80%{transform:rotate(-2deg)}100%{opacity:1;transform:none}}
+@keyframes kf-tilt-up{from{opacity:0;transform:translateY(calc(14cqw * var(--k,1))) rotate(4deg)}to{opacity:1;transform:none}}
+@keyframes kf-kb{from{transform:scale(1.0) translate(0,0)}to{transform:scale(1.13) translate(-1.2cqw,-1.4cqw)}}
+@keyframes kf-kb2{from{transform:scale(1.14) translate(1cqw,1cqw)}to{transform:scale(1.0) translate(0,0)}}
+@keyframes kf-ring{to{transform:rotate(360deg)}}
+@keyframes kf-float{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(calc(-1.8cqw * var(--k,1))) rotate(calc(var(--r,0deg) + 2deg))}}
+@keyframes kf-grain{0%{background-position:0 0}25%{background-position:-60px 40px}50%{background-position:80px -30px}75%{background-position:-30px -70px}100%{background-position:0 0}}
+@keyframes kf-twinkle{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes kf-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes kf-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ----- presets ----- */
+.reel.m-fade-up [data-i]{animation-name:kf-fade-up}
+.reel.m-pop [data-i]{animation-name:kf-pop;--ease:cubic-bezier(.34,1.4,.64,1)}
+.reel.m-slide-left [data-i]{animation-name:kf-slide-left}
+.reel.m-slide-right [data-i]{animation-name:kf-slide-right}
+.reel.m-blur-in [data-i]{animation-name:kf-blur-in}
+.reel.m-zoom-in [data-i]{animation-name:kf-zoom-in}
+.reel.m-wipe [data-i]{animation-name:kf-wipe;--ease:cubic-bezier(.7,0,.2,1)}
+.reel.m-rotate-in [data-i]{animation-name:kf-rotate-in}
+.reel.m-flip [data-i]{animation-name:kf-flip}
+.reel.m-drop [data-i]{animation-name:kf-drop;--ease:cubic-bezier(.3,.7,.4,1)}
+.reel.m-elastic [data-i]{animation-name:kf-elastic;--ease:linear}
+.reel.m-glitch [data-i]{animation-name:kf-glitch;--ease:steps(7,end)}
+.reel.m-swing [data-i]{animation-name:kf-swing}
+.reel.m-tilt-up [data-i]{animation-name:kf-tilt-up}
+/* por palavra */
+.reel.m-words-rise .w{overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em;vertical-align:top}
+.reel.m-words-rise .w[data-i]{animation:none}
+.reel.m-words-rise .w .wi{display:inline-block;animation:kf-word-rise var(--md,.75s) var(--ease,cubic-bezier(.2,.9,.2,1)) both;animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.1s))}
+.reel.m-words-rise [data-i]:not(.w){animation-name:kf-fade-up}
+.reel.m-typewriter .w[data-i]{animation-name:kf-step;animation-duration:.01s;--ease:steps(1,end)}
+.reel.m-typewriter [data-i]:not(.w){animation-name:kf-fade-up}
+.reel.m-words-pop .w[data-i]{animation-name:kf-pop;--ease:cubic-bezier(.34,1.5,.64,1)}
+.reel.m-words-pop [data-i]:not(.w){animation-name:kf-fade-up}
+
+/* contínuos (sempre ativos no reel) */
+.reel .photo>img,.reel .photo>.ph,.reel .photo>video{animation:kf-kb var(--sd,3.2s) ease-in-out both}
+.reel .photo:nth-of-type(even)>img,.reel .photo:nth-of-type(even)>.ph{animation-name:kf-kb2}
+.reel .ring{animation:kf-ring 14s linear infinite}
+.reel .float{animation:kf-float 3.2s ease-in-out infinite}
+.reel .pulse{animation:kf-pulse 1.6s ease-in-out infinite}
+.reel .dc-grain{animation:kf-grain .5s steps(1) infinite}
+.reel .dc-stars{animation:kf-twinkle 2.4s ease-in-out infinite}
+.reel .dc-sparkle{animation:kf-twinkle 1.8s ease-in-out infinite}
+.reel .marquee-run{animation:kf-marquee 8s linear infinite}
+
+/* ============ v2: novos movimentos (básico → avançado) ============ */
+.reel.ease-o [data-i],.reel.ease-o .w .wi{animation-timing-function:var(--ease-o)!important}
+@keyframes kf-fade{from{opacity:0}to{opacity:1}}
+@keyframes kf-mask-up{from{clip-path:inset(100% 0 0 0);transform:translateY(calc(4cqw * var(--k,1)))}to{clip-path:inset(0);transform:none}}
+@keyframes kf-mask-down{from{clip-path:inset(0 0 100% 0);transform:translateY(calc(-4cqw * var(--k,1)))}to{clip-path:inset(0);transform:none}}
+@keyframes kf-curtain{from{clip-path:inset(0 50% 0 50%)}to{clip-path:inset(0 0 0 0)}}
+@keyframes kf-focus{from{opacity:0;filter:blur(calc(3.2cqw * var(--k,1)));transform:scale(1.07)}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes kf-rubber{0%{opacity:0;transform:scale(1.3,.7)}30%{opacity:1;transform:scale(.8,1.2)}55%{transform:scale(1.1,.92)}78%{transform:scale(.97,1.03)}100%{opacity:1;transform:none}}
+@keyframes kf-stamp{0%{opacity:0;transform:scale(2.6) rotate(-7deg)}55%{opacity:1;transform:scale(.94) rotate(1deg)}75%{transform:scale(1.03)}100%{opacity:1;transform:none}}
+@keyframes kf-spin-in{from{opacity:0;transform:rotate(-200deg) scale(.2)}to{opacity:1;transform:none}}
+@keyframes kf-flip-y{from{opacity:0;transform:perspective(70cqw) rotateY(-90deg)}to{opacity:1;transform:perspective(70cqw) rotateY(0)}}
+@keyframes kf-skew-slide{from{opacity:0;transform:translateX(calc(-30cqw * var(--k,1))) skewX(-18deg)}to{opacity:1;transform:none}}
+@keyframes kf-tracking{from{opacity:0;letter-spacing:.5em}to{opacity:1;letter-spacing:var(--dls,-.01em)}}
+@keyframes kf-spring-in{from{opacity:0;transform:translateY(calc(9cqw * var(--k,1))) scale(.7)}30%{opacity:1}to{opacity:1;transform:none}}
+@keyframes kf-overshoot{from{opacity:0;transform:translateY(calc(12cqw * var(--k,1)))}to{opacity:1;transform:none}}
+@keyframes kf-drift{from{opacity:0;filter:blur(1.4cqw);transform:translateY(calc(3cqw * var(--k,1))) scale(1.03)}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes kf-zoom-out{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes kf-card3d{from{opacity:0;transform:perspective(80cqw) rotateX(26deg) rotateY(-20deg) translateY(calc(10cqw * var(--k,1)))}to{opacity:1;transform:perspective(80cqw) none}}
+@keyframes kf-bar{from{transform:scaleX(0);transform-origin:0 50%}to{transform:scaleX(1);transform-origin:0 50%}}
+@keyframes kf-blur-slide{from{opacity:0;filter:blur(2cqw);transform:translateX(calc(-14cqw * var(--k,1)))}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes kf-jelly{0%{opacity:0;transform:scale(.3,.3)}25%{opacity:1;transform:scale(1.2,.85)}50%{transform:scale(.9,1.1)}70%{transform:scale(1.05,.97)}100%{transform:none}}
+@keyframes kf-char-rise{from{transform:translateY(115%)}to{transform:none}}
+@keyframes kf-char-fade{from{opacity:0;filter:blur(.7cqw)}to{opacity:1;filter:blur(0)}}
+@keyframes kf-char-pop{from{opacity:0;transform:scale(.2) translateY(30%)}to{opacity:1;transform:none}}
+
+.reel.m-fade [data-i]{animation-name:kf-fade;--ease:var(--ez-standard)}
+.reel.m-mask-up [data-i]{animation-name:kf-mask-up;--ease:var(--ez-out-expo)}
+.reel.m-mask-down [data-i]{animation-name:kf-mask-down;--ease:var(--ez-out-expo)}
+.reel.m-curtain [data-i]{animation-name:kf-curtain;--ease:var(--ez-inout-quart)}
+.reel.m-focus-pull [data-i]{animation-name:kf-focus;--ease:var(--ez-out-cubic)}
+.reel.m-rubber [data-i]{animation-name:kf-rubber;--ease:var(--ez-out-quad)}
+.reel.m-stamp [data-i]{animation-name:kf-stamp;--ease:var(--ez-out-quart)}
+.reel.m-spin-in [data-i]{animation-name:kf-spin-in;--ease:var(--ez-out-back)}
+.reel.m-flip-y [data-i]{animation-name:kf-flip-y;--ease:var(--ez-out-quart)}
+.reel.m-skew-slide [data-i]{animation-name:kf-skew-slide;--ease:var(--ez-out-expo)}
+.reel.m-tracking-in .t[data-i]{animation-name:kf-tracking;--ease:var(--ez-out-expo)}
+.reel.m-tracking-in [data-i]:not(.t){animation-name:kf-fade-up;--ease:var(--ez-out-cubic)}
+.reel.m-spring-in [data-i]{animation-name:kf-spring-in;--ease:var(--ez-spring-bouncy)}
+.reel.m-overshoot [data-i]{animation-name:kf-overshoot;--ease:var(--ez-out-back)}
+.reel.m-drift [data-i]{animation-name:kf-drift;--ease:var(--ez-out-quart)}
+.reel.m-zoom-out [data-i]{animation-name:kf-zoom-out;--ease:var(--ez-out-cubic)}
+.reel.m-card-3d [data-i]{animation-name:kf-card3d;--ease:var(--ez-out-expo)}
+.reel.m-bar-grow [data-i]{animation-name:kf-bar;--ease:var(--ez-out-expo)}
+.reel.m-blur-slide [data-i]{animation-name:kf-blur-slide;--ease:var(--ez-out-cubic)}
+.reel.m-jelly [data-i]{animation-name:kf-jelly;--ease:var(--ez-out-quad)}
+.reel.m-cut [data-i]{animation-name:kf-fade;animation-duration:.01s;--ease:steps(1,end)}
+/* por letra (mantém a palavra inteira na mesma linha) */
+.reel .nb{display:inline-block;white-space:nowrap}
+.reel.mc .w{overflow:visible}
+.reel.m-char-rise .w{overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em;vertical-align:top}
+.reel.m-char-rise .w[data-i],.reel.m-char-fade .w[data-i],.reel.m-char-pop .w[data-i],.reel.m-char-type .w[data-i]{animation:none}
+.reel.m-char-rise .w .wi{display:inline-block;animation:kf-char-rise var(--md,.7s) var(--ez-out-expo) both;animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.03s))}
+.reel.m-char-fade .w .wi{display:inline-block;animation:kf-char-fade var(--md,.5s) var(--ez-out-cubic) both;animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.03s))}
+.reel.m-char-pop .w .wi{display:inline-block;animation:kf-char-pop var(--md,.7s) var(--ez-spring-bouncy) both;animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.03s))}
+.reel.m-char-type .w .wi{display:inline-block;animation:kf-step .01s steps(1,end) both;animation-delay:calc(var(--bd,.15s) + var(--i) * var(--stg,.05s))}
+.reel.mc [data-i]:not(.w){animation-name:kf-fade-up;--ease:var(--ez-out-cubic)}
+.reel.ease-o.mc .w .wi{animation-timing-function:var(--ease-o)!important}
+
+/* ============ Ken Burns (fotos) ============ */
+@keyframes kb-zoom-in{from{transform:scale(1)}to{transform:scale(1.18)}}
+@keyframes kb-zoom-out{from{transform:scale(1.18)}to{transform:scale(1)}}
+@keyframes kb-pan-left{from{transform:scale(1.14) translateX(2.4cqw)}to{transform:scale(1.14) translateX(-2.4cqw)}}
+@keyframes kb-pan-right{from{transform:scale(1.14) translateX(-2.4cqw)}to{transform:scale(1.14) translateX(2.4cqw)}}
+@keyframes kb-pan-up{from{transform:scale(1.14) translateY(2.4cqw)}to{transform:scale(1.14) translateY(-2.4cqw)}}
+@keyframes kb-pan-down{from{transform:scale(1.14) translateY(-2.4cqw)}to{transform:scale(1.14) translateY(2.4cqw)}}
+@keyframes kb-drift{from{transform:scale(1.08) translate(-1.2cqw,1cqw) rotate(-.6deg)}to{transform:scale(1.16) translate(1.2cqw,-1cqw) rotate(.6deg)}}
+.reel.kb-none .photo>img,.reel.kb-none .photo>.ph,.reel.kb-none .photo>video{animation:none!important}
+.reel.kb-zoom-in .photo>*{animation:kb-zoom-in var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-zoom-out .photo>*{animation:kb-zoom-out var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-pan-left .photo>*{animation:kb-pan-left var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-pan-right .photo>*{animation:kb-pan-right var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-pan-up .photo>*{animation:kb-pan-up var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-pan-down .photo>*{animation:kb-pan-down var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}
+.reel.kb-drift .photo>*{animation:kb-drift var(--sd,3.2s) var(--ez-inout-sine,ease-in-out) both!important}

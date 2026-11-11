@@ -1,0 +1,19 @@
+<style>
+.L-before-after .t{font-size:10cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-before-after .ba{flex:1 1 0;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;border-radius:var(--ph-radius);overflow:hidden}
+.L-before-after .ba .photo{position:relative;border-radius:0!important;border:0;box-shadow:none}
+.L-before-after .ba .lb{position:absolute;bottom:3cqw;z-index:4}
+.L-before-after .ba .lb.a{left:3cqw}.L-before-after .ba .lb.b{right:3cqw}
+.L-before-after .ba .div{position:absolute;left:50%;top:0;bottom:0;width:.9cqw;background:#fff;transform:translateX(-50%);z-index:5;box-shadow:0 0 2cqw rgba(0,0,0,.4)}
+.L-before-after .ba .knob{position:absolute;left:50%;top:50%;width:11cqw;height:11cqw;border-radius:50%;background:#fff;color:#111;transform:translate(-50%,-50%);z-index:6;display:grid;place-items:center;font-weight:900;font-size:4.2cqw;box-shadow:0 .8cqw 2.6cqw rgba(0,0,0,.4)}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="ba">{{ photo(0) }}{{ photo(1) }}<i class="div"></i><div class="knob">‹ ›</div>
+    <span class="lb a badge alt" style="background:rgba(0,0,0,.55);color:#fff;border-color:#fff">{{ c.label_a or 'Antes' }}</span>
+    <span class="lb b badge">{{ c.label_b or 'Depois' }}</span></div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

@@ -1,0 +1,15 @@
+<style>
+.L-contact-sheet .pad{gap:2.4cqw}
+.L-contact-sheet .sheet{flex:1 1 0;min-height:0;background:#0d0d0d;padding:2.6cqw;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:1.6cqw;position:relative;box-shadow:0 1.6cqw 4cqw rgba(0,0,0,.35)}
+.L-contact-sheet .fr{position:relative}
+.L-contact-sheet .fr .photo{position:absolute;inset:0;border-radius:.3cqw;border:0;box-shadow:none;filter:grayscale(.15) contrast(1.05)}
+.L-contact-sheet .fr b{position:absolute;left:1cqw;bottom:.6cqw;z-index:3;font:700 2cqw 'Space Grotesk';color:#e9a63a;letter-spacing:.1em;text-shadow:0 0 .6cqw #000}
+.L-contact-sheet .mark{position:absolute;z-index:5;border:.7cqw solid #ff3b30;border-radius:50%;width:30%;height:19%;right:3%;top:30%;transform:rotate(-8deg);opacity:.9}
+.L-contact-sheet .t{font-size:9.4cqw;max-height:18cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="sheet">{% for i in range(12) %}<div class="fr">{{ photo(i) }}<b>{{ '%02d'|format(i+1) }}A</b></div>{% endfor %}<i class="mark"></i></div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

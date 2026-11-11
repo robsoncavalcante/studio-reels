@@ -1,0 +1,14 @@
+<style>
+.L-big-number .pad{justify-content:center;gap:2.6cqw}
+.L-big-number .num{font-size:40cqw;line-height:.82;max-height:42cqh;overflow:hidden;white-space:nowrap;flex:0 1 auto;min-height:0;--tc:var(--accent)}
+.L-big-number .lab{font-size:5.4cqw;font-weight:800;text-transform:uppercase;letter-spacing:.06em;line-height:1.15}
+.L-big-number .t.h{font-size:8.6cqw;max-height:22cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t num fit">{{ c.number or '100%' }}</div>
+  {% if c.label %}<div class="lab">{{ c.label }}</div>{% endif %}
+  <div class="hr-accent" style="margin:1cqw 0"></div>
+  <div class="t h fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

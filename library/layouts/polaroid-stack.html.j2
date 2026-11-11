@@ -1,0 +1,18 @@
+<style>
+.L-polaroid-stack .t{font-size:10cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-polaroid-stack .pl{position:absolute;background:#fdfcf8;padding:2.6cqw 2.6cqw 9.6cqw;box-shadow:0 1.8cqw 4.4cqw rgba(0,0,0,.34);width:56%}
+.L-polaroid-stack .pl .photo{aspect-ratio:1/1;border-radius:.4cqw;border:0;box-shadow:none;width:100%}
+.L-polaroid-stack .pl span{position:absolute;left:0;right:0;bottom:2cqw;text-align:center;font:700 5.8cqw/1 'Caveat';color:#222}
+.L-polaroid-stack .a{left:0;top:2%;transform:rotate(-8deg)}
+.L-polaroid-stack .b{right:0;top:22%;transform:rotate(6deg);z-index:2}
+.L-polaroid-stack .d{left:12%;bottom:0;transform:rotate(-2deg);z-index:3}
+</style>
+<div class="pad col gap2">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="stage">
+    <div class="pl a">{{ photo(0) }}<span>{{ c['items'][0].title if c['items']|length>0 else '' }}</span></div>
+    <div class="pl b">{{ photo(1) }}<span>{{ c['items'][1].title if c['items']|length>1 else '' }}</span></div>
+    <div class="pl d">{{ photo(2) }}<span>{{ c['items'][2].title if c['items']|length>2 else '' }}</span></div>
+  </div>
+</div>

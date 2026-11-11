@@ -1,0 +1,22 @@
+<style>
+.L-ds-cta .pad{justify-content:center;gap:4.6cqw;padding-top:16cqw}
+.L-ds-cta .dsb{align-self:flex-start;display:inline-flex;align-items:center;gap:1.6cqw;padding:1.2cqw 2.8cqw 1.2cqw 2cqw;border-radius:1.2cqw;background:var(--surface);border:.25cqw solid var(--line);font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.L-ds-cta .dsb i{width:1.6cqw;height:1.6cqw;border-radius:.4cqw;background:var(--accent2);display:block}
+.L-ds-cta .t{font-size:10.6cqw;line-height:.98;max-height:38cqh;flex:0 1 auto;min-height:0}
+.L-ds-cta .s{font-size:4.2cqw;max-width:90%}
+.L-ds-cta .btns{display:flex;gap:2.8cqw;margin-top:2.4cqw;flex-wrap:nowrap}
+.L-ds-cta .bt{display:inline-flex;align-items:center;gap:2cqw;height:10.5cqw;padding:0 3.4cqw;border-radius:var(--btn-radius);font-size:3.5cqw;font-weight:500}
+.L-ds-cta .bt svg{width:4.6cqw;height:4.6cqw}
+.L-ds-cta .bt.p{background:var(--accent);color:#FEF2F2}
+.L-ds-cta .bt.o{border:.3cqw solid var(--line);color:var(--fg);background:transparent}
+.L-ds-cta .acts{display:flex;gap:2.6cqw;margin-top:3.6cqw;padding-top:4.6cqw;border-top:.25cqw solid var(--line)}
+.L-ds-cta .ab{display:flex;align-items:center;gap:1.8cqw;padding:0 3.2cqw;height:9cqw;border-radius:var(--btn-radius);background:var(--surface);box-shadow:0 0 0 .25cqw var(--line);font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.L-ds-cta .ab svg{width:4.2cqw;height:4.2cqw;color:var(--fg)}
+</style>
+<div class="pad col">
+  <div class="dsb"><i></i>{{ c.kicker or 'Próximo passo' }}</div>
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  <div class="btns"><span class="bt p">{{ icon('message-circle') }}{{ c.cta or 'Chamar no WhatsApp' }}</span>{% if c.cta2 %}<span class="bt o">{{ c.cta2 }}{{ icon('arrow-right') }}</span>{% endif %}</div>
+  <div class="acts"><span class="ab">{{ icon('heart') }}Curta</span><span class="ab">{{ icon('message-circle') }}Comente</span><span class="ab">{{ icon('bookmark') }}Salve</span></div>
+</div>

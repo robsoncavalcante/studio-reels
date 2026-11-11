@@ -1,0 +1,22 @@
+<style>
+.L-menu-price .t{font-size:10.6cqw;max-height:18cqh;flex:0 1 auto;min-height:0}
+.L-menu-price .hero{height:30%;flex:none;position:relative}
+.L-menu-price .hero .photo{position:absolute;inset:0}
+.L-menu-price .list{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;font-size:3.9cqw}
+.L-menu-price .mi{display:flex;align-items:baseline;gap:2cqw}
+.L-menu-price .mi b{font-size:1.1em;font-weight:800;white-space:nowrap;max-width:62%;overflow:hidden;text-overflow:ellipsis}
+.L-menu-price .mi i{flex:1;border-bottom:.45cqw dotted var(--line);transform:translateY(-.25em)}
+.L-menu-price .mi strong{font-family:var(--font-display),Inter;font-weight:var(--dw);color:var(--accent-text,var(--accent));font-size:1.25em;white-space:nowrap}
+.L-menu-price .mi small{display:block;font-size:.72em;color:var(--muted);font-weight:500;white-space:normal;margin-top:.2em}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="hero">{{ photo(0) }}</div>
+  <div class="list fit">
+    {% for it in c['items'][:6] %}<div class="item"><div class="mi"><b>{{ it.title }}</b><i></i><strong>{{ it.value or '' }}</strong></div>{% if it.text %}<small style="font-size:.74em;color:var(--muted)">{{ it.text }}</small>{% endif %}</div>{% endfor %}
+  </div>
+  {% if c.subtitle %}<div class="s tc">{{ c.subtitle }}</div>{% endif %}
+</div>

@@ -1,0 +1,218 @@
+{
+ "id": "thiago-rodrigues",
+ "nome": "Referência · Thiago Rodrigues (sites)",
+ "status": "v2 — 4 páginas medidas em CSS + 20 posts de Instagram analisados visualmente (prints enviados por Robson)",
+ "uso": "Inspiração de princípios (paleta, tipo, escala, componentes). Não copiar marca, logos, textos ou artes dele.",
+ "fontes_medidas": [
+  "thiagor.net/links",
+  "thiagor.net/black",
+  "desigma.com.br",
+  "thiagor.net/dgid"
+ ],
+ "variantes": {
+  "black": {
+   "modo": "escuro",
+   "bg": "#000509",
+   "bg2": "#06131B",
+   "fg": "#EDF5F9",
+   "texto": "#B9CED8",
+   "accent": "#00D9FF",
+   "borda": "#14232C",
+   "borda_ativa": "#004F5F",
+   "display": "Doto (pixel/dot) para destaque",
+   "corpo": "Google Sans Flex",
+   "h1": 72,
+   "h2": 64,
+   "corpo_px": 15,
+   "raio": [
+    10,
+    12,
+    15
+   ],
+   "botao_primario": "fundo accent, texto bg, raio ~15",
+   "botao_secundario": "fundo bg, borda #004F5F, texto claro",
+   "energia": "alta"
+  },
+  "desigma": {
+   "modo": "escuro quente",
+   "bg": "#1A1A1A",
+   "bg2": "#252525",
+   "fg": "#F3DECB",
+   "accent": "#FF6316",
+   "accent_escuro": "#D65313",
+   "borda": "#353535",
+   "display": "Poppins",
+   "corpo": "Poppins",
+   "h1": 34,
+   "h2": 48,
+   "corpo_px": 16,
+   "raio": [
+    10
+   ],
+   "botao": "fundo #151515, borda accent, texto #FFDEC6",
+   "energia": "alta"
+  },
+  "dgid": {
+   "modo": "escuro frio",
+   "bg": "#0F0E10",
+   "fg": "#C0BABA",
+   "accent": "#6924ED",
+   "accent2": "#2575FC",
+   "secundaria": "#4285F4",
+   "display": "Poppins",
+   "corpo": "Poppins",
+   "h1": 33,
+   "h2": 48,
+   "corpo_px": 17,
+   "raio": [
+    8,
+    10
+   ],
+   "botao": "fundo accent roxo, texto branco, halo (box-shadow 0 0 0 13px accent a 20%)",
+   "energia": "alta"
+  },
+  "links": {
+   "modo": "claro",
+   "bg": "#FFFFFF",
+   "texto": "#1A1A1A",
+   "accent": "#CC3366",
+   "destaque_verde": "#11F496",
+   "display": "Poppins",
+   "h1": 36,
+   "h2": 17,
+   "corpo_px": 14,
+   "raio": [
+    10,
+    12
+   ],
+   "botao": "fundo #484544, texto #C7BBB0, raio 12",
+   "energia": "baixa"
+  }
+ },
+ "principios_observados": [
+  "Cada projeto tem UMA cor de acento forte sobre fundo quase-preto tingido (ciano, laranja, roxo) — nunca preto puro neutro: o preto é levemente tingido da cor do acento.",
+  "Texto corpo em tom suave do mesmo matiz do projeto (não branco puro): #B9CED8, #F3DECB, #C0BABA.",
+  "Escala tipográfica contrastada: título muito maior que corpo (≈4–5x), 1 família geométrica (Poppins) + 1 família de caráter só no destaque (Doto).",
+  "Raio de borda consistente 8–15px; bordas finas de baixo contraste (#14232C, #353535) em vez de sombras pesadas.",
+  "Botão primário = cor de acento cheia ou contorno no acento; halo translúcido do acento como 'glow' (dgid).",
+  "Setas '↗/→' como caractere nos CTAs; checks em verde; ícones de traço fino."
+ ],
+ "a_confirmar_com_imagens": [
+  "sombras e smoke/fumaça",
+  "composição das fotos e terços",
+  "ganchos dos posts",
+  "uso de Lucide Icons",
+  "direção de arte dos carrosséis"
+ ],
+ "iconografia": {
+  "preferida": "Lucide Icons (traço 1.5–2px, pontas arredondadas); setas ↗ → como glifo; ícones sempre monocromáticos na cor do texto/acento"
+ },
+ "formato_posts": "3:4 (1080x1440) — Instagram atual; título à esquerda, margem lateral ≈ 8,4% da largura",
+ "escala_tipografica_pct_largura": {
+  "headline": "5,5–7% (capas curtas até 20–25%, 'tipo como imagem')",
+  "subtitulo": "3,8–4,2%, peso regular, mesma família",
+  "corpo_texto_longo": "3,4–3,8%",
+  "microtexto_cantos": "1,8–2,2% em mono ou grotesca, caixa alta, tracking +10%",
+  "cta": "3,2–3,8% semibold/bold"
+ },
+ "tipografia": {
+  "familia_base": "grotesca geométrica/humanista bold (Poppins, Google Sans Flex, Bricolage Grotesque)",
+  "headline": "peso 700–800, tracking −3% a −6%, entrelinha 0,95–1,02; frases curtas em 2–5 linhas, alinhadas à esquerda; ocasionalmente caixa alta (campanha) ou condensada extrema (Anton/Big Shoulders) em ganchos numéricos",
+  "contraste_de_estilo": "1 palavra-chave em itálico serifado elegante (ex.: 'diferencia.' em Cormorant/Instrument Serif italic) OU itálico da própria grotesca OU cor de acento; nunca mais de 1–2 destaques por tela",
+  "tecnico": "monoespaçada/pixel (Doto, Geist Mono, JetBrains Mono) em rótulos, números, '#000000', contadores 7 SKILLS, créditos nos cantos",
+  "manuscrito": "anotação à mão (Caveat) com seta curva fina ligando ao elemento (+4 bônus)",
+  "destaque_no_corpo": "negrito na parte-chave da frase; palavra-gatilho sublinhada dentro do CTA (Comenta BLACK)"
+ },
+ "cor": {
+  "regra": "1 matiz dominante por peça + preto/branco; foto e texto no mesmo matiz (duotone/gel colorido); texto de destaque na cor do acento",
+  "paletas": {
+   "smoke-cyan": {
+    "bg": "#020B14",
+    "bg2": "#0B2A3C",
+    "fg": "#F2F7FA",
+    "accent": "#59C8F5",
+    "accent2": "#00D9FF"
+   },
+   "mint-duotone": {
+    "bg": "#050807",
+    "bg2": "#0B2F22",
+    "fg": "#F4F7F4",
+    "accent": "#6BE3A0",
+    "accent2": "#C7FE83"
+   },
+   "red-noir": {
+    "bg": "#070606",
+    "bg2": "#1A0B0B",
+    "fg": "#F5F2F0",
+    "accent": "#E5383B",
+    "accent2": "#FF8A80"
+   },
+   "orange-noir": {
+    "bg": "#050505",
+    "bg2": "#1A1A1A",
+    "fg": "#FFFFFF",
+    "accent": "#EE6C2F",
+    "accent2": "#F3DECB"
+   },
+   "klein-peach": {
+    "bg": "#2446FF",
+    "bg2": "#1830D6",
+    "fg": "#FFC49E",
+    "accent": "#FFC49E",
+    "accent2": "#FFFFFF"
+   },
+   "paper-ink": {
+    "bg": "#EFEEEA",
+    "bg2": "#E6E4DE",
+    "fg": "#111111",
+    "accent": "#1F2BD8",
+    "accent2": "#E5383B"
+   }
+  }
+ },
+ "componentes": {
+  "pager": "pílula translúcida escura no topo direito, '8/8', raio total, texto claro ≈ 2,6%",
+  "cta_pilula": "raio 20–30px (1,6–2,3%), preenchimento no acento com texto escuro (ex.: mint #6BE3A0 + 'LINK NA BIO' + quadradinho escuro com seta ↗) ",
+  "cta_caixa": "borda 4px no acento (azul-claro) com fundo transparente, ou caixa preenchida translúcida; texto 'Comenta PALAVRA que eu te mando o link' com PALAVRA sublinhada",
+  "rodape": "@perfil com ícone Instagram + assinatura 'Siga em frente.' com seta pontilhada; ou logos alinhados em linha no rodapé",
+  "faixa_vidro": "2 linhas finas horizontais criando faixa de vidro sobre o rosto, textos curtos dentro da faixa (efeito refração)",
+  "etiqueta_adesivo": "retângulo amarelo levemente rotacionado com texto mono em caixa alta (episódio/série)",
+  "cartao_direcao_visual": "cartão arredondado claro com 5 swatches, nome da fonte e hex (#08EC99 · #C7FE83)"
+ },
+ "composicao": {
+  "foto": "sujeito único em contraluz/low-key; fundo escuro com fumaça ou gel de cor chapado; luz de recorte; rosto de perfil ou olhos na linha do terço superior; sujeito ocupa um lado, texto o outro",
+  "profundidade": "texto GIGANTE atrás do sujeito (mascarado), palavra cortada pela borda; sujeito em primeiro plano cobre parte das letras (efeito 'Profundidade!')",
+  "tipo_como_imagem": "palavra enorme rotacionada/cortada pelas bordas com pessoas/objetos vistos de cima sobre as letras, com sombra projetada coerente",
+  "palavra_fantasma": "nome da campanha em 6–10% de opacidade (blur leve) atrás do sujeito",
+  "rabisco_sobre_texto": "traço contínuo/rabisco vetorial na cor do acento sobrepõe o título (multiply) — ideia = conceito",
+  "linha_contínua": "ilustração de uma linha única em acento sobre preto com grão, rótulo pequeno no topo",
+  "gradiente_de_leitura": "degradê preto 0→85% nos 40–50% inferiores da foto para texto branco centralizado",
+  "split_antes_depois": "tela dividida 50/50 em duas tonalidades da mesma cor; título centralizado atravessando a divisão",
+  "quadro_de_marca": "grade de cartões arredondados (raio ≈ 3%) com cor, tipo, mockups e par de cores; fundo off-white",
+  "cantos_editoriais": "4 microtextos nos cantos (ano · autor · /01 · categoria) para dar cara editorial",
+  "respiro": "margem 8% laterais, 5–6% topo; 25–35% da altura de vazio quando a foto domina"
+ },
+ "efeitos": {
+  "grao": "ruído fino 6–12% sobre fundos chapados e sobre o texto grande (aspecto impresso)",
+  "fumaça": "camada de fumaça/névoa real em screen 30–60% atrás do sujeito",
+  "sombra": "projetada longa e suave, mesma direção da luz",
+  "glow": "leve brilho no acento apenas em UI/telas, não em títulos",
+  "transparencia": "pílulas e caixas translúcidas com borda 1px clara (vidro fosco)"
+ },
+ "ganchos_observados": [
+  "Comenta PALAVRA que eu te mando o link (CTA de DM/automação)",
+  "Pergunta provocativa sobre técnica ('Que tal cortar o texto nas bordas do design?')",
+  "Afirmação de identidade ('Seu olhar te diferencia.')",
+  "Verdade desconfortável ('Seu cérebro acredita na história que você repete')",
+  "Número + promessa ('40 ganchos psicológicos…', '7 skills que você instala uma vez')",
+  "Notícia + contradição ('Cariani lançou concurso… Mas não garantiu pagamento')",
+  "Antes/depois com data (1997 → 2026)",
+  "Série numerada ('Voz do Designer | 43', 'Episódio 01')"
+ ],
+ "alerta_ia": "Vários posts usam fotos que parecem geradas/compostas por IA (retratos com fumaça, pantera, produto 3D). A regra da skill é NÃO gerar imagem por IA: replicar o EFEITO com foto real (retrato do cliente + fumaça/gel de cor em pós) e bancos gratuitos. O estilo 3D glossy roxo (scrolltide) foi tratado como contra-exemplo (visual 'IA genérico').",
+ "a_confirmar": [
+  "Fonte exata da Poppins vs Google Sans Flex em cada post",
+  "O que você quer de cada post (indique 3 favoritos para eu priorizar)"
+ ],
+ "status_arquivo": "v2"
+}

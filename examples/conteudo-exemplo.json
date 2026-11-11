@@ -1,0 +1,13 @@
+{
+  "brand": {"name": "Criative", "handle": "@criative.com", "colors": {"accent": "#ff3d00", "bg": "#0d0d0d", "bg2": "#1a1a1a", "fg": "#ffffff", "accent2": "#ffd23f"}},
+  "kicker": "Guia rápido",
+  "title": "5 erros no *Instagram* da sua empresa",
+  "subtitle": "Arraste e salve",
+  "photos": [],
+  "slides": [
+    {"title": "Perfil sem *posicionamento*", "body": "Quem entra no perfil precisa entender em 3 segundos o que você faz."},
+    {"title": "Capa *genérica*", "body": "A capa decide se a pessoa continua ou rola o feed."},
+    {"title": "Sem chamada *para ação*", "body": "Todo post deve dizer o próximo passo."}
+  ],
+  "cta": {"title": "Quer ajuda com seu *Instagram*?", "subtitle": "Fale com a Criative", "cta": "Chamar no WhatsApp"}
+}

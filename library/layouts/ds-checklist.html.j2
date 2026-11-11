@@ -1,0 +1,20 @@
+<style>
+.L-ds-checklist .pad{gap:4cqw;padding-top:15cqw}
+.L-ds-checklist .t{font-size:9.4cqw;line-height:1.0;max-height:26cqh;flex:0 1 auto;min-height:0}
+.L-ds-checklist .s{font-size:3.8cqw}
+.L-ds-checklist .card{margin-top:auto;border-radius:var(--card-radius);background:var(--surface);box-shadow:0 0 0 .25cqw var(--line);padding:1cqw 4.4cqw;display:flex;flex-direction:column}
+.L-ds-checklist .row{display:flex;align-items:center;gap:3.4cqw;padding:2.2cqw 0;border-bottom:.25cqw solid var(--line);font-size:3.7cqw;font-weight:500;line-height:1.25}
+.L-ds-checklist .row:last-child{border-bottom:0}
+.L-ds-checklist .cb{flex:none;width:6.6cqw;height:6.6cqw;border-radius:1.2cqw;background:var(--accent);color:#FEF2F2;display:grid;place-items:center}
+.L-ds-checklist .cb svg{width:4.4cqw;height:4.4cqw}
+.L-ds-checklist .ft{font-family:'Geist Mono',monospace;font-size:3cqw;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;padding:2.4cqw 0 2cqw}
+.L-ds-steps .k,.L-ds-checklist .k{color:#FF6B73}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  <div class="card">
+    {% for it in c['items'] %}<div class="row"><div class="cb">{{ icon('check', sw=2.6) }}</div><div>{{ it.title if it.title is defined else it }}</div></div>{% endfor %}
+  </div>
+</div>

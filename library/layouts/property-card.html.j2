@@ -1,0 +1,19 @@
+<style>
+.L-property-card .pad{gap:3cqw}
+.L-property-card .hero{flex:1 1 0;min-height:0;position:relative}
+.L-property-card .hero .photo{position:absolute;inset:0}
+.L-property-card .hero .badge{position:absolute;left:3cqw;top:3cqw;z-index:3}
+.L-property-card .t{font-size:8.8cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-property-card .price{display:flex;align-items:baseline;gap:2cqw}
+.L-property-card .price b{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:9.6cqw;color:var(--accent-text,var(--accent));line-height:1}
+.L-property-card .price span{font-size:2.8cqw;color:var(--muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.L-property-card .feat{display:flex;gap:2cqw;flex-wrap:wrap}
+</style>
+<div class="pad col">
+  <div class="hero">{{ photo(0) }}{% if c.badge %}<span class="badge">{{ c.badge }}</span>{% endif %}</div>
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="feat">{% for it in c['items'][:5] %}<span class="chip item">{{ it.title }}</span>{% endfor %}</div>
+  <div class="price"><span>{{ c.label or 'a partir de' }}</span><b>{{ c.number or '' }}</b></div>
+  {% if c.cta %}<div><span class="cta">{{ c.cta }} <i class="arrow"></i></span></div>{% endif %}
+</div>

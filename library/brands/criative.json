@@ -1,0 +1,14 @@
+{
+ "name": "Criative Comunicação",
+ "handle": "@criativecom",
+ "logo": "library/brands/assets/criative-logo-on-dark.png",
+ "colors": {
+  "bg": "#0C090C",
+  "bg2": "#1D161E",
+  "fg": "#FAFAFA",
+  "accent": "#C10007",
+  "accent2": "#FB2C36"
+ },
+ "font_display": "Space Grotesk",
+ "font_body": "DM Sans"
+}

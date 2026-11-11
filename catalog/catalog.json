@@ -1,0 +1,3966 @@
+{
+ "stats": {
+  "layouts": 39,
+  "themes": 55,
+  "fonts": 99,
+  "decor": 25,
+  "formats": 4,
+  "motions": 41,
+  "transitions": 39,
+  "carousel_recipes": 17,
+  "reel_recipes": 14,
+  "bridges": 6,
+  "static_designs": 8580,
+  "single_layout_reels": 87945,
+  "reel_recipe_combos": 31570,
+  "carousel_sets": 935,
+  "carousel_variants": 13090
+ },
+ "layouts": [
+  {
+   "id": "full-bleed-bottom",
+   "name": "Foto cheia · título embaixo",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto em tela cheia com degradê e título grande na base. Clássico de capa.",
+   "tags": [
+    "capa",
+    "marketing",
+    "negócios",
+    "estilo de vida"
+   ],
+   "roles": [
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Guia completo",
+    "title": "Como crescer no *Instagram* em 2026",
+    "subtitle": "7 passos práticos para aparecer mais",
+    "cta": "Arraste",
+    "badge": "Novo"
+   }
+  },
+  {
+   "id": "full-bleed-center",
+   "name": "Foto cheia · título central",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto escurecida com título centralizado gigante.",
+   "tags": [
+    "capa",
+    "viagem",
+    "motivação"
+   ],
+   "roles": [
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Verão 2026",
+    "title": "O *melhor* verão da sua vida",
+    "subtitle": "Começa agora",
+    "cta": "Saiba mais"
+   }
+  },
+  {
+   "id": "framed-photo",
+   "name": "Foto emoldurada",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto com cantos arredondados e título abaixo — limpo e editorial.",
+   "tags": [
+    "portfólio",
+    "minimalista",
+    "negócios"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Projeto",
+    "title": "Casa *Aurora*",
+    "subtitle": "Arquitetura contemporânea em João Pessoa"
+   }
+  },
+  {
+   "id": "arch-window",
+   "name": "Janela em arco",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto recortada em arco com contorno deslocado. Visual boho/elegante.",
+   "tags": [
+    "beleza",
+    "amor",
+    "estilo"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Coleção",
+    "title": "Luz *natural*",
+    "subtitle": "Ensaio de outono"
+   }
+  },
+  {
+   "id": "circle-orbit",
+   "name": "Círculo com texto orbitando",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto circular com texto girando ao redor (gira no reel).",
+   "tags": [
+    "promo",
+    "comida",
+    "estilo"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "badge": "Novidade",
+    "title": "Chegou o *nosso* novo sabor",
+    "subtitle": "Disponível em todas as lojas"
+   }
+  },
+  {
+   "id": "polaroid",
+   "name": "Polaroid com fita",
+   "kind": "memória",
+   "photos": 1,
+   "desc": "Polaroid levemente inclinada com fita adesiva e legenda manuscrita.",
+   "tags": [
+    "memórias",
+    "amor",
+    "viagem"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Memórias",
+    "title": "Dias que ficam",
+    "caption": "verão • 2026"
+   }
+  },
+  {
+   "id": "magazine-cover",
+   "name": "Capa de revista",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Masthead gigante, chamadas de capa e data da edição.",
+   "tags": [
+    "capa",
+    "editorial",
+    "negócios"
+   ],
+   "roles": [
+    "cover"
+   ],
+   "sample": {
+    "masthead": "CRIATIVE",
+    "kicker": "Edição especial",
+    "title": "Design que *vende*",
+    "date": "NOV 2026",
+    "badge": "Nº 12",
+    "items": [
+     {
+      "title": "Branding em 30 dias"
+     },
+     {
+      "title": "Sites que convertem"
+     },
+     {
+      "title": "O novo tráfego"
+     }
+    ]
+   }
+  },
+  {
+   "id": "split-vertical",
+   "name": "Foto + painel colorido",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto no topo e painel de cor sólida com título embaixo.",
+   "tags": [
+    "marketing",
+    "educativo"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Dica rápida",
+    "title": "Pare de postar *sem estratégia*",
+    "subtitle": "Veja como organizar seu conteúdo"
+   }
+  },
+  {
+   "id": "split-diagonal",
+   "name": "Corte diagonal",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Foto com faixa diagonal de cor e título dinâmico.",
+   "tags": [
+    "promo",
+    "esporte",
+    "motivação"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Oferta",
+    "title": "Só até *domingo*",
+    "subtitle": "Condições especiais para novos clientes"
+   }
+  },
+  {
+   "id": "cutout-behind",
+   "name": "Texto atrás do recorte",
+   "kind": "capa",
+   "photos": 1,
+   "desc": "Palavra gigante atrás de uma pessoa recortada (PNG transparente em `cutout`).",
+   "tags": [
+    "moda",
+    "beleza",
+    "estilo"
+   ],
+   "roles": [
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Nova coleção",
+    "title": "MODA",
+    "subtitle": "@suamarca"
+   }
+  },
+  {
+   "id": "ticket",
+   "name": "Ingresso de evento",
+   "kind": "evento",
+   "photos": 1,
+   "desc": "Cartão em formato de ingresso com data, hora, local e código de barras.",
+   "tags": [
+    "evento",
+    "festa",
+    "negócios"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Convite",
+    "title": "Noite *Criativa*",
+    "subtitle": "Networking + música ao vivo",
+    "date": "12 DEZ",
+    "time": "19h",
+    "place": "Manaíra, João Pessoa",
+    "badge": "Gratuito"
+   }
+  },
+  {
+   "id": "sticker-pop",
+   "name": "Foto + adesivos de preço",
+   "kind": "promo",
+   "photos": 1,
+   "desc": "Foto com adesivo redondo de preço e etiqueta inclinada.",
+   "tags": [
+    "promo",
+    "produto",
+    "marketing"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Oferta da semana",
+    "title": "Cadeira *Aurora*",
+    "subtitle": "Madeira maciça, entrega grátis",
+    "number": "R$ 899",
+    "label": "por apenas",
+    "badge": "-30%"
+   }
+  },
+  {
+   "id": "collage-2",
+   "name": "Colagem · 2 fotos",
+   "kind": "colagem",
+   "photos": 2,
+   "desc": "Duas fotos sobrepostas e levemente inclinadas.",
+   "tags": [
+    "memórias",
+    "estilo de vida",
+    "amor"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Antes e depois do fim de semana",
+    "title": "Nosso *refúgio*",
+    "subtitle": "Fins de semana que valem a pena"
+   }
+  },
+  {
+   "id": "collage-3-mosaic",
+   "name": "Colagem · mosaico 3 fotos",
+   "kind": "colagem",
+   "photos": 3,
+   "desc": "Uma foto grande + duas menores em mosaico.",
+   "tags": [
+    "portfólio",
+    "negócios",
+    "estilo de vida"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Portfólio",
+    "title": "Projetos *recentes*",
+    "subtitle": "Residencial · Comercial · Interiores"
+   }
+  },
+  {
+   "id": "collage-4-grid",
+   "name": "Colagem · grade 2×2",
+   "kind": "colagem",
+   "photos": 4,
+   "desc": "Quatro fotos em grade com título flutuante no centro.",
+   "tags": [
+    "memórias",
+    "recap",
+    "estilo de vida"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Recap",
+    "title": "*4* momentos",
+    "subtitle": "O melhor do mês",
+    "date": "OUT 26"
+   }
+  },
+  {
+   "id": "collage-5-scrapbook",
+   "name": "Scrapbook · 5 fotos",
+   "kind": "colagem",
+   "photos": 5,
+   "desc": "Fotos com borda branca, fita e bilhete manuscrito.",
+   "tags": [
+    "viagem",
+    "memórias",
+    "amor"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Diário de viagem",
+    "title": "Cinco dias em *Pipa*",
+    "caption": "saudade já"
+   }
+  },
+  {
+   "id": "film-strip",
+   "name": "Tira de filme",
+   "kind": "memória",
+   "photos": 3,
+   "desc": "Tira de negativo 35mm com 3 quadros levemente inclinada.",
+   "tags": [
+    "memórias",
+    "viagem",
+    "filme"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Rolo 01",
+    "title": "Em *35mm*",
+    "subtitle": "Fotografia analógica"
+   }
+  },
+  {
+   "id": "polaroid-stack",
+   "name": "Pilha de polaroids",
+   "kind": "memória",
+   "photos": 3,
+   "desc": "Três polaroids sobrepostas com legendas manuscritas.",
+   "tags": [
+    "memórias",
+    "amor",
+    "viagem"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Álbum",
+    "title": "Momentos *soltos*",
+    "items": [
+     {
+      "title": "praia"
+     },
+     {
+      "title": "amigos"
+     },
+     {
+      "title": "pôr do sol"
+     }
+    ]
+   }
+  },
+  {
+   "id": "grid-9",
+   "name": "Grade 3×3",
+   "kind": "colagem",
+   "photos": 9,
+   "desc": "Nove quadros em grade — ótimo para recap do ano/mês.",
+   "tags": [
+    "recap",
+    "memórias",
+    "estilo de vida"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "2026",
+    "title": "Meu ano em *9* fotos",
+    "subtitle": "Obrigado por tudo"
+   }
+  },
+  {
+   "id": "staggered-columns",
+   "name": "Colunas escalonadas",
+   "kind": "colagem",
+   "photos": 6,
+   "desc": "Duas colunas desalinhadas estilo Pinterest.",
+   "tags": [
+    "inspiração",
+    "estilo de vida",
+    "beleza"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Inspiração",
+    "title": "Referências de *decoração*",
+    "subtitle": "Salve para depois"
+   }
+  },
+  {
+   "id": "contact-sheet",
+   "name": "Folha de contato",
+   "kind": "memória",
+   "photos": 12,
+   "desc": "Folha de provas fotográficas 12 quadros com marcação em vermelho.",
+   "tags": [
+    "filme",
+    "portfólio",
+    "moda"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Ensaio",
+    "title": "Contact *sheet*",
+    "subtitle": "Seleção da sessão"
+   }
+  },
+  {
+   "id": "quote",
+   "name": "Citação",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Aspas gigantes, frase com destaque e autor (foto opcional).",
+   "tags": [
+    "motivação",
+    "inspiração",
+    "educativo"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "quote": "Design não é só como parece. Design é como *funciona*.",
+    "author": "Steve Jobs",
+    "role": "Co-fundador da Apple"
+   }
+  },
+  {
+   "id": "big-number",
+   "name": "Número gigante",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Estatística em destaque com rótulo e explicação.",
+   "tags": [
+    "dados",
+    "marketing",
+    "negócios"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Você sabia?",
+    "number": "87%",
+    "label": "dos clientes pesquisam antes de comprar",
+    "title": "Seu *Instagram* é o novo cartão de visitas",
+    "subtitle": "Fonte: pesquisa interna 2026"
+   }
+  },
+  {
+   "id": "tips-list",
+   "name": "Lista numerada",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Até 5 itens numerados com título e descrição.",
+   "tags": [
+    "educativo",
+    "marketing",
+    "dicas"
+   ],
+   "roles": [
+    "body"
+   ],
+   "sample": {
+    "kicker": "Checklist",
+    "title": "5 passos para um *post* melhor",
+    "items": [
+     {
+      "title": "Defina o objetivo",
+      "text": "Uma ideia por post."
+     },
+     {
+      "title": "Capriche na capa",
+      "text": "Os 3 primeiros segundos decidem."
+     },
+     {
+      "title": "Escreva para uma pessoa",
+      "text": "Fale direto com o cliente."
+     },
+     {
+      "title": "Use uma chamada clara",
+      "text": "Diga o que fazer depois."
+     },
+     {
+      "title": "Poste com constância",
+      "text": "Consistência vence o acaso."
+     }
+    ]
+   }
+  },
+  {
+   "id": "checklist",
+   "name": "Checklist com caixas",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Lista com caixas marcadas (ou vazias com done:false).",
+   "tags": [
+    "educativo",
+    "negócios",
+    "dicas"
+   ],
+   "roles": [
+    "body"
+   ],
+   "sample": {
+    "kicker": "Antes de postar",
+    "title": "Revisão *final*",
+    "items": [
+     {
+      "title": "Logo aplicada"
+     },
+     {
+      "title": "Texto revisado",
+      "text": "Sem erros de português"
+     },
+     {
+      "title": "Hashtags escolhidas"
+     },
+     {
+      "title": "Chamada para ação"
+     }
+    ],
+    "subtitle": "Marque tudo e publique"
+   }
+  },
+  {
+   "id": "before-after",
+   "name": "Antes e depois",
+   "kind": "conteúdo",
+   "photos": 2,
+   "desc": "Duas fotos lado a lado com divisor e rótulos.",
+   "tags": [
+    "beleza",
+    "portfólio",
+    "esporte"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Transformação",
+    "title": "Resultado em *30 dias*",
+    "label_a": "Antes",
+    "label_b": "Depois",
+    "subtitle": "Projeto real de cliente"
+   }
+  },
+  {
+   "id": "announcement",
+   "name": "Anúncio / lançamento",
+   "kind": "promo",
+   "photos": 1,
+   "desc": "Selo, título gigante, foto inclinada, adesivo de preço e botão.",
+   "tags": [
+    "promo",
+    "produto",
+    "marketing"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "badge": "Lançamento",
+    "title": "Nova linha *Verão*",
+    "subtitle": "Peças leves para dias quentes",
+    "number": "R$ 99",
+    "label": "a partir de",
+    "cta": "Quero ver"
+   }
+  },
+  {
+   "id": "countdown",
+   "name": "Contagem / data",
+   "kind": "evento",
+   "photos": 0,
+   "desc": "Dia gigante, mês, título do evento e chips de hora/local.",
+   "tags": [
+    "evento",
+    "festa",
+    "sazonal"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Salve a data",
+    "title": "Inauguração *oficial*",
+    "date": "12 DEZ",
+    "time": "19h",
+    "place": "Av. Cabo Branco, 100",
+    "cta": "Confirmar presença"
+   }
+  },
+  {
+   "id": "typographic",
+   "name": "Tipográfico puro",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Só texto: frase gigante que preenche o quadro.",
+   "tags": [
+    "manifesto",
+    "minimalista",
+    "motivação"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Manifesto",
+    "title": "Faça o *simples* bem feito.",
+    "subtitle": "Princípio da casa nº 1"
+   }
+  },
+  {
+   "id": "cta-follow",
+   "name": "Chamada final (seguir/salvar)",
+   "kind": "cta",
+   "photos": 1,
+   "desc": "Cartão final com avatar, @, ícones curtir/comentar/enviar/salvar e botão.",
+   "tags": [
+    "cta",
+    "marketing"
+   ],
+   "roles": [
+    "end"
+   ],
+   "sample": {
+    "title": "Gostou? *Salve* e envie para quem precisa",
+    "subtitle": "Siga para mais conteúdo toda semana",
+    "cta": "Seguir",
+    "handle": "@suamarca"
+   }
+  },
+  {
+   "id": "question-poll",
+   "name": "Enquete (estilo story)",
+   "kind": "interativo",
+   "photos": 1,
+   "desc": "Foto escurecida com cartão de enquete e duas opções.",
+   "tags": [
+    "story",
+    "interação"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "kicker": "Interaja",
+    "title": "Você prefere *praia* ou *campo*?",
+    "label": "Enquete",
+    "option_a": "Praia",
+    "option_b": "Campo"
+   }
+  },
+  {
+   "id": "step-process",
+   "name": "Passo a passo (linha do tempo)",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Passos conectados por linha vertical.",
+   "tags": [
+    "educativo",
+    "negócios",
+    "processo"
+   ],
+   "roles": [
+    "body"
+   ],
+   "sample": {
+    "kicker": "Como funciona",
+    "title": "Do briefing à *entrega*",
+    "items": [
+     {
+      "title": "Conversa inicial",
+      "text": "Entendemos seu negócio."
+     },
+     {
+      "title": "Proposta",
+      "text": "Escopo, prazo e investimento."
+     },
+     {
+      "title": "Criação",
+      "text": "Direção de arte e aprovação."
+     },
+     {
+      "title": "Publicação",
+      "text": "Entrega e acompanhamento."
+     }
+    ]
+   }
+  },
+  {
+   "id": "testimonial",
+   "name": "Depoimento",
+   "kind": "prova social",
+   "photos": 1,
+   "desc": "Cartão com avatar, estrelas, depoimento e nome.",
+   "tags": [
+    "prova social",
+    "negócios"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Clientes",
+    "quote": "Em dois meses o *Instagram* virou nosso principal canal de vendas.",
+    "author": "Marina Alves",
+    "role": "Dona da Loja Brisa",
+    "rating": 5
+   }
+  },
+  {
+   "id": "menu-price",
+   "name": "Cardápio / tabela de preços",
+   "kind": "promo",
+   "photos": 1,
+   "desc": "Itens com linha pontilhada e preço à direita.",
+   "tags": [
+    "comida",
+    "promo",
+    "negócios"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Cardápio",
+    "title": "Pratos do *dia*",
+    "items": [
+     {
+      "title": "Risoto de camarão",
+      "value": "R$ 58",
+      "text": "Arroz arbóreo, camarão e limão siciliano"
+     },
+     {
+      "title": "Filé ao molho madeira",
+      "value": "R$ 62"
+     },
+     {
+      "title": "Salada tropical",
+      "value": "R$ 34"
+     },
+     {
+      "title": "Petit gâteau",
+      "value": "R$ 26"
+     }
+    ],
+    "subtitle": "Segunda a sexta · 11h às 15h"
+   }
+  },
+  {
+   "id": "profile-card",
+   "name": "Cartão de perfil / sobre",
+   "kind": "institucional",
+   "photos": 1,
+   "desc": "Foto, nome, cargo, 3 números e lista de destaques.",
+   "tags": [
+    "institucional",
+    "negócios",
+    "sobre"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Quem somos",
+    "title": "Ana *Souza*",
+    "subtitle": "Arquiteta e urbanista",
+    "stats": [
+     {
+      "value": "12",
+      "label": "anos"
+     },
+     {
+      "value": "240",
+      "label": "projetos"
+     },
+     {
+      "value": "4.9",
+      "label": "nota"
+     }
+    ],
+    "items": [
+     {
+      "title": "Residencial e comercial"
+     },
+     {
+      "title": "Projeto + obra"
+     },
+     {
+      "title": "Atendimento em todo o NE"
+     }
+    ],
+    "cta": "Agendar visita"
+   }
+  },
+  {
+   "id": "tip-single",
+   "name": "Dica única (número grande)",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Um slide por dica: número gigante, título e texto.",
+   "tags": [
+    "educativo",
+    "dicas"
+   ],
+   "roles": [
+    "body"
+   ],
+   "sample": {
+    "number": "01",
+    "total": "05",
+    "title": "Comece pelo *objetivo*",
+    "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post? Salvar, comentar, clicar ou comprar."
+   }
+  },
+  {
+   "id": "myth-fact",
+   "name": "Mito x Verdade",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Dois cartões: mito riscado e a verdade em destaque.",
+   "tags": [
+    "educativo",
+    "marketing"
+   ],
+   "roles": [
+    "body"
+   ],
+   "sample": {
+    "label_a": "Mito",
+    "label_b": "Verdade",
+    "title": "Postar todo dia é obrigatório.",
+    "body": "O que pesa é consistência e qualidade. Três posts bons por semana vencem sete improvisados."
+   }
+  },
+  {
+   "id": "property-card",
+   "name": "Cartão de imóvel",
+   "kind": "promo",
+   "photos": 1,
+   "desc": "Foto grande, nome, características em chips e preço.",
+   "tags": [
+    "imobiliário",
+    "promo",
+    "negócios"
+   ],
+   "roles": [
+    "cover",
+    "body"
+   ],
+   "sample": {
+    "badge": "Lançamento",
+    "kicker": "Cabo Branco · João Pessoa",
+    "title": "Residencial *Mar Azul*",
+    "items": [
+     {
+      "title": "3 suítes"
+     },
+     {
+      "title": "120 m²"
+     },
+     {
+      "title": "2 vagas"
+     },
+     {
+      "title": "Varanda gourmet"
+     }
+    ],
+    "number": "R$ 890 mil",
+    "label": "a partir de",
+    "cta": "Agendar visita"
+   }
+  },
+  {
+   "id": "service-grid",
+   "name": "Grade de serviços",
+   "kind": "conteúdo",
+   "photos": 0,
+   "desc": "Quatro cartões 2×2 com ícone numerado, título e texto.",
+   "tags": [
+    "negócios",
+    "serviços",
+    "institucional"
+   ],
+   "roles": [
+    "body",
+    "cover"
+   ],
+   "sample": {
+    "kicker": "Serviços",
+    "title": "O que *fazemos*",
+    "items": [
+     {
+      "title": "Branding",
+      "text": "Marca e identidade visual."
+     },
+     {
+      "title": "Sites",
+      "text": "WordPress sob medida."
+     },
+     {
+      "title": "Tráfego",
+      "text": "Google e Meta Ads."
+     },
+     {
+      "title": "Conteúdo",
+      "text": "Posts, reels e vídeos."
+     }
+    ],
+    "subtitle": "Tudo no mesmo lugar"
+   }
+  }
+ ],
+ "themes": [
+  {
+   "id": "clean-white",
+   "name": "Clean White",
+   "cats": [
+    "minimalista",
+    "negócios",
+    "editorial"
+   ],
+   "bg": "#ffffff",
+   "bg2": "#f1f1ef",
+   "fg": "#111111",
+   "accent": "#ff4d2e",
+   "accent2": "#111111",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-0.01em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "180deg",
+   "ph_radius": "2.6cqw"
+  },
+  {
+   "id": "editorial-cream",
+   "name": "Editorial Cream",
+   "cats": [
+    "editorial",
+    "estilo de vida",
+    "minimalista"
+   ],
+   "bg": "#f4efe6",
+   "bg2": "#e9e1d1",
+   "fg": "#1b1a17",
+   "accent": "#b4542f",
+   "accent2": "#1b1a17",
+   "font_display": "Playfair Display",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-0.02em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "paper",
+    "frame"
+   ],
+   "kind": "light",
+   "ph_radius": ".6cqw",
+   "bg_kind": "solid"
+  },
+  {
+   "id": "mono-black",
+   "name": "Mono Black",
+   "cats": [
+    "minimalista",
+    "editorial",
+    "tech"
+   ],
+   "bg": "#0b0b0b",
+   "bg2": "#1b1b1b",
+   "fg": "#ffffff",
+   "accent": "#f2f2f2",
+   "accent2": "#8a8a8a",
+   "font_display": "Anton",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "ph_radius": "0",
+   "btn_radius": "0.8cqw"
+  },
+  {
+   "id": "swiss-grid",
+   "name": "Swiss Grid",
+   "cats": [
+    "minimalista",
+    "editorial",
+    "negócios"
+   ],
+   "bg": "#efefec",
+   "bg2": "#e4e4df",
+   "fg": "#111111",
+   "accent": "#e10600",
+   "accent2": "#111111",
+   "font_display": "Archivo Black",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": "-.01em",
+   "dlh": 0.96,
+   "title_fx": "plain",
+   "decor": [
+    "grid"
+   ],
+   "kind": "light",
+   "ph_radius": "0",
+   "btn_radius": "0"
+  },
+  {
+   "id": "soft-greige",
+   "name": "Soft Greige",
+   "cats": [
+    "minimalista",
+    "estilo de vida",
+    "beleza"
+   ],
+   "bg": "#e9e4dc",
+   "bg2": "#d9d1c4",
+   "fg": "#2c2925",
+   "accent": "#8a6f5a",
+   "accent2": "#cbb8a4",
+   "font_display": "Fraunces",
+   "font_body": "DM Sans",
+   "dw": 600,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "noise-soft"
+   ],
+   "kind": "light",
+   "bg_kind": "radial",
+   "ph_radius": "3.2cqw"
+  },
+  {
+   "id": "paper-ink",
+   "name": "Paper & Ink",
+   "cats": [
+    "editorial",
+    "educativo",
+    "negócios"
+   ],
+   "bg": "#fbf8f1",
+   "bg2": "#efe9da",
+   "fg": "#1a1a2e",
+   "accent": "#2540d9",
+   "accent2": "#ffcf33",
+   "font_display": "DM Serif Display",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 1.02,
+   "title_fx": "highlight",
+   "decor": [
+    "paper",
+    "corner-marks"
+   ],
+   "kind": "light",
+   "ph_radius": ".8cqw"
+  },
+  {
+   "id": "neon-night",
+   "name": "Neon Night",
+   "cats": [
+    "tendência",
+    "festa",
+    "tech"
+   ],
+   "bg": "#0a0716",
+   "bg2": "#1b0b3a",
+   "fg": "#ffffff",
+   "accent": "#ff2bd6",
+   "accent2": "#00e5ff",
+   "font_display": "Syne",
+   "font_body": "Space Grotesk",
+   "dw": 800,
+   "dcase": "uppercase",
+   "dls": ".01em",
+   "dlh": 0.98,
+   "title_fx": "glow",
+   "decor": [
+    "stars",
+    "vignette",
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "3cqw",
+   "ph_border": ".5cqw solid #ff2bd6",
+   "ph_shadow": "0 0 5cqw #ff2bd6aa",
+   "btn_shadow": "0 0 3cqw #ff2bd6"
+  },
+  {
+   "id": "neon-lime",
+   "name": "Neon Lime",
+   "cats": [
+    "tendência",
+    "esporte",
+    "tech"
+   ],
+   "bg": "#08110a",
+   "bg2": "#0f2a14",
+   "fg": "#f4ffe9",
+   "accent": "#b6ff00",
+   "accent2": "#00ffa3",
+   "font_display": "Unbounded",
+   "font_body": "Space Grotesk",
+   "dw": 800,
+   "dcase": "uppercase",
+   "dls": "-.01em",
+   "dlh": 1.0,
+   "title_fx": "glow",
+   "decor": [
+    "grid",
+    "scanlines"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "1.4cqw",
+   "ph_border": ".4cqw solid #b6ff00",
+   "ph_shadow": "0 0 4cqw #b6ff0088"
+  },
+  {
+   "id": "y2k-chrome",
+   "name": "Y2K Chrome",
+   "cats": [
+    "tendência",
+    "beleza",
+    "festa"
+   ],
+   "bg": "#c9d6ff",
+   "bg2": "#f0e6ff",
+   "fg": "#1c1f4a",
+   "accent": "#5b6cff",
+   "accent2": "#ff7ad9",
+   "font_display": "Unbounded",
+   "font_body": "DM Sans",
+   "dw": 900,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.0,
+   "title_fx": "chrome",
+   "decor": [
+    "sparkle",
+    "glass-shine"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "5.4cqw",
+   "ph_border": ".9cqw solid #ffffff",
+   "ph_shadow": "0 1.4cqw 3.6cqw rgba(60,60,160,.35)",
+   "btn_shadow": "inset 0 -.8cqw 1.6cqw rgba(0,0,0,.18), inset 0 .8cqw 1.6cqw rgba(255,255,255,.7)"
+  },
+  {
+   "id": "plastic-bubble",
+   "name": "Plastic Bubble",
+   "cats": [
+    "tendência",
+    "kids",
+    "beleza"
+   ],
+   "bg": "#ffd6f0",
+   "bg2": "#c8f1ff",
+   "fg": "#3a1a6e",
+   "accent": "#ff4fa8",
+   "accent2": "#5bd6ff",
+   "font_display": "Righteous",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": ".01em",
+   "dlh": 1.0,
+   "title_fx": "bubble",
+   "decor": [
+    "blobs",
+    "glass-shine"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "150deg",
+   "ph_radius": "6.4cqw",
+   "ph_border": "1cqw solid #ffffff",
+   "ph_shadow": "0 1.6cqw 4cqw rgba(160,60,160,.3)",
+   "btn_shadow": "inset 0 -1cqw 1.8cqw rgba(0,0,0,.18), inset 0 1cqw 1.8cqw rgba(255,255,255,.8)"
+  },
+  {
+   "id": "retro-90s-memphis",
+   "name": "Retrô 90s Memphis",
+   "cats": [
+    "retrô",
+    "festa",
+    "tendência"
+   ],
+   "bg": "#fff6d6",
+   "bg2": "#ffe9a6",
+   "fg": "#1c1c1c",
+   "accent": "#ff4fa3",
+   "accent2": "#00c2ff",
+   "font_display": "Archivo Black",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "shadow",
+   "decor": [
+    "memphis",
+    "dots"
+   ],
+   "kind": "light",
+   "ph_radius": "1cqw",
+   "ph_border": ".7cqw solid #1c1c1c",
+   "ph_shadow": "1.5cqw 1.5cqw 0 #1c1c1c",
+   "btn_shadow": ".7cqw .7cqw 0 #1c1c1c",
+   "btn_radius": "1.2cqw"
+  },
+  {
+   "id": "vaporwave",
+   "name": "Vaporwave",
+   "cats": [
+    "retrô",
+    "tendência",
+    "festa"
+   ],
+   "bg": "#2b1055",
+   "bg2": "#ff6ec7",
+   "fg": "#ffffff",
+   "accent": "#00fff0",
+   "accent2": "#ffd1ff",
+   "font_display": "Righteous",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "none",
+   "dls": ".02em",
+   "dlh": 1.0,
+   "title_fx": "shadow",
+   "decor": [
+    "grid-perspective",
+    "stars",
+    "scanlines"
+   ],
+   "kind": "dark",
+   "bg_kind": "sunset",
+   "angle": "180deg",
+   "ph_radius": "1.6cqw",
+   "ph_border": ".5cqw solid #00fff0",
+   "ph_shadow": "0 0 4cqw #00fff088"
+  },
+  {
+   "id": "acid-graphic",
+   "name": "Acid Graphic",
+   "cats": [
+    "tendência",
+    "esporte",
+    "festa"
+   ],
+   "bg": "#d7ff2f",
+   "bg2": "#c3ee10",
+   "fg": "#0d0d0d",
+   "accent": "#0d0d0d",
+   "accent2": "#ff3df2",
+   "font_display": "Anton",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".005em",
+   "dlh": 0.96,
+   "title_fx": "plain",
+   "decor": [
+    "halftone",
+    "diag"
+   ],
+   "kind": "light",
+   "ph_radius": "0",
+   "ph_border": ".7cqw solid #0d0d0d",
+   "ph_shadow": "1.4cqw 1.4cqw 0 #ff3df2",
+   "btn_radius": "0",
+   "on_accent": "#d7ff2f"
+  },
+  {
+   "id": "brutalist",
+   "name": "Brutalist",
+   "cats": [
+    "tendência",
+    "editorial",
+    "tech"
+   ],
+   "bg": "#e9e9e4",
+   "bg2": "#dcdcd5",
+   "fg": "#0a0a0a",
+   "accent": "#ff3b00",
+   "accent2": "#0a0a0a",
+   "font_display": "Space Grotesk",
+   "font_body": "Space Grotesk",
+   "dw": 700,
+   "dcase": "uppercase",
+   "dls": "-.03em",
+   "dlh": 0.94,
+   "title_fx": "plain",
+   "decor": [
+    "grid",
+    "corner-marks"
+   ],
+   "kind": "light",
+   "ph_radius": "0",
+   "ph_border": ".8cqw solid #0a0a0a",
+   "btn_radius": "0",
+   "card_radius": "0"
+  },
+  {
+   "id": "cyber-grid",
+   "name": "Cyber Grid",
+   "cats": [
+    "tech",
+    "tendência",
+    "esporte"
+   ],
+   "bg": "#050914",
+   "bg2": "#0a1f44",
+   "fg": "#d9f3ff",
+   "accent": "#00e5ff",
+   "accent2": "#ff2e63",
+   "font_display": "Oswald",
+   "font_body": "Space Grotesk",
+   "dw": 700,
+   "dcase": "uppercase",
+   "dls": ".02em",
+   "dlh": 1.0,
+   "title_fx": "glow",
+   "decor": [
+    "grid-perspective",
+    "scanlines",
+    "vignette"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "180deg",
+   "ph_radius": ".8cqw",
+   "ph_border": ".3cqw solid #00e5ff",
+   "ph_shadow": "0 0 3cqw #00e5ff66"
+  },
+  {
+   "id": "gradient-aurora",
+   "name": "Gradient Aurora",
+   "cats": [
+    "tendência",
+    "tech",
+    "marketing"
+   ],
+   "bg": "#0e0b2c",
+   "bg2": "#3a1c71",
+   "fg": "#ffffff",
+   "accent": "#ffaf7b",
+   "accent2": "#d76d77",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.025em",
+   "dlh": 1.0,
+   "title_fx": "gradient",
+   "decor": [
+    "blobs",
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "mesh",
+   "ph_radius": "4cqw"
+  },
+  {
+   "id": "film-35mm",
+   "name": "Filme 35mm",
+   "cats": [
+    "filme",
+    "viagem",
+    "memórias"
+   ],
+   "bg": "#1a1612",
+   "bg2": "#2a221a",
+   "fg": "#f1e8d3",
+   "accent": "#e9a63a",
+   "accent2": "#c1502e",
+   "font_display": "Instrument Serif",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "film-edge",
+    "grain",
+    "vignette"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": ".5cqw",
+   "ph_filter": "sepia(.22) contrast(1.06) saturate(.92)"
+  },
+  {
+   "id": "kodak-warm",
+   "name": "Kodak Warm",
+   "cats": [
+    "filme",
+    "retrô",
+    "viagem"
+   ],
+   "bg": "#f6c945",
+   "bg2": "#f08c2e",
+   "fg": "#2a1305",
+   "accent": "#d62828",
+   "accent2": "#2a1305",
+   "font_display": "Archivo Black",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "shadow",
+   "decor": [
+    "grain",
+    "lightleak"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": ".8cqw",
+   "ph_border": ".9cqw solid #fff7e0",
+   "ph_filter": "sepia(.18) saturate(1.12) contrast(1.05)"
+  },
+  {
+   "id": "polaroid-70s",
+   "name": "Polaroid 70s",
+   "cats": [
+    "retrô",
+    "memórias",
+    "amor"
+   ],
+   "bg": "#efe3c8",
+   "bg2": "#e0d0ac",
+   "fg": "#3b2a1a",
+   "accent": "#c8553d",
+   "accent2": "#588b8b",
+   "font_display": "Pacifico",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "0",
+   "dlh": 1.08,
+   "title_fx": "plain",
+   "decor": [
+    "paper",
+    "noise-soft"
+   ],
+   "kind": "light",
+   "bg_kind": "radial",
+   "ph_radius": ".6cqw",
+   "ph_filter": "sepia(.28) saturate(1.05)"
+  },
+  {
+   "id": "sepia-newspaper",
+   "name": "Jornal Sépia",
+   "cats": [
+    "editorial",
+    "retrô",
+    "educativo"
+   ],
+   "bg": "#e8dcc2",
+   "bg2": "#d8c8a4",
+   "fg": "#1b140c",
+   "accent": "#7a1f12",
+   "accent2": "#1b140c",
+   "font_display": "Playfair Display",
+   "font_body": "Lora",
+   "dw": 900,
+   "dcase": "uppercase",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "paper",
+    "frame-double",
+    "halftone"
+   ],
+   "kind": "light",
+   "ph_radius": "0",
+   "ph_filter": "grayscale(.55) sepia(.3) contrast(1.1)",
+   "btn_radius": "0"
+  },
+  {
+   "id": "retro-diner",
+   "name": "Retro Diner",
+   "cats": [
+    "retrô",
+    "comida",
+    "festa"
+   ],
+   "bg": "#1f6f78",
+   "bg2": "#14464c",
+   "fg": "#fff4dc",
+   "accent": "#ff5a5f",
+   "accent2": "#ffd166",
+   "font_display": "Righteous",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": ".02em",
+   "dlh": 1.0,
+   "title_fx": "shadow",
+   "decor": [
+    "checker",
+    "dots"
+   ],
+   "kind": "dark",
+   "ph_radius": "3cqw",
+   "ph_border": ".8cqw solid #fff4dc",
+   "btn_shadow": ".6cqw .6cqw 0 #14464c"
+  },
+  {
+   "id": "vintage-travel",
+   "name": "Cartaz de Viagem",
+   "cats": [
+    "viagem",
+    "retrô",
+    "editorial"
+   ],
+   "bg": "#f2e6c9",
+   "bg2": "#e6d4a8",
+   "fg": "#1f3a5f",
+   "accent": "#d9531e",
+   "accent2": "#1f3a5f",
+   "font_display": "Bebas Neue",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".02em",
+   "dlh": 0.95,
+   "title_fx": "plain",
+   "decor": [
+    "paper",
+    "frame-double",
+    "sunburst"
+   ],
+   "kind": "light",
+   "ph_radius": ".4cqw",
+   "ph_border": ".8cqw solid #1f3a5f",
+   "ph_filter": "saturate(.85) sepia(.15)"
+  },
+  {
+   "id": "noir-bw",
+   "name": "Noir P&B",
+   "cats": [
+    "editorial",
+    "filme",
+    "moda"
+   ],
+   "bg": "#090909",
+   "bg2": "#242424",
+   "fg": "#f5f5f5",
+   "accent": "#f5f5f5",
+   "accent2": "#9a9a9a",
+   "font_display": "Playfair Display",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "uppercase",
+   "dls": ".02em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "grain",
+    "vignette",
+    "frame"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "0",
+   "ph_filter": "grayscale(1) contrast(1.15)"
+  },
+  {
+   "id": "hygge-cozy",
+   "name": "Hygge Cozy",
+   "cats": [
+    "estilo de vida",
+    "sazonal",
+    "amor"
+   ],
+   "bg": "#f3e9dc",
+   "bg2": "#e7d6c1",
+   "fg": "#4a3426",
+   "accent": "#b86b3f",
+   "accent2": "#8f9d7a",
+   "font_display": "Fraunces",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "paper"
+   ],
+   "kind": "light",
+   "ph_radius": "4.2cqw"
+  },
+  {
+   "id": "autumn-spice",
+   "name": "Outono Spice",
+   "cats": [
+    "sazonal",
+    "estilo de vida",
+    "comida"
+   ],
+   "bg": "#3a1f12",
+   "bg2": "#6b2f14",
+   "fg": "#fff1dc",
+   "accent": "#f2a541",
+   "accent2": "#d1481f",
+   "font_display": "DM Serif Display",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "grain",
+    "blobs"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "165deg",
+   "ph_radius": "3cqw"
+  },
+  {
+   "id": "summer-recap",
+   "name": "Summer Recap",
+   "cats": [
+    "sazonal",
+    "viagem",
+    "festa"
+   ],
+   "bg": "#ffe66d",
+   "bg2": "#ff9f1c",
+   "fg": "#1b1b1b",
+   "accent": "#ff3d5a",
+   "accent2": "#1b1b1b",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.03em",
+   "dlh": 0.98,
+   "title_fx": "shadow",
+   "decor": [
+    "waves",
+    "sparkle"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": "4cqw",
+   "ph_border": ".8cqw solid #fff"
+  },
+  {
+   "id": "sunset-gradient",
+   "name": "Sunset Gradient",
+   "cats": [
+    "viagem",
+    "amor",
+    "estilo de vida"
+   ],
+   "bg": "#2d1b69",
+   "bg2": "#ff5e78",
+   "fg": "#ffffff",
+   "accent": "#ffd166",
+   "accent2": "#ffe5d0",
+   "font_display": "Poppins",
+   "font_body": "Poppins",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.03em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "grain",
+    "glow"
+   ],
+   "kind": "dark",
+   "bg_kind": "sunset",
+   "angle": "180deg",
+   "ph_radius": "4cqw"
+  },
+  {
+   "id": "boho-terracotta",
+   "name": "Boho Terracota",
+   "cats": [
+    "estilo de vida",
+    "beleza",
+    "amor"
+   ],
+   "bg": "#e8d5c0",
+   "bg2": "#d9bea0",
+   "fg": "#4a2c1a",
+   "accent": "#c1633f",
+   "accent2": "#7a8450",
+   "font_display": "Cormorant Garamond",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "noise-soft",
+    "frame"
+   ],
+   "kind": "light",
+   "bg_kind": "radial",
+   "ph_radius": "3cqw"
+  },
+  {
+   "id": "sage-botanical",
+   "name": "Sage Botânico",
+   "cats": [
+    "estilo de vida",
+    "saúde",
+    "beleza"
+   ],
+   "bg": "#dfe5d6",
+   "bg2": "#c9d4bc",
+   "fg": "#25331f",
+   "accent": "#5f7a4c",
+   "accent2": "#d8a47f",
+   "font_display": "Fraunces",
+   "font_body": "DM Sans",
+   "dw": 600,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "paper"
+   ],
+   "kind": "light",
+   "bg_kind": "radial",
+   "ph_radius": "3.4cqw"
+  },
+  {
+   "id": "ocean-breeze",
+   "name": "Ocean Breeze",
+   "cats": [
+    "viagem",
+    "estilo de vida",
+    "saúde"
+   ],
+   "bg": "#e6f6ff",
+   "bg2": "#b7e3ff",
+   "fg": "#052a45",
+   "accent": "#0a84d6",
+   "accent2": "#ffb703",
+   "font_display": "Poppins",
+   "font_body": "Poppins",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.03em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "waves"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "175deg",
+   "ph_radius": "4.4cqw"
+  },
+  {
+   "id": "tropical",
+   "name": "Tropical",
+   "cats": [
+    "viagem",
+    "festa",
+    "comida"
+   ],
+   "bg": "#0b3d2e",
+   "bg2": "#0f6b4b",
+   "fg": "#fff7e0",
+   "accent": "#ffb703",
+   "accent2": "#ff4d6d",
+   "font_display": "Bebas Neue",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".03em",
+   "dlh": 0.95,
+   "title_fx": "plain",
+   "decor": [
+    "blobs",
+    "sparkle"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "2.4cqw",
+   "ph_border": ".6cqw solid #ffb703"
+  },
+  {
+   "id": "pastel-candy",
+   "name": "Pastel Candy",
+   "cats": [
+    "kids",
+    "festa",
+    "beleza"
+   ],
+   "bg": "#fff0f6",
+   "bg2": "#e6f3ff",
+   "fg": "#4a3b66",
+   "accent": "#ff8fb1",
+   "accent2": "#8ecae6",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "dots",
+    "confetti"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "5cqw",
+   "ph_border": ".8cqw solid #fff"
+  },
+  {
+   "id": "lavender-dream",
+   "name": "Lavender Dream",
+   "cats": [
+    "beleza",
+    "amor",
+    "estilo de vida"
+   ],
+   "bg": "#efe6ff",
+   "bg2": "#d9c9ff",
+   "fg": "#2d1b5e",
+   "accent": "#7b4dff",
+   "accent2": "#ff9ecd",
+   "font_display": "Instrument Serif",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "blobs",
+    "grain"
+   ],
+   "kind": "light",
+   "bg_kind": "mesh",
+   "ph_radius": "4.4cqw"
+  },
+  {
+   "id": "rose-romance",
+   "name": "Rose Romance",
+   "cats": [
+    "amor",
+    "beleza",
+    "sazonal"
+   ],
+   "bg": "#fde6ea",
+   "bg2": "#f9c6d0",
+   "fg": "#5a1a2b",
+   "accent": "#d6336c",
+   "accent2": "#7a1c3b",
+   "font_display": "Playfair Display",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "sparkle"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": "4cqw"
+  },
+  {
+   "id": "corporate-blue",
+   "name": "Corporate Blue",
+   "cats": [
+    "negócios",
+    "marketing"
+   ],
+   "bg": "#0b2a5b",
+   "bg2": "#123c85",
+   "fg": "#ffffff",
+   "accent": "#29b6f6",
+   "accent2": "#ffb703",
+   "font_display": "Poppins",
+   "font_body": "Poppins",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.04,
+   "title_fx": "plain",
+   "decor": [
+    "diag",
+    "dots"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "155deg",
+   "ph_radius": "2cqw"
+  },
+  {
+   "id": "startup-gradient",
+   "name": "Startup Gradient",
+   "cats": [
+    "marketing",
+    "tech",
+    "negócios"
+   ],
+   "bg": "#1a1040",
+   "bg2": "#5b2bff",
+   "fg": "#ffffff",
+   "accent": "#00e0ff",
+   "accent2": "#ff6ac1",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.03em",
+   "dlh": 1.0,
+   "title_fx": "gradient",
+   "decor": [
+    "blobs",
+    "grid"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "150deg",
+   "ph_radius": "3.4cqw"
+  },
+  {
+   "id": "luxury-gold",
+   "name": "Luxo Dourado",
+   "cats": [
+    "negócios",
+    "moda",
+    "beleza"
+   ],
+   "bg": "#0c0a08",
+   "bg2": "#1c1710",
+   "fg": "#f5ecd7",
+   "accent": "#d4af37",
+   "accent2": "#8c6d1f",
+   "font_display": "Cormorant Garamond",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "uppercase",
+   "dls": ".06em",
+   "dlh": 1.05,
+   "title_fx": "plain",
+   "decor": [
+    "frame-double",
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "0",
+   "ph_border": ".4cqw solid #d4af37",
+   "btn_radius": "0"
+  },
+  {
+   "id": "dark-premium",
+   "name": "Dark Premium",
+   "cats": [
+    "negócios",
+    "tech",
+    "marketing"
+   ],
+   "bg": "#0f1115",
+   "bg2": "#1a1e26",
+   "fg": "#f4f5f7",
+   "accent": "#6ee7b7",
+   "accent2": "#60a5fa",
+   "font_display": "Space Grotesk",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.03em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "grain",
+    "glow"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "3cqw",
+   "ph_border": ".25cqw solid rgba(255,255,255,.18)"
+  },
+  {
+   "id": "real-estate-navy",
+   "name": "Imobiliário Navy",
+   "cats": [
+    "imobiliário",
+    "negócios",
+    "luxo"
+   ],
+   "bg": "#0e1f3a",
+   "bg2": "#1b3358",
+   "fg": "#f6f1e7",
+   "accent": "#c9a86a",
+   "accent2": "#f6f1e7",
+   "font_display": "DM Serif Display",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "frame",
+    "noise-soft"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": ".8cqw",
+   "btn_radius": ".6cqw"
+  },
+  {
+   "id": "health-green",
+   "name": "Saúde Verde",
+   "cats": [
+    "saúde",
+    "negócios",
+    "estilo de vida"
+   ],
+   "bg": "#f0f7f1",
+   "bg2": "#d7ecd9",
+   "fg": "#11361f",
+   "accent": "#1f9d55",
+   "accent2": "#f2b134",
+   "font_display": "Poppins",
+   "font_body": "Poppins",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "blobs"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "165deg",
+   "ph_radius": "4.4cqw"
+  },
+  {
+   "id": "beauty-nude",
+   "name": "Beauty Nude",
+   "cats": [
+    "beleza",
+    "moda",
+    "estilo de vida"
+   ],
+   "bg": "#f2e4da",
+   "bg2": "#e6cdbd",
+   "fg": "#3a2820",
+   "accent": "#b0765a",
+   "accent2": "#3a2820",
+   "font_display": "Cormorant Garamond",
+   "font_body": "DM Sans",
+   "dw": 600,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 0.98,
+   "title_fx": "plain",
+   "decor": [
+    "noise-soft"
+   ],
+   "kind": "light",
+   "bg_kind": "radial",
+   "ph_radius": "3cqw"
+  },
+  {
+   "id": "fitness-impact",
+   "name": "Fitness Impact",
+   "cats": [
+    "esporte",
+    "motivação",
+    "tendência"
+   ],
+   "bg": "#0a0a0a",
+   "bg2": "#191919",
+   "fg": "#ffffff",
+   "accent": "#c6ff00",
+   "accent2": "#ff3d00",
+   "font_display": "Anton",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".01em",
+   "dlh": 0.96,
+   "title_fx": "plain",
+   "decor": [
+    "diag",
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "1cqw",
+   "btn_radius": "1cqw",
+   "on_accent": "#0a0a0a"
+  },
+  {
+   "id": "food-tasty",
+   "name": "Food Tasty",
+   "cats": [
+    "comida",
+    "promo",
+    "estilo de vida"
+   ],
+   "bg": "#fff3e0",
+   "bg2": "#ffd9a8",
+   "fg": "#3b1d0c",
+   "accent": "#e63946",
+   "accent2": "#f4a261",
+   "font_display": "Fraunces",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.025em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "dots",
+    "paper"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": "5cqw"
+  },
+  {
+   "id": "kids-fun",
+   "name": "Kids Fun",
+   "cats": [
+    "kids",
+    "festa"
+   ],
+   "bg": "#fff6bf",
+   "bg2": "#bde0fe",
+   "fg": "#2b2d42",
+   "accent": "#ff6b6b",
+   "accent2": "#4d96ff",
+   "font_display": "Righteous",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": ".01em",
+   "dlh": 1.0,
+   "title_fx": "shadow",
+   "decor": [
+    "confetti",
+    "dots"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "6cqw",
+   "ph_border": ".9cqw solid #fff"
+  },
+  {
+   "id": "halloween",
+   "name": "Halloween",
+   "cats": [
+    "sazonal",
+    "festa"
+   ],
+   "bg": "#130a1f",
+   "bg2": "#2a0f3d",
+   "fg": "#ffeedd",
+   "accent": "#ff7a00",
+   "accent2": "#7cff6b",
+   "font_display": "Permanent Marker",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "0",
+   "dlh": 1.05,
+   "title_fx": "plain",
+   "decor": [
+    "stars",
+    "vignette",
+    "grain"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "2cqw",
+   "ph_border": ".6cqw solid #ff7a00"
+  },
+  {
+   "id": "natal",
+   "name": "Natal",
+   "cats": [
+    "sazonal",
+    "festa",
+    "amor"
+   ],
+   "bg": "#0f4d2e",
+   "bg2": "#0b3a22",
+   "fg": "#ffffff",
+   "accent": "#e63946",
+   "accent2": "#f4d35e",
+   "font_display": "DM Serif Display",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": "-.01em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "sparkle",
+    "confetti"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": "3cqw",
+   "ph_border": ".8cqw solid #fff"
+  },
+  {
+   "id": "black-friday",
+   "name": "Black Friday",
+   "cats": [
+    "sazonal",
+    "promo",
+    "marketing"
+   ],
+   "bg": "#0a0a0a",
+   "bg2": "#1c1c1c",
+   "fg": "#ffffff",
+   "accent": "#ffd400",
+   "accent2": "#ff2d2d",
+   "font_display": "Anton",
+   "font_body": "Space Grotesk",
+   "dw": 400,
+   "dcase": "uppercase",
+   "dls": ".01em",
+   "dlh": 0.94,
+   "title_fx": "shadow",
+   "decor": [
+    "diag",
+    "halftone"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "ph_radius": "0",
+   "ph_border": ".7cqw solid #ffd400",
+   "btn_radius": "0",
+   "on_accent": "#0a0a0a"
+  },
+  {
+   "id": "carnaval",
+   "name": "Carnaval",
+   "cats": [
+    "sazonal",
+    "festa"
+   ],
+   "bg": "#2d0a4e",
+   "bg2": "#ff2d95",
+   "fg": "#ffffff",
+   "accent": "#ffd400",
+   "accent2": "#00e5a8",
+   "font_display": "Righteous",
+   "font_body": "DM Sans",
+   "dw": 400,
+   "dcase": "none",
+   "dls": ".02em",
+   "dlh": 1.02,
+   "title_fx": "shadow",
+   "decor": [
+    "confetti",
+    "blobs",
+    "sparkle"
+   ],
+   "kind": "dark",
+   "bg_kind": "linear",
+   "angle": "160deg",
+   "ph_radius": "4cqw",
+   "ph_border": ".8cqw solid #ffd400"
+  },
+  {
+   "id": "festa-junina",
+   "name": "Festa Junina",
+   "cats": [
+    "sazonal",
+    "festa",
+    "comida"
+   ],
+   "bg": "#fff0c9",
+   "bg2": "#ffd98a",
+   "fg": "#5a1a0e",
+   "accent": "#d62828",
+   "accent2": "#2a9d8f",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "checker",
+    "confetti",
+    "dots"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": "2.4cqw",
+   "ph_border": ".8cqw solid #5a1a0e",
+   "ph_shadow": "1.2cqw 1.2cqw 0 #d62828"
+  },
+  {
+   "id": "dia-das-maes",
+   "name": "Dia das Mães",
+   "cats": [
+    "sazonal",
+    "amor",
+    "beleza"
+   ],
+   "bg": "#fde8ee",
+   "bg2": "#ffd1de",
+   "fg": "#6b1a3a",
+   "accent": "#e0457b",
+   "accent2": "#ffb703",
+   "font_display": "Playfair Display",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "sparkle",
+    "blobs"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "170deg",
+   "ph_radius": "4.4cqw"
+  },
+  {
+   "id": "ano-novo",
+   "name": "Ano Novo",
+   "cats": [
+    "sazonal",
+    "festa"
+   ],
+   "bg": "#0b0b1e",
+   "bg2": "#1a1a3f",
+   "fg": "#ffffff",
+   "accent": "#f5d36b",
+   "accent2": "#9fb4ff",
+   "font_display": "Cormorant Garamond",
+   "font_body": "DM Sans",
+   "dw": 700,
+   "dcase": "uppercase",
+   "dls": ".05em",
+   "dlh": 1.0,
+   "title_fx": "plain",
+   "decor": [
+    "stars",
+    "confetti",
+    "sparkle"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "ph_radius": ".6cqw",
+   "ph_border": ".4cqw solid #f5d36b"
+  },
+  {
+   "id": "pascoa",
+   "name": "Páscoa",
+   "cats": [
+    "sazonal",
+    "kids",
+    "comida"
+   ],
+   "bg": "#f6eaff",
+   "bg2": "#d9f7e8",
+   "fg": "#4b2c6b",
+   "accent": "#ff8c42",
+   "accent2": "#7bd3a8",
+   "font_display": "Fraunces",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.02em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "dots",
+    "confetti"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "165deg",
+   "ph_radius": "5cqw"
+  },
+  {
+   "id": "brand-light",
+   "name": "Marca · Claro",
+   "cats": [
+    "marca"
+   ],
+   "bg": "#ffffff",
+   "bg2": "#f3f4f6",
+   "fg": "#111111",
+   "accent": "#3b5bfd",
+   "accent2": "#111111",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.025em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "180deg",
+   "brand": true,
+   "ph_radius": "3cqw"
+  },
+  {
+   "id": "brand-dark",
+   "name": "Marca · Escuro",
+   "cats": [
+    "marca"
+   ],
+   "bg": "#0d0f14",
+   "bg2": "#151923",
+   "fg": "#ffffff",
+   "accent": "#3b5bfd",
+   "accent2": "#ff7a59",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.025em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "grain",
+    "glow"
+   ],
+   "kind": "dark",
+   "bg_kind": "radial",
+   "brand": true,
+   "ph_radius": "3cqw"
+  },
+  {
+   "id": "brand-vivid",
+   "name": "Marca · Vibrante",
+   "cats": [
+    "marca"
+   ],
+   "bg": "#3b5bfd",
+   "bg2": "#1a2a9c",
+   "fg": "#ffffff",
+   "accent": "#ffd23f",
+   "accent2": "#ff7a59",
+   "font_display": "Bricolage Grotesque",
+   "font_body": "DM Sans",
+   "dw": 800,
+   "dcase": "none",
+   "dls": "-.025em",
+   "dlh": 1.02,
+   "title_fx": "plain",
+   "decor": [
+    "blobs",
+    "grain"
+   ],
+   "kind": "light",
+   "bg_kind": "linear",
+   "angle": "155deg",
+   "brand": true,
+   "ph_radius": "3.4cqw",
+   "on_accent": "#111111"
+  }
+ ],
+ "carousels": [
+  {
+   "id": "dicas",
+   "name": "Dicas (1 por slide)",
+   "desc": "Capa + N dicas com número gigante + chamada final",
+   "cover": "full-bleed-bottom",
+   "body": [
+    "tip-single"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "dots-path",
+   "cats": [
+    "educativo",
+    "marketing"
+   ],
+   "sample": {
+    "kicker": "Guia rápido",
+    "title": "5 dicas para um *post* que converte",
+    "subtitle": "Arraste e salve para depois",
+    "slides": [
+     {
+      "title": "Comece pelo *objetivo*",
+      "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post?"
+     },
+     {
+      "title": "A capa *decide* tudo",
+      "body": "Você tem 3 segundos. Use contraste, uma frase curta e muito respiro."
+     },
+     {
+      "title": "Um post, *uma* ideia",
+      "body": "Carrossel bom ensina uma coisa só — e ensina bem."
+     },
+     {
+      "title": "Fale como *gente*",
+      "body": "Troque o jargão por exemplos do dia a dia do seu cliente."
+     },
+     {
+      "title": "Termine com *chamada*",
+      "body": "Peça uma ação: salvar, comentar, enviar ou clicar no link."
+     }
+    ]
+   }
+  },
+  {
+   "id": "passo-a-passo",
+   "name": "Passo a passo",
+   "desc": "Capa com painel + etapas numeradas",
+   "cover": "split-vertical",
+   "body": [
+    "tip-single"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "dots-path",
+   "cats": [
+    "educativo",
+    "processo"
+   ],
+   "sample": {
+    "kicker": "Tutorial",
+    "title": "Como montar seu *funil* em 4 passos",
+    "subtitle": "Do zero ao primeiro lead",
+    "slides": [
+     {
+      "title": "Comece pelo *objetivo*",
+      "body": "Antes de abrir o editor, responda: o que a pessoa deve fazer depois de ver este post?"
+     },
+     {
+      "title": "A capa *decide* tudo",
+      "body": "Você tem 3 segundos. Use contraste, uma frase curta e muito respiro."
+     },
+     {
+      "title": "Um post, *uma* ideia",
+      "body": "Carrossel bom ensina uma coisa só — e ensina bem."
+     },
+     {
+      "title": "Fale como *gente*",
+      "body": "Troque o jargão por exemplos do dia a dia do seu cliente."
+     }
+    ]
+   }
+  },
+  {
+   "id": "lista-completa",
+   "name": "Listas e checklists",
+   "desc": "Capa tipográfica + listas numeradas/checklists",
+   "cover": "typographic",
+   "body": [
+    "tips-list",
+    "checklist"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "ribbon",
+   "cats": [
+    "educativo",
+    "negócios"
+   ],
+   "sample": {
+    "kicker": "Checklist",
+    "title": "Tudo que você precisa para *lançar*",
+    "subtitle": "Arraste →",
+    "slides": [
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "mitos-verdades",
+   "name": "Mitos e verdades",
+   "desc": "Cada slide derruba um mito",
+   "cover": "typographic",
+   "body": [
+    "myth-fact"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "ribbon",
+   "cats": [
+    "educativo",
+    "marketing"
+   ],
+   "sample": {
+    "kicker": "Você acredita nisso?",
+    "title": "3 mitos do *marketing* digital",
+    "subtitle": "Arraste para ver a verdade",
+    "slides": [
+     {
+      "title": "Postar todo dia é obrigatório.",
+      "body": "O que pesa é consistência e qualidade. Três posts bons por semana vencem sete improvisados."
+     },
+     {
+      "title": "Hashtag resolve o alcance.",
+      "body": "Elas ajudam a classificar o conteúdo, mas retenção e salvamentos pesam mais."
+     },
+     {
+      "title": "Reels é só para dançar.",
+      "body": "Bastidor, dica rápida e prova social funcionam muito melhor."
+     }
+    ]
+   }
+  },
+  {
+   "id": "antes-depois",
+   "name": "Antes e depois",
+   "desc": "Transformações lado a lado",
+   "cover": "full-bleed-center",
+   "body": [
+    "before-after"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "big-circle",
+   "cats": [
+    "beleza",
+    "portfólio"
+   ],
+   "sample": {
+    "kicker": "Resultados reais",
+    "title": "Transformações que *falam* por si",
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "lancamento",
+   "name": "Lançamento / produto",
+   "desc": "Anúncio + detalhes + preço",
+   "cover": "announcement",
+   "body": [
+    "framed-photo",
+    "collage-3-mosaic",
+    "big-number",
+    "sticker-pop"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "photo-strip",
+   "cats": [
+    "promo",
+    "produto"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "portfolio",
+   "name": "Portfólio / cases",
+   "desc": "Capa de revista + projetos",
+   "cover": "magazine-cover",
+   "body": [
+    "framed-photo",
+    "split-vertical",
+    "collage-2",
+    "arch-window"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "photo-strip",
+   "cats": [
+    "portfólio",
+    "negócios"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "depoimentos",
+   "name": "Depoimentos",
+   "desc": "Prova social em sequência",
+   "cover": "typographic",
+   "body": [
+    "testimonial"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "wave-line",
+   "cats": [
+    "prova social"
+   ],
+   "sample": {
+    "kicker": "Quem usa recomenda",
+    "title": "O que dizem nossos *clientes*",
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "manifesto",
+   "name": "Manifesto / storytelling",
+   "desc": "Frases fortes e citações",
+   "cover": "typographic",
+   "body": [
+    "typographic",
+    "quote"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "wave-line",
+   "cats": [
+    "manifesto",
+    "motivação"
+   ],
+   "sample": {
+    "kicker": "Nosso jeito",
+    "title": "Acreditamos em *menos* ruído",
+    "slides": [
+     {
+      "title": "Marca forte é *consistência*.",
+      "kicker": "Princípio 1"
+     },
+     {
+      "quote": "Simples é o *novo* sofisticado.",
+      "author": "Equipe Criative",
+      "role": "Direção criativa"
+     },
+     {
+      "title": "Faça o *básico* extraordinariamente bem.",
+      "kicker": "Princípio 3"
+     }
+    ]
+   }
+  },
+  {
+   "id": "recap-memorias",
+   "name": "Recap / memórias",
+   "desc": "Álbum de fotos em vários formatos",
+   "cover": "polaroid",
+   "body": [
+    "collage-4-grid",
+    "polaroid-stack",
+    "film-strip",
+    "collage-5-scrapbook",
+    "grid-9"
+   ],
+   "end": "quote",
+   "default_bridge": "photo-strip",
+   "cats": [
+    "memórias",
+    "viagem"
+   ],
+   "sample": {
+    "kicker": "Memórias",
+    "title": "O ano em *fotos*",
+    "caption": "2026",
+    "slides": [
+     {},
+     {},
+     {},
+     {}
+    ],
+    "end": {
+     "quote": "Que venha *2027*.",
+     "author": "Com carinho",
+     "role": ""
+    }
+   }
+  },
+  {
+   "id": "cardapio",
+   "name": "Cardápio / tabela de preços",
+   "desc": "Capa + páginas de menu",
+   "cover": "full-bleed-center",
+   "body": [
+    "menu-price"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "wave-line",
+   "cats": [
+    "comida",
+    "promo"
+   ],
+   "sample": {
+    "kicker": "Cardápio",
+    "title": "Sabores da *casa*",
+    "slides": [
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "evento",
+   "name": "Evento",
+   "desc": "Convite + data + programação",
+   "cover": "ticket",
+   "body": [
+    "countdown",
+    "tips-list",
+    "step-process"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "ribbon",
+   "cats": [
+    "evento",
+    "festa"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "numeros",
+   "name": "Números e dados",
+   "desc": "Estatísticas grandes em sequência",
+   "cover": "typographic",
+   "body": [
+    "big-number"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "dots-path",
+   "cats": [
+    "dados",
+    "negócios"
+   ],
+   "sample": {
+    "kicker": "Em números",
+    "title": "Nossa *história* em 3 dados",
+    "slides": [
+     {
+      "number": "12",
+      "label": "anos de estrada",
+      "title": "Experiência que *conta*"
+     },
+     {
+      "number": "240+",
+      "label": "projetos entregues",
+      "title": "Resultados *comprovados*"
+     },
+     {
+      "number": "4.9",
+      "label": "nota média dos clientes",
+      "title": "Satisfação *real*"
+     }
+    ]
+   }
+  },
+  {
+   "id": "imobiliario",
+   "name": "Imobiliário",
+   "desc": "Imóvel, galeria e diferenciais",
+   "cover": "property-card",
+   "body": [
+    "framed-photo",
+    "collage-3-mosaic",
+    "tips-list"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "photo-strip",
+   "cats": [
+    "imobiliário",
+    "promo"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "servicos",
+   "name": "Serviços da empresa",
+   "desc": "Quem somos, o que fazemos e como",
+   "cover": "magazine-cover",
+   "body": [
+    "service-grid",
+    "step-process",
+    "big-number"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "dots-path",
+   "cats": [
+    "negócios",
+    "institucional"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "viagem",
+   "name": "Viagem",
+   "desc": "Diário visual de viagem",
+   "cover": "full-bleed-bottom",
+   "body": [
+    "polaroid",
+    "film-strip",
+    "collage-5-scrapbook",
+    "circle-orbit"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "photo-strip",
+   "cats": [
+    "viagem",
+    "memórias"
+   ],
+   "sample": {
+    "kicker": "Diário de bordo",
+    "title": "Cinco dias em *Pipa*",
+    "slides": [
+     {},
+     {},
+     {},
+     {}
+    ]
+   }
+  },
+  {
+   "id": "inspiracao",
+   "name": "Inspiração / moodboard",
+   "desc": "Referências visuais e estilo",
+   "cover": "split-diagonal",
+   "body": [
+    "staggered-columns",
+    "arch-window",
+    "contact-sheet"
+   ],
+   "end": "cta-follow",
+   "default_bridge": "wave-line",
+   "cats": [
+    "inspiração",
+    "estilo de vida"
+   ],
+   "sample": {
+    "slides": [
+     {},
+     {},
+     {}
+    ]
+   }
+  }
+ ],
+ "reels": [
+  {
+   "id": "promo-4",
+   "name": "Promo em 4 cenas",
+   "desc": "Anúncio → galeria → número → chamada",
+   "scenes": [
+    {
+     "layout": "announcement",
+     "dur": 3.0
+    },
+    {
+     "layout": "collage-3-mosaic",
+     "dur": 3.0
+    },
+    {
+     "layout": "big-number",
+     "dur": 2.6
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.6
+    }
+   ],
+   "motion": "pop",
+   "transition": "smooth",
+   "cats": [
+    "promo",
+    "marketing"
+   ]
+  },
+  {
+   "id": "lancamento",
+   "name": "Lançamento de produto",
+   "desc": "Impacto, preço e chamada",
+   "scenes": [
+    {
+     "layout": "full-bleed-center",
+     "dur": 2.4
+    },
+    {
+     "layout": "sticker-pop",
+     "dur": 3.2
+    },
+    {
+     "layout": "big-number",
+     "dur": 2.4
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "words-pop",
+   "transition": "slideleft",
+   "cats": [
+    "promo",
+    "produto"
+   ]
+  },
+  {
+   "id": "recap-memorias",
+   "name": "Recap / memórias",
+   "desc": "Polaroids, colagens e filme",
+   "scenes": [
+    {
+     "layout": "polaroid",
+     "dur": 2.4
+    },
+    {
+     "layout": "collage-4-grid",
+     "dur": 2.8
+    },
+    {
+     "layout": "polaroid-stack",
+     "dur": 3.0
+    },
+    {
+     "layout": "film-strip",
+     "dur": 2.8
+    },
+    {
+     "layout": "quote",
+     "dur": 2.6
+    }
+   ],
+   "motion": "blur-in",
+   "transition": "fade",
+   "cats": [
+    "memórias",
+    "viagem"
+   ]
+  },
+  {
+   "id": "dicas",
+   "name": "Dicas rápidas",
+   "desc": "Gancho + 3 dicas + chamada",
+   "scenes": [
+    {
+     "layout": "typographic",
+     "dur": 2.4
+    },
+    {
+     "layout": "tip-single",
+     "dur": 3.0
+    },
+    {
+     "layout": "tip-single",
+     "dur": 3.0
+    },
+    {
+     "layout": "tip-single",
+     "dur": 3.0
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "words-rise",
+   "transition": "smooth",
+   "cats": [
+    "educativo",
+    "marketing"
+   ]
+  },
+  {
+   "id": "evento",
+   "name": "Convite de evento",
+   "desc": "Ingresso, data e chamada",
+   "scenes": [
+    {
+     "layout": "ticket",
+     "dur": 3.2
+    },
+    {
+     "layout": "countdown",
+     "dur": 3.0
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "drop",
+   "transition": "circleopen",
+   "cats": [
+    "evento",
+    "festa"
+   ]
+  },
+  {
+   "id": "portfolio",
+   "name": "Portfólio",
+   "desc": "Capa, projetos e chamada",
+   "scenes": [
+    {
+     "layout": "magazine-cover",
+     "dur": 2.6
+    },
+    {
+     "layout": "framed-photo",
+     "dur": 2.6
+    },
+    {
+     "layout": "split-vertical",
+     "dur": 2.6
+    },
+    {
+     "layout": "collage-2",
+     "dur": 2.6
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "wipe",
+   "transition": "smooth",
+   "cats": [
+    "portfólio",
+    "negócios"
+   ]
+  },
+  {
+   "id": "antes-depois",
+   "name": "Antes e depois",
+   "desc": "Gancho + transformação",
+   "scenes": [
+    {
+     "layout": "typographic",
+     "dur": 2.2
+    },
+    {
+     "layout": "before-after",
+     "dur": 3.6
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "zoom-in",
+   "transition": "wipeleft",
+   "cats": [
+    "beleza",
+    "portfólio"
+   ]
+  },
+  {
+   "id": "depoimentos",
+   "name": "Prova social",
+   "desc": "Depoimentos em sequência",
+   "scenes": [
+    {
+     "layout": "typographic",
+     "dur": 2.2
+    },
+    {
+     "layout": "testimonial",
+     "dur": 3.4
+    },
+    {
+     "layout": "testimonial",
+     "dur": 3.4
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "fade-up",
+   "transition": "fade",
+   "cats": [
+    "prova social"
+   ]
+  },
+  {
+   "id": "imovel-tour",
+   "name": "Imóvel · tour rápido",
+   "desc": "Ficha, galeria e diferenciais",
+   "scenes": [
+    {
+     "layout": "property-card",
+     "dur": 3.0
+    },
+    {
+     "layout": "collage-3-mosaic",
+     "dur": 3.0
+    },
+    {
+     "layout": "tips-list",
+     "dur": 3.2
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "slide-left",
+   "transition": "smoothleft",
+   "cats": [
+    "imobiliário",
+    "promo"
+   ]
+  },
+  {
+   "id": "cardapio",
+   "name": "Cardápio animado",
+   "desc": "Capa, menu e chamada",
+   "scenes": [
+    {
+     "layout": "full-bleed-center",
+     "dur": 2.4
+    },
+    {
+     "layout": "menu-price",
+     "dur": 3.8
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "tilt-up",
+   "transition": "slideup",
+   "cats": [
+    "comida",
+    "promo"
+   ]
+  },
+  {
+   "id": "viagem",
+   "name": "Diário de viagem",
+   "desc": "Capa, scrapbook e filme",
+   "scenes": [
+    {
+     "layout": "full-bleed-bottom",
+     "dur": 2.4
+    },
+    {
+     "layout": "collage-5-scrapbook",
+     "dur": 3.2
+    },
+    {
+     "layout": "film-strip",
+     "dur": 2.8
+    },
+    {
+     "layout": "polaroid",
+     "dur": 2.4
+    }
+   ],
+   "motion": "swing",
+   "transition": "smooth",
+   "cats": [
+    "viagem",
+    "memórias"
+   ]
+  },
+  {
+   "id": "citacao",
+   "name": "Citação em movimento",
+   "desc": "Frase forte + chamada",
+   "scenes": [
+    {
+     "layout": "quote",
+     "dur": 4.0
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.2
+    }
+   ],
+   "motion": "words-rise",
+   "transition": "fade",
+   "cats": [
+    "motivação"
+   ]
+  },
+  {
+   "id": "enquete",
+   "name": "Story de enquete",
+   "desc": "Pergunta interativa",
+   "scenes": [
+    {
+     "layout": "question-poll",
+     "dur": 5.0
+    }
+   ],
+   "motion": "elastic",
+   "transition": "fade",
+   "cats": [
+    "story",
+    "interação"
+   ]
+  },
+  {
+   "id": "servicos",
+   "name": "Serviços em movimento",
+   "desc": "Apresentação rápida da empresa",
+   "scenes": [
+    {
+     "layout": "magazine-cover",
+     "dur": 2.6
+    },
+    {
+     "layout": "service-grid",
+     "dur": 3.4
+    },
+    {
+     "layout": "step-process",
+     "dur": 3.4
+    },
+    {
+     "layout": "cta-follow",
+     "dur": 2.4
+    }
+   ],
+   "motion": "glitch",
+   "transition": "smooth",
+   "cats": [
+    "negócios",
+    "institucional"
+   ]
+  }
+ ],
+ "motions": [
+  {
+   "id": "fade-up",
+   "name": "Subir suave",
+   "dur": 0.7,
+   "stagger": 0.14,
+   "delay": 0.15,
+   "words": false,
+   "level": "basico"
+  },
+  {
+   "id": "pop",
+   "name": "Pop com salto",
+   "dur": 0.6,
+   "stagger": 0.12,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "slide-left",
+   "name": "Entrar da direita",
+   "dur": 0.7,
+   "stagger": 0.12,
+   "delay": 0.12,
+   "words": false,
+   "level": "basico"
+  },
+  {
+   "id": "slide-right",
+   "name": "Entrar da esquerda",
+   "dur": 0.7,
+   "stagger": 0.12,
+   "delay": 0.12,
+   "words": false,
+   "level": "basico"
+  },
+  {
+   "id": "blur-in",
+   "name": "Desfoque → nítido",
+   "dur": 0.8,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "zoom-in",
+   "name": "Zoom de entrada",
+   "dur": 0.7,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "basico"
+  },
+  {
+   "id": "wipe",
+   "name": "Revelar (cortina)",
+   "dur": 0.8,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "basico"
+  },
+  {
+   "id": "rotate-in",
+   "name": "Girar e entrar",
+   "dur": 0.75,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "flip",
+   "name": "Virar (flip)",
+   "dur": 0.8,
+   "stagger": 0.16,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "drop",
+   "name": "Queda com quique",
+   "dur": 0.9,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "avancado"
+  },
+  {
+   "id": "elastic",
+   "name": "Elástico",
+   "dur": 0.9,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "avancado"
+  },
+  {
+   "id": "glitch",
+   "name": "Glitch",
+   "dur": 0.7,
+   "stagger": 0.1,
+   "delay": 0.12,
+   "words": false,
+   "level": "avancado"
+  },
+  {
+   "id": "swing",
+   "name": "Balanço",
+   "dur": 0.9,
+   "stagger": 0.14,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "tilt-up",
+   "name": "Subir inclinado",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.12,
+   "words": false,
+   "level": "intermediario"
+  },
+  {
+   "id": "words-rise",
+   "name": "Palavras subindo (máscara)",
+   "dur": 0.75,
+   "stagger": 0.1,
+   "delay": 0.15,
+   "words": true,
+   "level": "basico"
+  },
+  {
+   "id": "typewriter",
+   "name": "Máquina de escrever",
+   "dur": 0.01,
+   "stagger": 0.11,
+   "delay": 0.2,
+   "words": true,
+   "level": "basico"
+  },
+  {
+   "id": "words-pop",
+   "name": "Palavras em pop",
+   "dur": 0.5,
+   "stagger": 0.09,
+   "delay": 0.15,
+   "words": true,
+   "level": "intermediario"
+  },
+  {
+   "id": "fade",
+   "name": "Fade simples",
+   "level": "basico",
+   "dur": 0.6,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Só opacidade: o mais discreto e seguro"
+  },
+  {
+   "id": "cut",
+   "name": "Corte seco",
+   "level": "basico",
+   "dur": 0.01,
+   "stagger": 0.18,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Aparece de uma vez, ritmo de edição rápida"
+  },
+  {
+   "id": "zoom-out",
+   "name": "Zoom de dentro pra fora",
+   "level": "basico",
+   "dur": 0.65,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Escala 60% → 100%"
+  },
+  {
+   "id": "drift",
+   "name": "Deriva suave",
+   "level": "basico",
+   "dur": 1.1,
+   "stagger": 0.16,
+   "delay": 0.15,
+   "words": false,
+   "desc": "Fade longo com leve blur e subida: elegante"
+  },
+  {
+   "id": "overshoot",
+   "name": "Sobe e acomoda",
+   "level": "basico",
+   "dur": 0.7,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Sobe passando um pouco do alvo (out-back)"
+  },
+  {
+   "id": "bar-grow",
+   "name": "Barra crescendo",
+   "level": "basico",
+   "dur": 0.7,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Escala horizontal a partir da esquerda"
+  },
+  {
+   "id": "mask-up",
+   "name": "Máscara subindo",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Revela de baixo pra cima (clip-path)"
+  },
+  {
+   "id": "mask-down",
+   "name": "Máscara descendo",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Revela de cima pra baixo"
+  },
+  {
+   "id": "curtain",
+   "name": "Cortina do centro",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Abre do centro para as bordas"
+  },
+  {
+   "id": "focus-pull",
+   "name": "Puxar foco",
+   "level": "intermediario",
+   "dur": 0.85,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Borrado → nítido, estilo cinema"
+  },
+  {
+   "id": "stamp",
+   "name": "Carimbo",
+   "level": "intermediario",
+   "dur": 0.55,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Escala 260% e crava; ótimo p/ preço e selo"
+  },
+  {
+   "id": "spin-in",
+   "name": "Girar entrando",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Rotação 200° com escala"
+  },
+  {
+   "id": "flip-y",
+   "name": "Virar no eixo Y",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Giro 3D horizontal"
+  },
+  {
+   "id": "skew-slide",
+   "name": "Deslizar inclinado",
+   "level": "intermediario",
+   "dur": 0.7,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Entra inclinado, estilo esportivo"
+  },
+  {
+   "id": "blur-slide",
+   "name": "Deslizar com blur",
+   "level": "intermediario",
+   "dur": 0.8,
+   "stagger": 0.12,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Entra pela esquerda desfocando"
+  },
+  {
+   "id": "tracking-in",
+   "name": "Espaçamento fechando",
+   "level": "avancado",
+   "dur": 1.0,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Letter-spacing 0.5em → normal nos títulos"
+  },
+  {
+   "id": "rubber",
+   "name": "Elástico (squash & stretch)",
+   "level": "avancado",
+   "dur": 0.9,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Esmaga e estica como borracha"
+  },
+  {
+   "id": "jelly",
+   "name": "Gelatina",
+   "level": "avancado",
+   "dur": 0.95,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Balanço de gelatina, divertido"
+  },
+  {
+   "id": "spring-in",
+   "name": "Mola física",
+   "level": "avancado",
+   "dur": 1.0,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Entrada com mola real (linear() easing)"
+  },
+  {
+   "id": "card-3d",
+   "name": "Cartão 3D",
+   "level": "avancado",
+   "dur": 0.9,
+   "stagger": 0.14,
+   "delay": 0.1,
+   "words": false,
+   "desc": "Perspectiva 3D inclinada assentando"
+  },
+  {
+   "id": "char-rise",
+   "name": "Letras subindo",
+   "level": "avancado",
+   "dur": 0.7,
+   "stagger": 0.03,
+   "delay": 0.1,
+   "words": true,
+   "desc": "Letra por letra com máscara",
+   "chars": true
+  },
+  {
+   "id": "char-fade",
+   "name": "Letras surgindo",
+   "level": "avancado",
+   "dur": 0.5,
+   "stagger": 0.03,
+   "delay": 0.1,
+   "words": true,
+   "desc": "Letra por letra com blur",
+   "chars": true
+  },
+  {
+   "id": "char-pop",
+   "name": "Letras saltando",
+   "level": "avancado",
+   "dur": 0.7,
+   "stagger": 0.035,
+   "delay": 0.1,
+   "words": true,
+   "desc": "Cada letra salta com mola",
+   "chars": true
+  },
+  {
+   "id": "char-type",
+   "name": "Máquina de escrever",
+   "level": "avancado",
+   "dur": 0.01,
+   "stagger": 0.05,
+   "delay": 0.1,
+   "words": true,
+   "desc": "Letra a letra, instantâneo",
+   "chars": true
+  }
+ ],
+ "bridges": [
+  {
+   "id": "ribbon",
+   "name": "Faixa contínua 'arraste'",
+   "desc": "Faixa inclinada com texto que atravessa todas as páginas"
+  },
+  {
+   "id": "wave-line",
+   "name": "Linha ondulada",
+   "desc": "Linha dupla ondulada ligando as páginas"
+  },
+  {
+   "id": "big-circle",
+   "name": "Círculos nas dobras",
+   "desc": "Círculos grandes cortados entre uma página e outra"
+  },
+  {
+   "id": "photo-strip",
+   "name": "Tira de fotos",
+   "desc": "Faixa de fotos inclinadas atravessando o carrossel"
+  },
+  {
+   "id": "arrow-path",
+   "name": "Seta tracejada",
+   "desc": "Seta curva que aponta para a próxima página"
+  },
+  {
+   "id": "dots-path",
+   "name": "Linha do tempo",
+   "desc": "Linha com marcadores em cada página (ótimo para passo a passo)"
+  }
+ ],
+ "transitions": [
+  "fade",
+  "fadeblack",
+  "fadewhite",
+  "dissolve",
+  "wipeleft",
+  "wiperight",
+  "wipeup",
+  "wipedown",
+  "slideleft",
+  "slideright",
+  "slideup",
+  "slidedown",
+  "smoothleft",
+  "smoothright",
+  "smoothup",
+  "smoothdown",
+  "circleopen",
+  "circleclose",
+  "circlecrop",
+  "rectcrop",
+  "vertopen",
+  "vertclose",
+  "horzopen",
+  "horzclose",
+  "radial",
+  "pixelize",
+  "diagtl",
+  "diagtr",
+  "diagbl",
+  "diagbr",
+  "hlslice",
+  "hrslice",
+  "vuslice",
+  "vdslice",
+  "squeezeh",
+  "squeezev",
+  "zoomin",
+  "distance",
+  "hblur"
+ ]
+}

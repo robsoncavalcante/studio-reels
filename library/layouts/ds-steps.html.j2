@@ -1,0 +1,22 @@
+<style>
+.L-ds-steps .pad{gap:5cqw;padding-top:17cqw}
+.L-ds-steps .t{font-size:9cqw;line-height:1.0;max-height:22cqh;flex:0 1 auto;min-height:0}
+.L-ds-steps .tl{display:flex;flex-direction:column;gap:0;flex:1 1 auto;min-height:0;margin-top:1cqw}
+.L-ds-steps .st{display:flex;gap:4cqw;position:relative;padding-bottom:4.4cqw;flex:1}
+.L-ds-steps .st:last-child{padding-bottom:0}
+.L-ds-steps .st:not(:last-child)::before{content:"";position:absolute;left:5.1cqw;top:11cqw;bottom:.6cqw;width:.35cqw;background:var(--line)}
+.L-ds-steps .dot{flex:none;width:10.4cqw;height:10.4cqw;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#FEF2F2}
+.L-ds-steps .dot svg{width:5.4cqw;height:5.4cqw}
+.L-ds-steps .sh{font-family:var(--font-display);font-size:5.2cqw;font-weight:500;letter-spacing:-.02em;line-height:1.1}
+.L-ds-steps .sp{font-size:3.5cqw;line-height:1.38;color:var(--muted);margin-top:.8cqw}
+.L-ds-steps .k,.L-ds-checklist .k{color:#FF6B73}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="tl">
+  {% for it in c['items'] %}
+    <div class="st"><div class="dot">{{ icon(it.icon or 'check') }}</div><div><div class="sh">{{ it.title }}</div><div class="sp">{{ it.text }}</div></div></div>
+  {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,32 @@
+[
+ {
+  "id": "ribbon",
+  "name": "Faixa contínua 'arraste'",
+  "desc": "Faixa inclinada com texto que atravessa todas as páginas"
+ },
+ {
+  "id": "wave-line",
+  "name": "Linha ondulada",
+  "desc": "Linha dupla ondulada ligando as páginas"
+ },
+ {
+  "id": "big-circle",
+  "name": "Círculos nas dobras",
+  "desc": "Círculos grandes cortados entre uma página e outra"
+ },
+ {
+  "id": "photo-strip",
+  "name": "Tira de fotos",
+  "desc": "Faixa de fotos inclinadas atravessando o carrossel"
+ },
+ {
+  "id": "arrow-path",
+  "name": "Seta tracejada",
+  "desc": "Seta curva que aponta para a próxima página"
+ },
+ {
+  "id": "dots-path",
+  "name": "Linha do tempo",
+  "desc": "Linha com marcadores em cada página (ótimo para passo a passo)"
+ }
+]

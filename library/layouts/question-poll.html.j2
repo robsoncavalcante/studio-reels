@@ -1,0 +1,22 @@
+<style>
+.L-question-poll .pad{justify-content:center;align-items:center;gap:3cqw}
+.L-question-poll .card{width:88cqw;background:#fff;border-radius:5cqw;overflow:hidden;box-shadow:0 2cqw 6cqw rgba(0,0,0,.4);color:#161616;--fg:#161616;--muted:rgba(22,22,22,.6)}
+.L-question-poll .hd{background:linear-gradient(90deg,var(--accent),var(--accent2));color:var(--on-accent);text-align:center;font-weight:900;letter-spacing:.14em;font-size:3cqw;padding:2.6cqw;text-transform:uppercase}
+.L-question-poll .bd{padding:6cqw 5cqw 5.4cqw;display:flex;flex-direction:column;gap:4.4cqw}
+.L-question-poll .q{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:8.2cqw;line-height:1.08;text-align:center;max-height:36cqh;flex:0 1 auto;min-height:0;text-transform:var(--dcase);color:#161616}
+.L-question-poll .q em{font-style:normal;color:var(--accent-text,var(--accent))}
+.L-question-poll .opts{display:grid;grid-template-columns:1fr 1fr;gap:3cqw}
+.L-question-poll .op{background:#f1f1f1;border-radius:99cqw;text-align:center;padding:3.6cqw 2cqw;font-weight:800;font-size:4.2cqw}
+.L-question-poll .op.on{background:var(--accent);color:var(--on-accent)}
+.L-question-poll .kk{color:#fff;text-align:center}
+</style>
+{{ photo(0,'flat bgph') }}<div class="scrim-all" style="background:rgba(0,0,0,.5)"></div>
+<div class="pad col ondark">
+  {% if c.kicker %}<div class="k kk" style="color:#fff">{{ c.kicker }}</div>{% endif %}
+  <div class="card">
+    <div class="hd">{{ c.label or 'Enquete' }}</div>
+    <div class="bd"><div class="q fit">{{ rich(c.title) }}</div>
+      <div class="opts"><div class="op on">{{ c.option_a or 'Sim' }}</div><div class="op">{{ c.option_b or 'Não' }}</div></div></div>
+  </div>
+  {% if c.subtitle %}<div class="s" style="color:#fff;text-align:center">{{ c.subtitle }}</div>{% endif %}
+</div>

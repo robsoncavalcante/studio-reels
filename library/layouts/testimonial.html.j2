@@ -1,0 +1,18 @@
+<style>
+.L-testimonial .pad{justify-content:center;align-items:center;gap:4cqw}
+.L-testimonial .card{width:100%;position:relative;padding:15cqw 6.4cqw 7cqw;margin-top:9cqw;display:flex;flex-direction:column;align-items:center;gap:3.4cqw;text-align:center}
+.L-testimonial .av{position:absolute;top:-12cqw;left:50%;width:24cqw;height:24cqw;margin-left:-12cqw;border-radius:50%!important;border:1.2cqw solid var(--accent)!important;z-index:2}
+.L-testimonial .qt{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:6.4cqw;line-height:1.2;max-height:40cqh;flex:0 1 auto;min-height:0;text-transform:var(--dcase);text-wrap:balance}
+.L-testimonial .qt em{font-style:normal;color:var(--accent-text,var(--accent))}
+.L-testimonial b{font-size:3.8cqw;font-weight:800}
+.L-testimonial small{font-size:2.8cqw;color:var(--muted);display:block;margin-top:.4cqw}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="card surface">
+    {{ photo(0,'av') }}
+    <div class="stars">{{ stars(c.rating or 5) }}</div>
+    <div class="qt fit">{{ rich(c.quote or c.title) }}</div>
+    <div><b>{{ c.author or '' }}</b><small>{{ c.role or '' }}</small></div>
+  </div>
+</div>

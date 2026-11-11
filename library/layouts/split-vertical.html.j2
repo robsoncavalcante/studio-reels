@@ -1,0 +1,15 @@
+<style>
+.L-split-vertical .top{position:absolute;left:0;right:0;top:0;height:58%}
+.L-split-vertical .panel{position:absolute;left:0;right:0;bottom:0;height:46%;background:var(--accent);border-radius:7cqw 7cqw 0 0;
+  --fg:var(--on-accent);--muted:color-mix(in srgb,var(--on-accent) 78%,transparent);padding:7cqw var(--px) var(--pb);display:flex;flex-direction:column;gap:2.2cqw;justify-content:center}
+.L-split-vertical .panel .k{color:var(--on-accent);opacity:.75}
+.L-split-vertical .panel .t{font-size:9.4cqw;max-height:20cqh;flex:0 1 auto;min-height:0;--tc:var(--on-accent)}
+.L-split-vertical .panel .t em{color:var(--on-accent);text-decoration:underline;text-decoration-thickness:.6cqw;text-underline-offset:.12em}
+.fmt-post .L-split-vertical .panel,.L-split-vertical.fmt-post .panel{padding-bottom:var(--pb)}
+</style>
+<div class="top">{{ photo(0,'flat bgph') }}</div>
+<div class="panel">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

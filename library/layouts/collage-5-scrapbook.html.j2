@@ -1,0 +1,21 @@
+<style>
+.L-collage-5-scrapbook .stage .photo{border:1.6cqw solid #fffdf7;border-bottom-width:1.6cqw;box-shadow:0 1.4cqw 3.4cqw rgba(0,0,0,.3);border-radius:.4cqw}
+.L-collage-5-scrapbook .p0{left:2%;top:0;width:46%;height:36%;transform:rotate(-5deg)}
+.L-collage-5-scrapbook .p1{right:1%;top:4%;width:42%;height:30%;transform:rotate(4deg)}
+.L-collage-5-scrapbook .p2{left:0;top:38%;width:38%;height:30%;transform:rotate(3deg)}
+.L-collage-5-scrapbook .p3{right:2%;top:36%;width:50%;height:34%;transform:rotate(-3deg)}
+.L-collage-5-scrapbook .p4{left:26%;top:66%;width:44%;height:32%;transform:rotate(5deg);z-index:3}
+.L-collage-5-scrapbook .tp{position:absolute;width:15cqw;height:5cqw;background:color-mix(in srgb,var(--accent2) 55%,#fff);opacity:.85;z-index:4}
+.L-collage-5-scrapbook .note{position:absolute;right:1%;bottom:0;z-index:5;transform:rotate(-4deg);background:var(--accent);color:var(--on-accent);padding:2cqw 3.4cqw;font:700 7.4cqw/1 'Caveat';box-shadow:0 1cqw 2.4cqw rgba(0,0,0,.25)}
+.L-collage-5-scrapbook .t{font-size:9.6cqw;max-height:18cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col gap2">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="stage">
+    {{ photo(0,'p0') }}{{ photo(1,'p1') }}{{ photo(2,'p2') }}{{ photo(3,'p3') }}{{ photo(4,'p4') }}
+    <i class="tp" style="left:14%;top:-1%;transform:rotate(-12deg)"></i><i class="tp" style="right:14%;top:2%;transform:rotate(9deg)"></i>
+    <i class="tp" style="left:8%;top:36%;transform:rotate(14deg)"></i><i class="tp" style="right:20%;top:34%;transform:rotate(-8deg)"></i>
+    {% if c.caption or c.subtitle %}<div class="note">{{ c.caption or c.subtitle }}</div>{% endif %}
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<style>
+.L-tip-single .pad{gap:3cqw}
+.L-tip-single .t.nm{font-size:30cqw;line-height:.8;--tc:var(--accent);flex:none;white-space:nowrap}
+.L-tip-single .of{font-size:2.6cqw;letter-spacing:.2em;font-weight:700;color:var(--muted);text-transform:uppercase}
+.L-tip-single .t{font-size:10.6cqw;max-height:30cqh;flex:0 1 auto;min-height:0}
+.L-tip-single .b{font-size:3.9cqw;max-height:34cqh;flex:0 1 auto;min-height:0;overflow:hidden}
+.L-tip-single .ph2{height:26%;flex:none;position:relative;margin-top:auto}
+.L-tip-single .ph2 .photo{position:absolute;inset:0}
+</style>
+<div class="pad col">
+  <div><div class="t nm">{{ c.number or '01' }}</div>{% if c.total %}<div class="of">de {{ c.total }}</div>{% endif %}</div>
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.body %}<div class="b fit">{{ c.body }}</div>{% endif %}
+  {% if c.photos %}<div class="ph2">{{ photo(0) }}</div>{% endif %}
+</div>

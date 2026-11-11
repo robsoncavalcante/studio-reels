@@ -1,0 +1,170 @@
+[
+ {
+  "id": "ref-smoke-cyan",
+  "name": "Smoke Cyan (lançamento/promo)",
+  "cats": [
+   "lançamento",
+   "tecnologia",
+   "promoção"
+  ],
+  "bg": "#020B14",
+  "bg2": "#0B2A3C",
+  "fg": "#F2F7FA",
+  "accent": "#59C8F5",
+  "accent2": "#00D9FF",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.05em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ },
+ {
+  "id": "ref-mint-duotone",
+  "name": "Mint Duotone (produto/tech)",
+  "cats": [
+   "tecnologia",
+   "produto",
+   "educação"
+  ],
+  "bg": "#050807",
+  "bg2": "#0B2F22",
+  "fg": "#F4F7F4",
+  "accent": "#6BE3A0",
+  "accent2": "#C7FE83",
+  "font_display": "Google Sans Flex",
+  "font_body": "Google Sans Flex",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.05em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "radial",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ },
+ {
+  "id": "ref-red-noir",
+  "name": "Red Noir (provocação/opinião)",
+  "cats": [
+   "opinião",
+   "impacto",
+   "editorial"
+  ],
+  "bg": "#070606",
+  "bg2": "#1A0B0B",
+  "fg": "#F5F2F0",
+  "accent": "#E5383B",
+  "accent2": "#FF8A80",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.05em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ },
+ {
+  "id": "ref-orange-noir",
+  "name": "Orange Noir (dicas/tutorial)",
+  "cats": [
+   "tutorial",
+   "tecnologia",
+   "dicas"
+  ],
+  "bg": "#050505",
+  "bg2": "#1A1A1A",
+  "fg": "#FFFFFF",
+  "accent": "#EE6C2F",
+  "accent2": "#F3DECB",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.05em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ },
+ {
+  "id": "ref-klein-peach",
+  "name": "Klein + Pêssego (marca/identidade)",
+  "cats": [
+   "branding",
+   "moda",
+   "impacto"
+  ],
+  "bg": "#2446FF",
+  "bg2": "#1830D6",
+  "fg": "#FFC49E",
+  "accent": "#FFC49E",
+  "accent2": "#FFFFFF",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "Bricolage Grotesque",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.04em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "solid",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ },
+ {
+  "id": "ref-paper-ink",
+  "name": "Papel + Tinta (educativo/editorial)",
+  "cats": [
+   "educativo",
+   "editorial",
+   "minimalista"
+  ],
+  "bg": "#EFEEEA",
+  "bg2": "#E6E4DE",
+  "fg": "#111111",
+  "accent": "#1F2BD8",
+  "accent2": "#E5383B",
+  "font_display": "Poppins",
+  "font_body": "Poppins",
+  "dw": 700,
+  "dcase": "none",
+  "dls": "-.05em",
+  "dlh": 0.97,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "light",
+  "bg_kind": "solid",
+  "angle": "180deg",
+  "ph_radius": "2.2cqw"
+ }
+]

@@ -1,0 +1,366 @@
+{
+ "pairs": [
+  {
+   "id": "editorial-classico",
+   "display": "Playfair Display",
+   "body": "Source Sans 3",
+   "moods": [
+    "editorial",
+    "elegante"
+   ],
+   "why": "Alto contraste de serifa + sans neutra para leitura"
+  },
+  {
+   "id": "luxo-fino",
+   "display": "Cormorant Garamond",
+   "body": "Jost",
+   "moods": [
+    "luxo",
+    "elegante",
+    "minimalista"
+   ],
+   "why": "Serifa leve de moda com geométrica limpa"
+  },
+  {
+   "id": "moda-bodoni",
+   "display": "Bodoni Moda",
+   "body": "Hanken Grotesk",
+   "moods": [
+    "luxo",
+    "moda",
+    "editorial"
+   ],
+   "why": "Didone dramática, corpo discreto"
+  },
+  {
+   "id": "minimal-serif",
+   "display": "Instrument Serif",
+   "body": "Inter",
+   "moods": [
+    "minimalista",
+    "editorial"
+   ],
+   "why": "Serifa condensada com neutra tech"
+  },
+  {
+   "id": "revista-gloock",
+   "display": "Gloock",
+   "body": "DM Sans",
+   "moods": [
+    "editorial",
+    "impacto"
+   ],
+   "why": "Serifa pesada com sans humanista"
+  },
+  {
+   "id": "moderno-grot",
+   "display": "Bricolage Grotesque",
+   "body": "DM Sans",
+   "moods": [
+    "moderno",
+    "editorial",
+    "divertido"
+   ],
+   "why": "Grotesca expressiva + sans amigável"
+  },
+  {
+   "id": "tech-space",
+   "display": "Space Grotesk",
+   "body": "IBM Plex Sans",
+   "moods": [
+    "tech",
+    "moderno"
+   ],
+   "why": "Família tech coerente"
+  },
+  {
+   "id": "tech-unbounded",
+   "display": "Unbounded",
+   "body": "Inter",
+   "moods": [
+    "tech",
+    "ousado"
+   ],
+   "why": "Display largo + neutra"
+  },
+  {
+   "id": "impacto-bebas",
+   "display": "Bebas Neue",
+   "body": "Montserrat",
+   "moods": [
+    "impacto",
+    "promocao",
+    "esportivo"
+   ],
+   "why": "Condensada de impacto + geométrica legível"
+  },
+  {
+   "id": "promocao-anton",
+   "display": "Anton",
+   "body": "Lato",
+   "moods": [
+    "impacto",
+    "promocao"
+   ],
+   "why": "Títulos gritantes, corpo neutro"
+  },
+  {
+   "id": "esporte-oswald",
+   "display": "Oswald",
+   "body": "Barlow",
+   "moods": [
+    "esportivo",
+    "impacto"
+   ],
+   "why": "Condensadas da mesma linhagem industrial"
+  },
+  {
+   "id": "ousado-archivo",
+   "display": "Archivo Black",
+   "body": "Work Sans",
+   "moods": [
+    "impacto",
+    "promocao",
+    "ousado"
+   ],
+   "why": "Peso máximo + sans de trabalho"
+  },
+  {
+   "id": "corp-poppins",
+   "display": "Poppins",
+   "body": "Open Sans",
+   "moods": [
+    "corporativo",
+    "moderno",
+    "amigavel"
+   ],
+   "why": "Combinação segura para negócios"
+  },
+  {
+   "id": "corp-jakarta",
+   "display": "Plus Jakarta Sans",
+   "body": "Source Serif 4",
+   "moods": [
+    "corporativo",
+    "editorial"
+   ],
+   "why": "Sans moderna + serifa de texto"
+  },
+  {
+   "id": "imob-montserrat",
+   "display": "Montserrat",
+   "body": "Lora",
+   "moods": [
+    "imobiliario",
+    "corporativo",
+    "elegante"
+   ],
+   "why": "Geométrica sólida + serifa calorosa"
+  },
+  {
+   "id": "saude-lexend",
+   "display": "Lexend",
+   "body": "Open Sans",
+   "moods": [
+    "saude",
+    "acessivel",
+    "educacao"
+   ],
+   "why": "Legibilidade máxima (Lexend) + sans humanista neutra"
+  },
+  {
+   "id": "saude-quicksand",
+   "display": "Quicksand",
+   "body": "Mulish",
+   "moods": [
+    "saude",
+    "amigavel"
+   ],
+   "why": "Arredondadas suaves"
+  },
+  {
+   "id": "retro-fraunces",
+   "display": "Fraunces",
+   "body": "Space Grotesk",
+   "moods": [
+    "retro",
+    "divertido",
+    "editorial"
+   ],
+   "why": "Serifa 'wonky' + grotesca"
+  },
+  {
+   "id": "retro-young",
+   "display": "Young Serif",
+   "body": "Karla",
+   "moods": [
+    "retro",
+    "editorial",
+    "amigavel"
+   ],
+   "why": "Serifa quente + sans humanista"
+  },
+  {
+   "id": "neon-monoton",
+   "display": "Monoton",
+   "body": "Space Grotesk",
+   "moods": [
+    "retro",
+    "neon"
+   ],
+   "why": "Monoton só em títulos curtos"
+  },
+  {
+   "id": "retro-righteous",
+   "display": "Righteous",
+   "body": "DM Sans",
+   "moods": [
+    "retro",
+    "divertido"
+   ],
+   "why": "Display retrô + neutra"
+  },
+  {
+   "id": "handmade-caveat",
+   "display": "Caveat",
+   "body": "DM Sans",
+   "moods": [
+    "handmade",
+    "amigavel"
+   ],
+   "why": "Manuscrita de destaque + sans limpa"
+  },
+  {
+   "id": "handmade-marker",
+   "display": "Permanent Marker",
+   "body": "Work Sans",
+   "moods": [
+    "handmade",
+    "impacto",
+    "divertido"
+   ],
+   "why": "Marcador forte, corpo discreto"
+  },
+  {
+   "id": "casamento-script",
+   "display": "Great Vibes",
+   "body": "EB Garamond",
+   "moods": [
+    "casamento",
+    "luxo",
+    "elegante"
+   ],
+   "why": "Script para o nome + garalda de texto"
+  },
+  {
+   "id": "elegante-dancing",
+   "display": "Dancing Script",
+   "body": "Lora",
+   "moods": [
+    "elegante",
+    "casamento"
+   ],
+   "why": "Script legível + serifa de texto"
+  },
+  {
+   "id": "jornal-chivo",
+   "display": "Chivo",
+   "body": "Newsreader",
+   "moods": [
+    "editorial",
+    "jornal"
+   ],
+   "why": "Grotesca + serifa de jornal"
+  },
+  {
+   "id": "jornal-schibsted",
+   "display": "Schibsted Grotesk",
+   "body": "Source Serif 4",
+   "moods": [
+    "editorial",
+    "jornal"
+   ],
+   "why": "Título sans, leitura serifada"
+  },
+  {
+   "id": "slab-industrial",
+   "display": "Roboto Slab",
+   "body": "Open Sans",
+   "moods": [
+    "corporativo",
+    "industrial"
+   ],
+   "why": "Slab robusta + sans neutra"
+  },
+  {
+   "id": "slab-retro",
+   "display": "Alfa Slab One",
+   "body": "Karla",
+   "moods": [
+    "impacto",
+    "retro"
+   ],
+   "why": "Slab gordurosa de cartaz"
+  },
+  {
+   "id": "urbano-bungee",
+   "display": "Bungee",
+   "body": "Rubik",
+   "moods": [
+    "urbano",
+    "impacto"
+   ],
+   "why": "Display urbana + sans arredondada"
+  },
+  {
+   "id": "minimal-urbanist",
+   "display": "Urbanist",
+   "body": "Urbanist",
+   "moods": [
+    "minimalista",
+    "moderno"
+   ],
+   "why": "Família única: hierarquia só por peso"
+  },
+  {
+   "id": "luxo-italiana",
+   "display": "Italiana",
+   "body": "Raleway",
+   "moods": [
+    "luxo",
+    "minimalista",
+    "moda"
+   ],
+   "why": "Serifa fina de moda + sans elegante"
+  },
+  {
+   "id": "classico-cinzel",
+   "display": "Cinzel",
+   "body": "EB Garamond",
+   "moods": [
+    "luxo",
+    "classico"
+   ],
+   "why": "Capitular romana + garalda"
+  },
+  {
+   "id": "tech-mono",
+   "display": "JetBrains Mono",
+   "body": "Inter",
+   "moods": [
+    "tech"
+   ],
+   "why": "Mono para destaque técnico"
+  },
+  {
+   "id": "games-press",
+   "display": "Press Start 2P",
+   "body": "Space Mono",
+   "moods": [
+    "retro",
+    "games"
+   ],
+   "why": "Pixel + mono"
+  }
+ ]
+}

@@ -1,0 +1,63 @@
+[
+ {
+  "id": "criative-dark",
+  "name": "Criative Dark (design system)",
+  "cats": [
+   "agência",
+   "institucional"
+  ],
+  "bg": "#0C090C",
+  "bg2": "#1D161E",
+  "fg": "#FAFAFA",
+  "muted": "#A89EA9",
+  "accent": "#C10007",
+  "accent2": "#FB2C36",
+  "surface": "#1D161E",
+  "line": "rgba(255,255,255,.10)",
+  "font_display": "Space Grotesk",
+  "font_body": "DM Sans",
+  "dw": 500,
+  "dcase": "none",
+  "dls": "-.035em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [
+   "grain"
+  ],
+  "kind": "dark",
+  "bg_kind": "custom",
+  "bg_custom": "radial-gradient(75% 45% at 100% 100%,color-mix(in srgb,#9F0712 30%,transparent),transparent 70%),radial-gradient(90% 60% at 0% 0%,#1D161E,transparent 70%),#0C090C",
+  "card_radius": "1.8cqw",
+  "btn_radius": "1.3cqw",
+  "ph_radius": "1.8cqw"
+ },
+ {
+  "id": "criative-light",
+  "name": "Criative Light (design system)",
+  "cats": [
+   "agência",
+   "institucional"
+  ],
+  "bg": "#F3F1F3",
+  "bg2": "#FFFFFF",
+  "fg": "#0C090C",
+  "muted": "#79697B",
+  "accent": "#C10007",
+  "accent2": "#9F0712",
+  "surface": "#FFFFFF",
+  "line": "#E7E4E7",
+  "font_display": "Space Grotesk",
+  "font_body": "DM Sans",
+  "dw": 500,
+  "dcase": "none",
+  "dls": "-.035em",
+  "dlh": 1.0,
+  "title_fx": "plain",
+  "decor": [],
+  "kind": "light",
+  "bg_kind": "solid",
+  "card_radius": "1.8cqw",
+  "btn_radius": "1.3cqw",
+  "ph_radius": "1.8cqw"
+ }
+]

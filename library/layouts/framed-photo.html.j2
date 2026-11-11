@@ -1,0 +1,11 @@
+<style>
+.L-framed-photo .t{font-size:9.4cqw;max-height:26cqh;flex:0 1 auto;min-height:0}
+</style>
+<div class="pad col gap3">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  {{ photo(0,'grow') }}
+  <div class="col gap2">
+    <div class="t fit">{{ rich(c.title) }}</div>
+    {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  </div>
+</div>

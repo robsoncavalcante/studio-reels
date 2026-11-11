@@ -1,0 +1,17 @@
+<style>
+.L-countdown .pad{justify-content:center;gap:2.6cqw}
+{% set parts = (c.date or '12 DEZ').split(' ') %}
+.L-countdown .day{font-size:46cqw;line-height:.8;max-height:40cqh;white-space:nowrap;overflow:hidden;flex:0 1 auto;min-height:0;--tc:var(--accent)}
+.L-countdown .mon{font-size:12cqw;line-height:1;letter-spacing:.1em;text-transform:uppercase;font-weight:900;font-family:var(--font-display),Inter}
+.L-countdown .t.h{font-size:8.6cqw;max-height:22cqh;flex:0 1 auto;min-height:0}
+.L-countdown .chips{display:flex;gap:2.4cqw;flex-wrap:wrap}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t day fit">{{ parts[0] }}</div>
+  <div class="mon">{{ parts[1:]|join(' ') }}</div>
+  <div class="hr-accent" style="margin:1cqw 0"></div>
+  <div class="t h fit">{{ rich(c.title) }}</div>
+  <div class="chips">{% if c.time %}<span class="chip">⏰ {{ c.time }}</span>{% endif %}{% if c.place %}<span class="chip">📍 {{ c.place }}</span>{% endif %}</div>
+  {% if c.cta %}<div style="margin-top:2cqw"><span class="cta">{{ c.cta }} <i class="arrow"></i></span></div>{% endif %}
+</div>

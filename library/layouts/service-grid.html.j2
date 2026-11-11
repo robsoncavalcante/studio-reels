@@ -1,0 +1,16 @@
+<style>
+.L-service-grid .t{font-size:10.4cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-service-grid .sg{flex:1 1 0;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:2.6cqw;font-size:3.3cqw}
+.L-service-grid .sv{padding:4cqw;display:flex;flex-direction:column;gap:1.6cqw;justify-content:flex-start;min-height:0;overflow:hidden}
+.L-service-grid .sv .ic{width:2.6em;height:2.6em;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:900;font-family:var(--font-display),Inter;flex:none}
+.L-service-grid .sv h4{font-size:1.2em;font-weight:800;line-height:1.12}
+.L-service-grid .sv p{font-size:.86em;color:var(--muted);line-height:1.34}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="sg fit">{% for it in c['items'][:4] %}<div class="sv surface item"><div class="ic">{{ loop.index }}</div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div>{% endfor %}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

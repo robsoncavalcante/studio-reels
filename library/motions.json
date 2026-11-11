@@ -1,0 +1,399 @@
+[
+ {
+  "id": "fade-up",
+  "name": "Subir suave",
+  "dur": 0.7,
+  "stagger": 0.14,
+  "delay": 0.15,
+  "words": false,
+  "level": "basico"
+ },
+ {
+  "id": "pop",
+  "name": "Pop com salto",
+  "dur": 0.6,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "slide-left",
+  "name": "Entrar da direita",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "basico"
+ },
+ {
+  "id": "slide-right",
+  "name": "Entrar da esquerda",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "basico"
+ },
+ {
+  "id": "blur-in",
+  "name": "Desfoque → nítido",
+  "dur": 0.8,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "zoom-in",
+  "name": "Zoom de entrada",
+  "dur": 0.7,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "basico"
+ },
+ {
+  "id": "wipe",
+  "name": "Revelar (cortina)",
+  "dur": 0.8,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "basico"
+ },
+ {
+  "id": "rotate-in",
+  "name": "Girar e entrar",
+  "dur": 0.75,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "flip",
+  "name": "Virar (flip)",
+  "dur": 0.8,
+  "stagger": 0.16,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "drop",
+  "name": "Queda com quique",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "avancado"
+ },
+ {
+  "id": "elastic",
+  "name": "Elástico",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "avancado"
+ },
+ {
+  "id": "glitch",
+  "name": "Glitch",
+  "dur": 0.7,
+  "stagger": 0.1,
+  "delay": 0.12,
+  "words": false,
+  "level": "avancado"
+ },
+ {
+  "id": "swing",
+  "name": "Balanço",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "tilt-up",
+  "name": "Subir inclinado",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "words-rise",
+  "name": "Palavras subindo (máscara)",
+  "dur": 0.75,
+  "stagger": 0.1,
+  "delay": 0.15,
+  "words": true,
+  "level": "basico"
+ },
+ {
+  "id": "typewriter",
+  "name": "Máquina de escrever",
+  "dur": 0.01,
+  "stagger": 0.11,
+  "delay": 0.2,
+  "words": true,
+  "level": "basico"
+ },
+ {
+  "id": "words-pop",
+  "name": "Palavras em pop",
+  "dur": 0.5,
+  "stagger": 0.09,
+  "delay": 0.15,
+  "words": true,
+  "level": "intermediario"
+ },
+ {
+  "id": "fade",
+  "name": "Fade simples",
+  "level": "basico",
+  "dur": 0.6,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Só opacidade: o mais discreto e seguro"
+ },
+ {
+  "id": "cut",
+  "name": "Corte seco",
+  "level": "basico",
+  "dur": 0.01,
+  "stagger": 0.18,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Aparece de uma vez, ritmo de edição rápida"
+ },
+ {
+  "id": "zoom-out",
+  "name": "Zoom de dentro pra fora",
+  "level": "basico",
+  "dur": 0.65,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Escala 60% → 100%"
+ },
+ {
+  "id": "drift",
+  "name": "Deriva suave",
+  "level": "basico",
+  "dur": 1.1,
+  "stagger": 0.16,
+  "delay": 0.15,
+  "words": false,
+  "desc": "Fade longo com leve blur e subida: elegante"
+ },
+ {
+  "id": "overshoot",
+  "name": "Sobe e acomoda",
+  "level": "basico",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Sobe passando um pouco do alvo (out-back)"
+ },
+ {
+  "id": "bar-grow",
+  "name": "Barra crescendo",
+  "level": "basico",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Escala horizontal a partir da esquerda"
+ },
+ {
+  "id": "mask-up",
+  "name": "Máscara subindo",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Revela de baixo pra cima (clip-path)"
+ },
+ {
+  "id": "mask-down",
+  "name": "Máscara descendo",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Revela de cima pra baixo"
+ },
+ {
+  "id": "curtain",
+  "name": "Cortina do centro",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Abre do centro para as bordas"
+ },
+ {
+  "id": "focus-pull",
+  "name": "Puxar foco",
+  "level": "intermediario",
+  "dur": 0.85,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Borrado → nítido, estilo cinema"
+ },
+ {
+  "id": "stamp",
+  "name": "Carimbo",
+  "level": "intermediario",
+  "dur": 0.55,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Escala 260% e crava; ótimo p/ preço e selo"
+ },
+ {
+  "id": "spin-in",
+  "name": "Girar entrando",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Rotação 200° com escala"
+ },
+ {
+  "id": "flip-y",
+  "name": "Virar no eixo Y",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Giro 3D horizontal"
+ },
+ {
+  "id": "skew-slide",
+  "name": "Deslizar inclinado",
+  "level": "intermediario",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Entra inclinado, estilo esportivo"
+ },
+ {
+  "id": "blur-slide",
+  "name": "Deslizar com blur",
+  "level": "intermediario",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Entra pela esquerda desfocando"
+ },
+ {
+  "id": "tracking-in",
+  "name": "Espaçamento fechando",
+  "level": "avancado",
+  "dur": 1.0,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Letter-spacing 0.5em → normal nos títulos"
+ },
+ {
+  "id": "rubber",
+  "name": "Elástico (squash & stretch)",
+  "level": "avancado",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Esmaga e estica como borracha"
+ },
+ {
+  "id": "jelly",
+  "name": "Gelatina",
+  "level": "avancado",
+  "dur": 0.95,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Balanço de gelatina, divertido"
+ },
+ {
+  "id": "spring-in",
+  "name": "Mola física",
+  "level": "avancado",
+  "dur": 1.0,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Entrada com mola real (linear() easing)"
+ },
+ {
+  "id": "card-3d",
+  "name": "Cartão 3D",
+  "level": "avancado",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.1,
+  "words": false,
+  "desc": "Perspectiva 3D inclinada assentando"
+ },
+ {
+  "id": "char-rise",
+  "name": "Letras subindo",
+  "level": "avancado",
+  "dur": 0.7,
+  "stagger": 0.03,
+  "delay": 0.1,
+  "words": true,
+  "desc": "Letra por letra com máscara",
+  "chars": true
+ },
+ {
+  "id": "char-fade",
+  "name": "Letras surgindo",
+  "level": "avancado",
+  "dur": 0.5,
+  "stagger": 0.03,
+  "delay": 0.1,
+  "words": true,
+  "desc": "Letra por letra com blur",
+  "chars": true
+ },
+ {
+  "id": "char-pop",
+  "name": "Letras saltando",
+  "level": "avancado",
+  "dur": 0.7,
+  "stagger": 0.035,
+  "delay": 0.1,
+  "words": true,
+  "desc": "Cada letra salta com mola",
+  "chars": true
+ },
+ {
+  "id": "char-type",
+  "name": "Máquina de escrever",
+  "level": "avancado",
+  "dur": 0.01,
+  "stagger": 0.05,
+  "delay": 0.1,
+  "words": true,
+  "desc": "Letra a letra, instantâneo",
+  "chars": true
+ }
+]

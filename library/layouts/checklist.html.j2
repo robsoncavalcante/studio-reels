@@ -1,0 +1,19 @@
+<style>
+.L-checklist .t{font-size:10.4cqw;max-height:20cqh;flex:0 1 auto;min-height:0}
+.L-checklist .list{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;gap:2.2cqw;font-size:4.2cqw}
+.L-checklist .it{display:flex;gap:3.4cqw;align-items:center;padding:2.8cqw 3.4cqw;border-radius:var(--card-radius);background:var(--surface);border:.25cqw solid var(--line);flex:0 1 auto;min-height:0}
+.L-checklist .bx{width:1.7em;height:1.7em;border-radius:.4em;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-weight:900;font-size:1em}
+.L-checklist .bx.off{background:transparent;border:.25em solid var(--line);color:transparent}
+.L-checklist .it b{font-weight:700;font-size:1em;line-height:1.2}
+.L-checklist .it small{display:block;font-size:.72em;color:var(--muted);margin-top:.2em;font-weight:500}
+</style>
+<div class="pad col gap3">
+  <div class="col gap1">
+    {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+    <div class="t fit">{{ rich(c.title) }}</div>
+  </div>
+  <div class="list fit">
+    {% for it in c['items'][:6] %}<div class="it item"><div class="bx {{ 'off' if it.done is defined and not it.done else '' }}">✓</div><div><b>{{ it.title }}</b>{% if it.text %}<small>{{ it.text }}</small>{% endif %}</div></div>{% endfor %}
+  </div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>

@@ -1,0 +1,12 @@
+<style>
+.L-full-bleed-center .pad{justify-content:center;align-items:center;text-align:center;gap:3cqw}
+.L-full-bleed-center .t{font-size:15cqw;max-height:56cqh;flex:0 1 auto;min-height:0;width:100%}
+.L-full-bleed-center .s{max-width:80%}
+</style>
+{{ photo(0,'flat bgph') }}<div class="scrim-all"></div>
+<div class="pad ondark">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+  {% if c.cta %}<div style="margin-top:2cqw"><span class="cta">{{ c.cta }}</span></div>{% endif %}
+</div>

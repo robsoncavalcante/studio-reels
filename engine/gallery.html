@@ -1,0 +1,41 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio Reels · Galeria</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;background:#0e0e11;color:#eee}
+header{position:sticky;top:0;z-index:5;background:#16161bee;backdrop-filter:blur(8px);padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #2a2a33}
+h1{font-size:16px;margin:0 12px 0 0}select,input{background:#22222a;color:#eee;border:1px solid #33333d;border-radius:8px;padding:8px 10px}
+button{background:#22222a;color:#eee;border:1px solid #33333d;border-radius:8px;padding:8px 12px;cursor:pointer}button.on{background:#ff3d6e;border-color:#ff3d6e}
+.stats{padding:8px 16px;color:#9a9aa8;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:16px}
+.card{background:#16161b;border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid #23232b}.card img{width:100%;display:block;background:#222}
+.card div{padding:6px 8px;font-size:11px;color:#b5b5c3;line-height:1.3}.card b{color:#fff;display:block}
+#m{position:fixed;inset:0;background:#000c;display:none;place-items:center;z-index:9}#m.show{display:grid}
+#m .box{background:#16161b;border-radius:14px;padding:16px;max-width:92vw;max-height:94vh;overflow:auto;display:flex;gap:16px;flex-wrap:wrap}
+#m img{height:70vh;border-radius:8px}#m code{display:block;background:#0b0b0e;padding:10px;border-radius:8px;margin:8px 0;white-space:pre-wrap;max-width:420px;font-size:12px}
+</style></head><body>
+<header><h1>Studio Reels</h1>
+<button id="bS" class="on">Posts/Stories/Reels</button><button id="bC">Carrosséis</button>
+<input id="q" placeholder="Buscar…"><select id="fl"></select><select id="ft"></select><select id="fc"></select></header>
+<div class="stats" id="st"></div><div class="grid" id="g"></div>
+<div id="m"><div class="box"><img id="mi"><div><h3 id="mt"></h3><div id="mc"></div></div></div></div>
+<script>
+/*__DATA__*/
+let mode='s';const $=i=>document.getElementById(i);
+const opt=(el,all,arr)=>{el.innerHTML=`<option value="">${all}</option>`+arr.map(a=>`<option value="${a[0]}">${a[1]}</option>`).join('')};
+opt($('ft'),'Todos os temas',DATA.themes.map(t=>[t.id,t.name]));
+opt($('fc'),'Todas as categorias',[...new Set(DATA.themes.flatMap(t=>t.cats))].sort().map(c=>[c,c]));
+function fillL(){opt($('fl'),mode=='s'?'Todos os layouts':'Todas as receitas',(mode=='s'?DATA.layouts:DATA.carousels).map(l=>[l.id,l.name]))}
+function render(){const q=$('q').value.toLowerCase(),fl=$('fl').value,ft=$('ft').value,fc=$('fc').value;
+ const themes=DATA.themes.filter(t=>(!ft||t.id==ft)&&(!fc||t.cats.includes(fc)));const items=mode=='s'?DATA.layouts:DATA.carousels;let out=[],n=0;
+ for(const l of items){if(fl&&l.id!=fl)continue;for(const t of themes){if(q&&!(l.name+t.name+l.id+t.id).toLowerCase().includes(q))continue;if(n++>=600)break;
+  out.push(`<div class="card" data-l="${l.id}" data-t="${t.id}"><img loading="lazy" src="thumbs/${mode=='s'?'s':'c'}__${l.id}__${t.id}.jpg"><div><b>${l.name}</b>${t.name}</div></div>`)}}
+ $('g').innerHTML=out.join('');const S=DATA.stats;
+ $('st').textContent=`Mostrando ${Math.min(n,600)} de combinações · biblioteca: ${S.layouts} layouts × ${S.themes} temas × ${S.formats} formatos = ${S.static_designs.toLocaleString('pt-BR')} posts/stories · ${S.single_layout_reels.toLocaleString('pt-BR')} reels de 1 layout · ${S.carousel_variants.toLocaleString('pt-BR')} variações de carrossel`}
+$('g').onclick=e=>{const c=e.target.closest('.card');if(!c)return;const l=c.dataset.l,t=c.dataset.t;$('mi').src=c.querySelector('img').src;$('mt').textContent=l+' · '+t;
+ $('mc').innerHTML=mode=='s'?`<code>python studio.py render --layout ${l} --theme ${t} --format story --content meu.json</code><code>python studio.py reel --layout ${l} --theme ${t} --motion words-rise --content meu.json</code>`:`<code>python studio.py carousel --recipe ${l} --theme ${t} --format post --bridge auto --content meu.json</code>`;$('m').classList.add('show')};
+$('m').onclick=e=>{if(e.target.id=='m')$('m').classList.remove('show')};
+['q','fl','ft','fc'].forEach(i=>$(i).oninput=render);
+$('bS').onclick=()=>{mode='s';$('bS').classList.add('on');$('bC').classList.remove('on');fillL();render()};
+$('bC').onclick=()=>{mode='c';$('bC').classList.add('on');$('bS').classList.remove('on');fillL();render()};
+fillL();render();
+</script></body></html>

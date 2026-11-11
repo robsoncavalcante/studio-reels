@@ -1,0 +1,454 @@
+[
+ {
+  "id": "promo-4",
+  "name": "Promo em 4 cenas",
+  "desc": "Anúncio → galeria → número → chamada",
+  "scenes": [
+   {
+    "layout": "announcement",
+    "dur": 3.0
+   },
+   {
+    "layout": "collage-3-mosaic",
+    "dur": 3.0
+   },
+   {
+    "layout": "big-number",
+    "dur": 2.6
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.6
+   }
+  ],
+  "motion": "pop",
+  "transition": "smooth",
+  "cats": [
+   "promo",
+   "marketing"
+  ]
+ },
+ {
+  "id": "lancamento",
+  "name": "Lançamento de produto",
+  "desc": "Impacto, preço e chamada",
+  "scenes": [
+   {
+    "layout": "full-bleed-center",
+    "dur": 2.4
+   },
+   {
+    "layout": "sticker-pop",
+    "dur": 3.2
+   },
+   {
+    "layout": "big-number",
+    "dur": 2.4
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "words-pop",
+  "transition": "slideleft",
+  "cats": [
+   "promo",
+   "produto"
+  ]
+ },
+ {
+  "id": "recap-memorias",
+  "name": "Recap / memórias",
+  "desc": "Polaroids, colagens e filme",
+  "scenes": [
+   {
+    "layout": "polaroid",
+    "dur": 2.4
+   },
+   {
+    "layout": "collage-4-grid",
+    "dur": 2.8
+   },
+   {
+    "layout": "polaroid-stack",
+    "dur": 3.0
+   },
+   {
+    "layout": "film-strip",
+    "dur": 2.8
+   },
+   {
+    "layout": "quote",
+    "dur": 2.6
+   }
+  ],
+  "motion": "blur-in",
+  "transition": "fade",
+  "cats": [
+   "memórias",
+   "viagem"
+  ]
+ },
+ {
+  "id": "dicas",
+  "name": "Dicas rápidas",
+  "desc": "Gancho + 3 dicas + chamada",
+  "scenes": [
+   {
+    "layout": "typographic",
+    "dur": 2.4
+   },
+   {
+    "layout": "tip-single",
+    "dur": 3.0
+   },
+   {
+    "layout": "tip-single",
+    "dur": 3.0
+   },
+   {
+    "layout": "tip-single",
+    "dur": 3.0
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "words-rise",
+  "transition": "smooth",
+  "cats": [
+   "educativo",
+   "marketing"
+  ]
+ },
+ {
+  "id": "evento",
+  "name": "Convite de evento",
+  "desc": "Ingresso, data e chamada",
+  "scenes": [
+   {
+    "layout": "ticket",
+    "dur": 3.2
+   },
+   {
+    "layout": "countdown",
+    "dur": 3.0
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "drop",
+  "transition": "circleopen",
+  "cats": [
+   "evento",
+   "festa"
+  ]
+ },
+ {
+  "id": "portfolio",
+  "name": "Portfólio",
+  "desc": "Capa, projetos e chamada",
+  "scenes": [
+   {
+    "layout": "magazine-cover",
+    "dur": 2.6
+   },
+   {
+    "layout": "framed-photo",
+    "dur": 2.6
+   },
+   {
+    "layout": "split-vertical",
+    "dur": 2.6
+   },
+   {
+    "layout": "collage-2",
+    "dur": 2.6
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "wipe",
+  "transition": "smooth",
+  "cats": [
+   "portfólio",
+   "negócios"
+  ]
+ },
+ {
+  "id": "antes-depois",
+  "name": "Antes e depois",
+  "desc": "Gancho + transformação",
+  "scenes": [
+   {
+    "layout": "typographic",
+    "dur": 2.2
+   },
+   {
+    "layout": "before-after",
+    "dur": 3.6
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "zoom-in",
+  "transition": "wipeleft",
+  "cats": [
+   "beleza",
+   "portfólio"
+  ]
+ },
+ {
+  "id": "depoimentos",
+  "name": "Prova social",
+  "desc": "Depoimentos em sequência",
+  "scenes": [
+   {
+    "layout": "typographic",
+    "dur": 2.2
+   },
+   {
+    "layout": "testimonial",
+    "dur": 3.4
+   },
+   {
+    "layout": "testimonial",
+    "dur": 3.4
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "fade-up",
+  "transition": "fade",
+  "cats": [
+   "prova social"
+  ]
+ },
+ {
+  "id": "imovel-tour",
+  "name": "Imóvel · tour rápido",
+  "desc": "Ficha, galeria e diferenciais",
+  "scenes": [
+   {
+    "layout": "property-card",
+    "dur": 3.0
+   },
+   {
+    "layout": "collage-3-mosaic",
+    "dur": 3.0
+   },
+   {
+    "layout": "tips-list",
+    "dur": 3.2
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "slide-left",
+  "transition": "smoothleft",
+  "cats": [
+   "imobiliário",
+   "promo"
+  ]
+ },
+ {
+  "id": "cardapio",
+  "name": "Cardápio animado",
+  "desc": "Capa, menu e chamada",
+  "scenes": [
+   {
+    "layout": "full-bleed-center",
+    "dur": 2.4
+   },
+   {
+    "layout": "menu-price",
+    "dur": 3.8
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "tilt-up",
+  "transition": "slideup",
+  "cats": [
+   "comida",
+   "promo"
+  ]
+ },
+ {
+  "id": "viagem",
+  "name": "Diário de viagem",
+  "desc": "Capa, scrapbook e filme",
+  "scenes": [
+   {
+    "layout": "full-bleed-bottom",
+    "dur": 2.4
+   },
+   {
+    "layout": "collage-5-scrapbook",
+    "dur": 3.2
+   },
+   {
+    "layout": "film-strip",
+    "dur": 2.8
+   },
+   {
+    "layout": "polaroid",
+    "dur": 2.4
+   }
+  ],
+  "motion": "swing",
+  "transition": "smooth",
+  "cats": [
+   "viagem",
+   "memórias"
+  ]
+ },
+ {
+  "id": "citacao",
+  "name": "Citação em movimento",
+  "desc": "Frase forte + chamada",
+  "scenes": [
+   {
+    "layout": "quote",
+    "dur": 4.0
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.2
+   }
+  ],
+  "motion": "words-rise",
+  "transition": "fade",
+  "cats": [
+   "motivação"
+  ]
+ },
+ {
+  "id": "enquete",
+  "name": "Story de enquete",
+  "desc": "Pergunta interativa",
+  "scenes": [
+   {
+    "layout": "question-poll",
+    "dur": 5.0
+   }
+  ],
+  "motion": "elastic",
+  "transition": "fade",
+  "cats": [
+   "story",
+   "interação"
+  ]
+ },
+ {
+  "id": "servicos",
+  "name": "Serviços em movimento",
+  "desc": "Apresentação rápida da empresa",
+  "scenes": [
+   {
+    "layout": "magazine-cover",
+    "dur": 2.6
+   },
+   {
+    "layout": "service-grid",
+    "dur": 3.4
+   },
+   {
+    "layout": "step-process",
+    "dur": 3.4
+   },
+   {
+    "layout": "cta-follow",
+    "dur": 2.4
+   }
+  ],
+  "motion": "glitch",
+  "transition": "smooth",
+  "cats": [
+   "negócios",
+   "institucional"
+  ]
+ },
+ {
+  "id": "criative-sinais",
+  "name": "Criative · sinais (reel)",
+  "desc": "Capa + 4 pontos + CTA",
+  "scenes": [
+   {
+    "layout": "ds-cover",
+    "dur": 3.4
+   },
+   {
+    "layout": "ds-point",
+    "dur": 4.2
+   },
+   {
+    "layout": "ds-point",
+    "dur": 4.2
+   },
+   {
+    "layout": "ds-point",
+    "dur": 4.2
+   },
+   {
+    "layout": "ds-point",
+    "dur": 4.2
+   },
+   {
+    "layout": "ds-cta",
+    "dur": 4.0
+   }
+  ],
+  "motion": "words-rise",
+  "transition": "smooth",
+  "cats": [
+   "agência"
+  ]
+ },
+ {
+  "id": "criative-site",
+  "name": "Criative · site que vende (reel)",
+  "desc": "Capa + ideia + passos + checklist + CTA",
+  "scenes": [
+   {
+    "layout": "ds-cover",
+    "dur": 3.4
+   },
+   {
+    "layout": "ds-point",
+    "dur": 4.4
+   },
+   {
+    "layout": "ds-steps",
+    "dur": 6.4
+   },
+   {
+    "layout": "ds-checklist",
+    "dur": 6.0
+   },
+   {
+    "layout": "ds-cta",
+    "dur": 4.0
+   }
+  ],
+  "motion": "focus-pull",
+  "transition": "smooth",
+  "cats": [
+   "agência"
+  ]
+ }
+]
