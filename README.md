@@ -47,3 +47,6 @@ Limites honestos: busca em bancos de imagem exige internet e chave gratuita (nã
 2. `bash find_engine.sh` localiza (ou descompacta do zip anexado) o motor; `bash bootstrap.sh` instala dependências e roda o doctor.
 3. Chame sempre `python <motor>/studio.py ...` de qualquer pasta: logos e recursos usam caminhos relativos à raiz do motor.
 Marca Criative: `--brand criative --theme criative-dark|criative-light`; layouts `ds-*` e receitas `criative-*`; ícones Lucide via `icon('nome')`.
+
+## Fonte oficial
+Repositório privado: github.com/robsoncavalcante/studio-reels (branch main). Em qualquer projeto: anexe o repositório à sessão (add_repo) e rode `git clone --depth 1 https://github.com/robsoncavalcante/studio-reels ~/studio-reels && bash ~/studio-reels/bootstrap.sh`.
