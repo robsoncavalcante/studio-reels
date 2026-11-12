@@ -440,5 +440,86 @@
   "delay": 0.12,
   "words": false,
   "level": "premium"
+ },
+ {
+  "id": "bscale",
+  "name": "Escala com quique",
+  "dur": 0.8,
+  "stagger": 0.09,
+  "delay": 0.1,
+  "words": true,
+  "level": "intermediario"
+ },
+ {
+  "id": "pbup",
+  "name": "Quique subindo",
+  "dur": 0.85,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": true,
+  "level": "intermediario"
+ },
+ {
+  "id": "pbdn",
+  "name": "Quique descendo",
+  "dur": 0.85,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": true,
+  "level": "intermediario"
+ },
+ {
+  "id": "blurfade",
+  "name": "Desfoque e fade",
+  "dur": 0.8,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": true,
+  "level": "intermediario"
+ },
+ {
+  "id": "stretch",
+  "name": "Esticar e assentar",
+  "dur": 0.75,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "split",
+  "name": "Corte dividido",
+  "dur": 0.7,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "glitch",
+  "name": "Glitch curto",
+  "dur": 0.6,
+  "stagger": 0.08,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "distort",
+  "name": "Distorção elástica",
+  "dur": 0.7,
+  "stagger": 0.1,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "jump",
+  "name": "Pulo com peso",
+  "dur": 0.9,
+  "stagger": 0.11,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
  }
 ]

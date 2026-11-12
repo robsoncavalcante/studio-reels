@@ -391,6 +391,14 @@ def cmd_fonts(a):
     return 1
 
 
+def cmd_autocut(a):
+    from engine import autocut
+    out = a.out or str(Path(a.video).with_suffix("")) + "_autocut.mp4"
+    k = autocut.run(a.video, out, a.ritmo, a.jcut)
+    print(f"✓ {out}  ({len(k)} trechos mantidos)")
+    return 0
+
+
 def cmd_motion(a):
     from engine import motion
     if a.action == "easings":
@@ -814,6 +822,12 @@ def main():
     p.add_argument("--speed", type=float)
     p.add_argument("--out")
     p.set_defaults(fn=cmd_motion)
+
+    p = sub.add_parser("autocut", help="corta silêncios de vídeo falado (ritmo suave|ritmo|dinamico, J-cut opcional)")
+    p.add_argument("video"); p.add_argument("-o", "--out", default=None)
+    p.add_argument("--ritmo", choices=["suave", "ritmo", "dinamico"], default="ritmo")
+    p.add_argument("--jcut", type=float, default=0.0, help="segundos que o áudio antecipa a imagem")
+    p.set_defaults(fn=cmd_autocut)
 
     p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")
     p.add_argument("action", choices=["styles", "gen", "sfx", "sources", "providers", "brief", "tts", "music", "sfxgen", "fetch", "import", "mix"])

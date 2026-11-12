@@ -90,3 +90,7 @@ Flags do `reel`:
 - `--transition set:clean|energetic|cinematic|editorial|punch` conjuntos de transição com SFX casado.
 - `--captions karaoke|pop|box|clean --script texto|@arquivo` legendas ASS queimadas (timing estimado pela fala).
 - `--stems DIR` exporta cenas, stems de áudio, SRT/ASS, palavras.json, EDL CMX3600, marcadores JSON/CSV e projeto.json para Premiere/After Effects/DaVinci.
+
+### v4.1
+- 9 novas animações de texto: `bscale` `pbup` `pbdn` `blurfade` `stretch` `split` `glitch` `distort` `jump` (55 movimentos no total; prévia: `studio.py motion preview ID`).
+- `studio.py autocut VIDEO --ritmo suave|ritmo|dinamico [--jcut 0.1]`: remove silêncios de vídeo falado, com J-cut opcional; grava `.cuts.json`.

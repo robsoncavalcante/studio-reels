@@ -66,3 +66,23 @@
   animation:kf-hl .6s cubic-bezier(.5,0,.2,1) calc(var(--bd,.15s) + var(--hld,.9s)) both;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .reel.hl-underline .t em{font-style:normal;background:linear-gradient(var(--accent,#c10007),var(--accent,#c10007)) no-repeat left 96%/0% .12em;
   animation:kf-ul .5s cubic-bezier(.5,0,.2,1) calc(var(--bd,.15s) + var(--hld,.9s)) both;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* ----- v4.1: famílias de animação de texto (categorias comuns em pacotes de motion; curvas e código originais) ----- */
+@keyframes kf-bscale{0%{opacity:0;transform:scale(.3)}45%{opacity:1;transform:scale(1.14)}68%{transform:scale(.94)}85%{transform:scale(1.03)}100%{opacity:1;transform:none}}
+@keyframes kf-pbup{0%{opacity:0;transform:translateY(9cqw)}50%{opacity:1;transform:translateY(-2.2cqw)}72%{transform:translateY(.9cqw)}88%{transform:translateY(-.3cqw)}100%{opacity:1;transform:none}}
+@keyframes kf-pbdn{0%{opacity:0;transform:translateY(-9cqw)}50%{opacity:1;transform:translateY(2.2cqw)}72%{transform:translateY(-.9cqw)}88%{transform:translateY(.3cqw)}100%{opacity:1;transform:none}}
+@keyframes kf-blurfade{0%{opacity:0;filter:blur(2.4cqw);transform:translateY(1.2cqw)}60%{opacity:1}100%{opacity:1;filter:blur(0);transform:none}}
+@keyframes kf-stretch{0%{opacity:0;transform:scaleX(2.4) scaleY(.2)}40%{opacity:1;transform:scaleX(.82) scaleY(1.22)}65%{transform:scaleX(1.06) scaleY(.96)}100%{opacity:1;transform:none}}
+@keyframes kf-split{0%{opacity:1;clip-path:inset(0 0 50% 0);transform:translateX(-4cqw)}50%{clip-path:inset(0 0 50% 0);transform:translateX(0)}51%{clip-path:inset(50% 0 0 0);transform:translateX(4cqw)}100%{opacity:1;clip-path:inset(0);transform:none}}
+@keyframes kf-glitch{0%{opacity:0;transform:translateX(-1.4cqw) skewX(14deg)}12%{opacity:1;transform:translateX(1.2cqw) skewX(-10deg);text-shadow:.5cqw 0 #f0f,-.5cqw 0 #0ff}26%{transform:translateX(-.8cqw)}38%{transform:translateX(.5cqw) skewX(5deg);text-shadow:-.4cqw 0 #f0f,.4cqw 0 #0ff}52%{transform:none;text-shadow:none}58%{transform:translateX(.3cqw)}64%,100%{opacity:1;transform:none;text-shadow:none}}
+@keyframes kf-distort{0%{opacity:0;transform:skewX(-24deg) scaleX(1.3)}45%{opacity:1;transform:skewX(9deg) scaleX(.94)}70%{transform:skewX(-3deg)}100%{opacity:1;transform:none}}
+@keyframes kf-jump{0%{opacity:0;transform:translateY(0)}20%{opacity:1;transform:translateY(-5cqw) scale(.96,1.05)}42%{transform:translateY(0) scale(1.06,.9)}58%{transform:translateY(-1.6cqw)}74%{transform:translateY(0) scale(1.02,.98)}100%{opacity:1;transform:none}}
+.reel.m-bscale [data-i]{animation-name:kf-bscale;--ease:linear}
+.reel.m-pbup [data-i]{animation-name:kf-pbup;--ease:linear}
+.reel.m-pbdn [data-i]{animation-name:kf-pbdn;--ease:linear}
+.reel.m-blurfade [data-i]{animation-name:kf-blurfade;--ease:cubic-bezier(.3,.7,.2,1)}
+.reel.m-stretch [data-i]{animation-name:kf-stretch;--ease:linear}
+.reel.m-split [data-i]{animation-name:kf-split;--ease:cubic-bezier(.7,0,.2,1)}
+.reel.m-glitch [data-i]{animation-name:kf-glitch;--ease:steps(14,end)}
+.reel.m-distort [data-i]{animation-name:kf-distort;--ease:cubic-bezier(.2,.8,.3,1)}
+.reel.m-jump [data-i]{animation-name:kf-jump;--ease:linear}
