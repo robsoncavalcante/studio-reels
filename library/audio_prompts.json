@@ -1,0 +1,83 @@
+{
+ "music": {
+  "corporate": "Modern corporate pop instrumental for a short vertical business video. Confident, clean and bright: soft plucks and warm piano, light tight drums, round bass, 100-108 bpm, steady groove with a gentle build in the last third and a clear ending. No vocals, no spoken words, no sudden drops, mix leaves room for a voiceover in the mid range.",
+  "pop": "Upbeat modern pop instrumental for an Instagram reel. Bright arpeggio synth, clean kick and snare, claps, warm bass, 104 bpm, positive energy, catchy but not busy. No vocals, leaves space for a voiceover.",
+  "cinematic": "Cinematic luxury instrumental: slow evolving strings and pads, soft piano, deep sub, subtle riser into a restrained impact. 84 bpm, emotional and premium, no vocals, no choir.",
+  "lofi": "Warm lo-fi hip hop instrumental: dusty drums with swing, Rhodes chords, soft bass, vinyl texture, 78 bpm, relaxed lifestyle mood, no vocals.",
+  "house": "Stylish deep house instrumental for a fashion or event reel: four-on-the-floor kick, offbeat hats, pulsing bass, filtered chords, 122 bpm, sleek and modern, no vocals.",
+  "hype": "High-energy modern trap and drill instrumental for a promo or Black Friday reel: heavy 808, fast hi-hats, aggressive but clean, 140 bpm, urgent, no vocals, leaves space for a voiceover.",
+  "ambient": "Soft ambient instrumental for wellness and health content: long airy pads, gentle piano notes, slow evolution, 70 bpm, calm and trustworthy, no vocals."
+ },
+ "sfx": {
+  "whoosh": "smooth soft whoosh transition, clean, short, close mic, no music",
+  "swipe": "quick light swipe, UI slide, airy, very short",
+  "pop": "soft bubble pop, friendly UI notification, short",
+  "click": "clean modern UI button click, tight, dry",
+  "riser": "short cinematic riser building tension, 1.5 seconds, ends abruptly",
+  "impact": "deep cinematic impact hit with short tail, sub boom, clean",
+  "shimmer": "gentle magical shimmer chime, bright, 1 second, fades out"
+ },
+ "voices_pt_br": [
+  {
+   "id": 1060,
+   "name": "Duarte Queiroz",
+   "perfil": "masculina madura, firme, tom de notícia/explicativo (ótima para consultoria, jurídico, finanças)"
+  },
+  {
+   "id": 989,
+   "name": "Duarte Sampaio",
+   "perfil": "masculina calorosa e confiante, tom de mentor (liderança, educação)"
+  },
+  {
+   "id": 71,
+   "name": "Marcelo Costa",
+   "perfil": "masculina agradável, narração geral"
+  },
+  {
+   "id": 1409,
+   "name": "Tiago Macedo",
+   "perfil": "masculina médio-grave, quente, aveludada"
+  },
+  {
+   "id": 450,
+   "name": "Tiago Lima",
+   "perfil": "masculina jovem, alegre (varejo, promoção, social)"
+  },
+  {
+   "id": 455,
+   "name": "João Félix",
+   "perfil": "masculina jovem, dinâmica (plataformas digitais)"
+  },
+  {
+   "id": 984,
+   "name": "Catarina Cordeiro",
+   "perfil": "feminina enérgica, confiante e persuasiva (anúncios, vendas)"
+  },
+  {
+   "id": 611,
+   "name": "Lívia Moreira",
+   "perfil": "feminina jovem e simpática (social, atendimento)"
+  },
+  {
+   "id": 105,
+   "name": "Scheila Martins",
+   "perfil": "feminina madura, dicção clara (institucional)"
+  },
+  {
+   "id": 1069,
+   "name": "Joana Cordeiro",
+   "perfil": "feminina calma e medida (documental, bem-estar)"
+  },
+  {
+   "id": 449,
+   "name": "Camila Rocha",
+   "perfil": "feminina doce e rítmica (narração leve)"
+  },
+  {
+   "id": 1135,
+   "name": "Mariana Queiroz",
+   "perfil": "feminina serena (meditação, saúde)"
+  }
+ ],
+ "workflow": "FLUXO COM O CONECTOR MAGNIFIC (ou ElevenLabs web): 1) Claude chama simulate_cost e depois audio_music_generate / audio_sfx_generate / audio_tts (antes use audio_tts_direction para escrever o texto da locução); 2) creations_wait; 3) o arquivo fica no projeto do Magnific (webUrl) — o sandbox do Claude NÃO baixa o CDN, então: com o computador conectado ao app, Claude baixa por device_bash (curl) ou você baixa o mp3 e anexa na conversa; 4) `studio.py audio import <arquivo> --kind music|voice|sfx`; 5) `studio.py reel ... --audio trilha.wav --voice voz.wav` ou, para vídeo já pronto, `studio.py audio mix --video v.mp4 --music-file trilha.wav --voice-file voz.wav`. SFX: solte whoosh.wav, pop.wav etc. em library/audio/sfx/ e eles substituem os sintéticos. Meça a voz antes: se passar do tempo do vídeo, reduza o texto ou aumente as cenas."
+}

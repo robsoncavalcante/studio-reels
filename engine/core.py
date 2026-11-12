@@ -678,7 +678,7 @@ def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
 def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade-up", transition="smooth", tdur=None, fps=30,
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
-                sync=False, music=None, sfx=None, key="A", music_vol=0.75):
+                sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -738,17 +738,18 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 for i in range(len(scenes)):
                     events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7))
                 events.append(dict(t=max(0, starts[-1] + tdur + .5), kind="shimmer", vol=.7))
-        if music or events or audio:
+        if music or events or audio or voice:
             from . import audio as _audio
             wav = out.with_suffix(".mix.wav")
-            _audio.build_track(total, music, bpm, events, wav, music_file=None if music else audio, music_vol=music_vol, key=key)
+            _audio.build_track(total, music, bpm, events, wav, music_file=None if music else audio, music_vol=music_vol, key=key,
+                               voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start)
             audio = str(wav)
         join_scenes(clips, durs, tr_list, tdur, fps, out, audio)
         if audio and str(audio).endswith(".mix.wav"):
             Path(audio).unlink(missing_ok=True)
         beat = 60.0 / float(bpm) if bpm else None
         tl = dict(total=round(total, 3), fps=fps, format=fmt, theme=theme, motion=motion, pace=pace or "standard", ease=ease,
-                  bpm=bpm, beat=round(beat, 4) if beat else None, music=music, sfx=sfx, sync=bool(sync),
+                  bpm=bpm, beat=round(beat, 4) if beat else None, music=music, sfx=sfx, sync=bool(sync), voice=bool(voice),
                   scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3)) for i, s in enumerate(scenes)],
                   transitions=[dict(at=round(starts[i], 3), dur=tdur, type=tr_list[i - 1]) for i in range(1, len(scenes))],
                   sfx_events=events,

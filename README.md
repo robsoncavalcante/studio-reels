@@ -50,3 +50,31 @@ Marca Criative: `--brand criative --theme criative-dark|criative-light`; layouts
 
 ## Fonte oficial
 Repositório privado: github.com/robsoncavalcante/studio-reels (branch main). Em qualquer projeto: anexe o repositório à sessão (add_repo) e rode `git clone --depth 1 https://github.com/robsoncavalcante/studio-reels ~/studio-reels && bash ~/studio-reels/bootstrap.sh`.
+
+## Áudio profissional: voz, trilha e SFX (v4)
+
+O sintetizador local (`audio gen`) serve só de reserva. Para áudio bom, use a cadeia de provedores:
+
+| Necessidade | Opção grátis / offline | Opção por IA (conta/chave) |
+|---|---|---|
+| Locução pt-BR | **Kokoro** (offline, Apache-2.0: `pf_dora`, `pm_alex`, `pm_santa`) · Edge TTS (online) | **ElevenLabs** (`ELEVENLABS_API_KEY`) · Magnific `audio_tts` (vozes ElevenLabs/Gemini) |
+| Trilha | Jamendo (`JAMENDO_CLIENT_ID`), Openverse, Pixabay/FMA (manual) | Magnific `audio_music_generate` (Lyria 3, ElevenLabs Music) · ElevenLabs Music |
+| SFX | Freesound CC0 (`FREESOUND_API_KEY`), Openverse | Magnific `audio_sfx_generate` · ElevenLabs SFX |
+
+Atenção às licenças: o plano grátis do ElevenLabs **não tem licença comercial** (serve para teste; cliente exige plano pago).
+
+```bash
+python studio.py audio providers                       # o que está disponível neste ambiente
+python studio.py audio tts "Texto da locução" --out voz.wav            # auto: elevenlabs → kokoro → edge
+python studio.py audio tts @roteiro.txt --provider kokoro --voice pm_alex --speed 1.05
+python studio.py audio music "pop instrumental 108 bpm" --dur 60 --provider elevenlabs
+python studio.py audio sfxgen "whoosh suave" --dur 1.5
+python studio.py audio fetch "whoosh" --kind sfx --provider freesound   # baixa e registra licença em library/audio/credits.json
+python studio.py audio brief corporate                 # prompts prontos + vozes pt-BR do Magnific
+python studio.py audio import baixado.mp3 --kind music --as trilha-empapel
+python studio.py reel ... --audio trilha.wav --voice voz.wav --duck 0.6   # trilha em loop, ducking sob a voz, −14 LUFS
+python studio.py audio mix --video reel.mp4 --music-file trilha.wav --voice-file voz.wav   # refaz o som de um vídeo pronto
+```
+
+SFX próprios: solte `whoosh.wav`, `pop.wav`, `swipe.wav`… em `library/audio/sfx/` e eles substituem os sintéticos nos reels.
+Magnific (conector do Claude): o sandbox não baixa o CDN deles; baixe o arquivo pelo Magnific (ou peça ao Claude para baixar com o computador conectado) e use `audio import`.

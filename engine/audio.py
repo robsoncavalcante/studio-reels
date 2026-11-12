@@ -343,27 +343,90 @@ def write_wav(path, st):
     return Path(path)
 
 
+SFX_PACK = ROOT / "library" / "audio" / "sfx"   # solte aqui whoosh.wav, pop.wav... (Magnific/ElevenLabs/Freesound) e eles substituem os sintéticos
+
+
+def load_audio(path, duration: float | None = None) -> np.ndarray:
+    """Qualquer arquivo de áudio -> float32 estéreo (N,2) a 44,1 kHz."""
+    tmp = Path(str(path) + ".tmp.wav")
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(path)]
+    if duration:
+        cmd += ["-t", f"{duration:.2f}"]
+    subprocess.run(cmd + ["-ar", str(SR), "-ac", "2", str(tmp)], check=True)
+    with wave.open(str(tmp)) as w:
+        raw = np.frombuffer(w.readframes(w.getnframes()), "<i2").reshape(-1, 2) / 32768
+    tmp.unlink(missing_ok=True)
+    return raw.astype(np.float32)
+
+
+def loop_to(m: np.ndarray, n: int, xfade: float = 1.5) -> np.ndarray:
+    """Estende a trilha até n amostras repetindo com crossfade (trilhas de 30 s em vídeos de 60 s)."""
+    if len(m) >= n or len(m) < SR * 4:
+        return m[:n]
+    x = int(min(xfade, len(m) / 4 / SR) * SR)
+    out = m.copy()
+    while len(out) < n:
+        a, b = out[-x:], m[:x]
+        w = np.linspace(0, 1, x)[:, None]
+        out = np.concatenate([out[:-x], a * (1 - w) + b * w, m[x:]])
+    return out[:n]
+
+
+def duck_envelope(voice: np.ndarray, depth: float = .6, attack: float = .06, release: float = .35) -> np.ndarray:
+    """Ganho (0..1) a aplicar na trilha enquanto a voz fala (ducking suave, calculado a 100 Hz)."""
+    blk = SR // 100
+    lvl = np.abs(voice).max(axis=1)
+    m = len(lvl) // blk
+    env = lvl[:m * blk].reshape(m, blk).max(axis=1)
+    on = (np.convolve((env > .02).astype(np.float32), np.ones(8) / 8, "same") > .1).astype(np.float32)
+    a, r = np.exp(-1 / (attack * 100)), np.exp(-1 / (release * 100))
+    g = np.zeros(m, np.float32)
+    cur = 0.0
+    for i in range(m):
+        cur = on[i] + (cur - on[i]) * (a if on[i] > cur else r)
+        g[i] = cur
+    full = np.interp(np.arange(len(lvl)) / blk, np.arange(m), g)
+    return (1 - depth * full).astype(np.float32)
+
+
+def sfx_any(kind: str, vol: float = 1.0) -> np.ndarray:
+    pack = SFX_PACK / f"{kind}.wav"
+    if pack.exists():
+        s = load_audio(pack)
+        return s * vol
+    return sfx(kind, vol)
+
+
 def build_track(duration: float, style: str | None, bpm: float | None, events: list[dict], out: Path,
-                music_file: str | None = None, music_vol: float = .75, key: str = "A", sfx_vol: float = .8) -> Path:
-    """Mix: música (gerada ou arquivo) + SFX nos instantes de `events` [{t, kind, vol?}] -> wav estéreo."""
+                music_file: str | None = None, music_vol: float = .75, key: str = "A", sfx_vol: float = .8,
+                voice_file: str | None = None, voice_vol: float = 1.0, duck: float = .6, voice_start: float = 0.0) -> Path:
+    """Mix: música (gerada ou arquivo, com loop) + voz com ducking + SFX nos instantes de `events`
+    [{t, kind|file, vol?}] -> wav estéreo. SFX usa o pacote em library/audio/sfx quando existir."""
     n = int(duration * SR)
     mix = np.zeros((n, 2), np.float32)
+    voice = None
+    if voice_file:
+        v = load_audio(voice_file)
+        i0 = int(voice_start * SR)
+        voice = np.zeros((n, 2), np.float32)
+        seg = v[:max(0, n - i0)]
+        voice[i0:i0 + len(seg)] = seg
+        if len(v) + i0 > n:
+            print(f"  ! a voz ({len(v) / SR + voice_start:.1f}s) é mais longa que o vídeo ({duration:.1f}s): ela será cortada")
+    m = None
     if music_file:
-        tmp = out.with_suffix(".src.wav")
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(music_file), "-t", f"{duration:.2f}", "-ar", str(SR), "-ac", "2", str(tmp)], check=True)
-        with wave.open(str(tmp)) as w:
-            raw = np.frombuffer(w.readframes(w.getnframes()), "<i2").reshape(-1, 2) / 32768
-        tmp.unlink(missing_ok=True)
-        m = raw[:n]
-        m = _fades(m, .3, 1.2)
+        m = load_audio(music_file)
+        m = loop_to(m, n)
+        m = _fades(m[:n], .3, 1.2)
     elif style:
         m = music(style, duration, bpm, key)
-    else:
-        m = None
     if m is not None:
-        mix[:len(m)] += m[:n] * music_vol
+        g = duck_envelope(voice, duck)[:len(m), None] if voice is not None and duck > 0 else 1.0
+        mix[:len(m)] += m[:n] * music_vol * g
+    if voice is not None:
+        mix += voice * voice_vol
     for ev in events:
-        s = sfx(ev["kind"], ev.get("vol", 1.0) * sfx_vol)
+        s = load_audio(ev["file"]) * ev.get("vol", 1.0) * sfx_vol if ev.get("file") else sfx_any(ev["kind"], ev.get("vol", 1.0) * sfx_vol)
         i = int(ev["t"] * SR)
         if i >= n:
             continue
@@ -371,6 +434,23 @@ def build_track(duration: float, style: str | None, bpm: float | None, events: l
         mix[i:j] += s[:j - i]
     mix = np.tanh(mix * 1.05)
     return write_wav(out, mix)
+
+
+def remix_video(video, out, *, music_file=None, voice_file=None, style=None, bpm=None, music_vol=.75, voice_vol=1.0, duck=.6,
+                events=None, sfx_vol=.8, keep_original=False, voice_start=0.0) -> Path:
+    """Troca (ou acrescenta) o áudio de um vídeo pronto: ideal para refazer o som de um reel já renderizado."""
+    video, out = Path(video), Path(out)
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(video)], capture_output=True, text=True)
+    dur = float(r.stdout.strip())
+    wav = out.with_suffix(".mix.wav")
+    build_track(dur, style, bpm, events or [], wav, music_file=music_file, music_vol=music_vol, voice_file=voice_file,
+                voice_vol=voice_vol, duck=duck, sfx_vol=sfx_vol, voice_start=voice_start)
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(video), "-i", str(wav), "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+           "-c:a", "aac", "-b:a", "192k", "-af", f"afade=t=in:d=0.3,afade=t=out:st={max(0, dur - 1):.2f}:d=1,loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.84:level=disabled",
+           "-movflags", "+faststart", "-t", f"{dur:.3f}", str(out)]
+    subprocess.run(cmd, check=True)
+    wav.unlink(missing_ok=True)
+    return out
 
 
 def sources() -> list[dict]:

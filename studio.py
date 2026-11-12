@@ -206,7 +206,8 @@ def cmd_reel(a):
     core.render_reel(scenes, a.theme, out, fmt=a.format, motion=motion, transition=transition, tdur=a.tdur, fps=a.fps,
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
                      pace=a.pace, speed=a.speed, stagger_scale=a.stagger_scale, intensity=a.intensity, ease=a.ease,
-                     kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol)
+                     kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
+                     voice=a.voice, voice_vol=a.voice_vol, duck=a.duck)
     print("✓", out)
     return 0
 
@@ -431,7 +432,18 @@ def cmd_motion(a):
 
 
 def cmd_audio(a):
-    from engine import audio
+    from engine import voice
+    try:
+        return _cmd_audio(a)
+    except voice.ProviderError as e:
+        print(f"✗ {e}")
+        return 1
+
+
+def _cmd_audio(a):
+    from engine import audio, voice
+    if a.action in ("tts", "music", "sfxgen", "fetch", "import") and not a.text:
+        a.text = a.name  # o 1º argumento posicional é o texto/prompt/busca/arquivo
     if a.action == "styles":
         for k, v in audio.STYLES.items():
             print(f"{k:<10} {v['bpm']:>3} bpm  {v['desc']}  [{v['mood']}]")
@@ -440,6 +452,58 @@ def cmd_audio(a):
     if a.action == "sources":
         for s_ in audio.sources():
             print(f"• {s_['nome']}  [{s_['licenca']}]  crédito: {s_['atribuicao']}  comercial: {s_['uso_comercial']}\n    {s_['url']}  {s_['obs']}")
+        return 0
+    if a.action == "providers":
+        for p_ in voice.status():
+            print(f"{'✓' if p_['ok'] else '·'} {p_['id']:<11} {p_['kind']:<14} {p_['note']}")
+        return 0
+    if a.action == "brief":
+        import json as _j
+        d = _j.loads((ROOT / "library" / "audio_prompts.json").read_text(encoding="utf-8"))
+        st = a.name if a.name in d["music"] else "corporate"
+        print(f"== Trilha ({st}) — cole no Magnific (audio_music_generate: google-lyria-3-pro p/ 30-180s) ou ElevenLabs Music:\n{d['music'][st]}\n")
+        print("== SFX — audio_sfx_generate (1-2 s cada):")
+        for k, v in d["sfx"].items():
+            print(f"  {k:<8} {v}")
+        print("\n== Vozes pt-BR (Magnific audio_tts, ids do catálogo):")
+        for v in d["voices_pt_br"]:
+            print(f"  {v['id']:>5}  {v['name']:<22} {v['perfil']}")
+        print("\n" + d["workflow"])
+        return 0
+    if a.action == "tts":
+        out = Path(a.out) if a.out else ROOT / "samples" / "voz.wav"
+        text = Path(a.text[1:]).read_text(encoding="utf-8") if a.text.startswith("@") else a.text
+        f, p_ = voice.tts(text, out, provider=a.provider, voice=a.voice, speed=a.speed)
+        print(f"✓ {f}  ({voice.duration(f):.1f}s · provedor {p_})")
+        return 0
+    if a.action == "music":
+        out = Path(a.out) if a.out else ROOT / "samples" / "trilha.wav"
+        f, p_ = voice.gen_music(a.text, out, a.dur, a.provider)
+        print(f"✓ {f}  (provedor {p_})")
+        return 0
+    if a.action == "sfxgen":
+        out = Path(a.out) if a.out else ROOT / "samples" / "sfx.wav"
+        f, p_ = voice.gen_sfx(a.text, out, min(a.dur, 10), a.provider)
+        print(f"✓ {f}  (provedor {p_})")
+        return 0
+    if a.action == "fetch":
+        out = Path(a.out) if a.out else ROOT / "samples" / "fetch.mp3"
+        f, meta = voice.fetch(a.kind, a.text, out, provider=a.provider)
+        print(f"✓ {f}\n  {meta.get('title')} — {meta.get('author')} · {meta.get('license')} · {meta.get('url')}")
+        if meta.get("warn"):
+            print("  !", meta["warn"])
+        return 0
+    if a.action == "import":
+        f = voice.import_file(a.text, a.kind, a.out, name=a.as_name)
+        print(f"✓ {f}  ({voice.duration(f):.1f}s)")
+        return 0
+    if a.action == "mix":
+        if not a.video:
+            raise SystemExit("Use --video arquivo.mp4 (o áudio dele será substituído)")
+        out = Path(a.out) if a.out else Path(a.video).with_name(Path(a.video).stem + "_audio.mp4")
+        audio.remix_video(a.video, out, music_file=a.music_file, voice_file=a.voice_file, style=a.style, bpm=a.bpm,
+                          music_vol=a.music_vol, voice_vol=a.voice_vol, duck=a.duck)
+        print("✓", out)
         return 0
     out = Path(a.out) if a.out else ROOT / "samples" / f"audio_{a.name}.wav"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -623,7 +687,8 @@ def cmd_council(a):
                                  tdur=m.get("tdur"), bpm=aud.get("bpm"), audio=aud.get("file"), brand=brand, base_dir=base, sample=sample, renderer=r,
                                  pace=m.get("pace"), speed=m.get("speed"), stagger_scale=m.get("stagger_scale"), intensity=m.get("intensity"),
                                  ease=m.get("ease"), kenburns=m.get("kenburns"), count_up=m.get("count_up", False), sync=m.get("sync", False),
-                                 music=aud.get("music"), sfx=aud.get("sfx"), key=aud.get("key", "A"), music_vol=aud.get("vol", .75))
+                                 music=aud.get("music"), sfx=aud.get("sfx"), key=aud.get("key", "A"), music_vol=aud.get("vol", .75),
+                                 voice=aud.get("voice"), voice_vol=aud.get("voice_vol", 1.0), duck=aud.get("duck", .6))
         reps = qa_spec(spec, out, base)
         if kind == "reel":
             reps.append(qa.check_reel(str(out / "reel.timeline.json"), str(out / "reel.mp4")))
@@ -700,6 +765,9 @@ def main():
     p.add_argument("--sfx", choices=["light", "full"], help="efeitos sonoros: whoosh nas transições (+ pops e brilho no full)")
     p.add_argument("--key", default="A", help="tonalidade da trilha gerada (C, D#, A…)")
     p.add_argument("--music-vol", type=float, default=0.75, dest="music_vol")
+    p.add_argument("--voice", help="locução (wav/mp3) a mixar com ducking da trilha; gere com `studio.py audio tts`")
+    p.add_argument("--voice-vol", type=float, default=1.0, dest="voice_vol")
+    p.add_argument("--duck", type=float, default=0.6, help="quanto a trilha abaixa enquanto a voz fala (0..1)")
     p.add_argument("--dur", type=float, default=5.0, help="duração (modo --layout)")
     p.add_argument("--fps", type=int, default=30)
     p.add_argument("--bpm", type=float)
@@ -739,12 +807,25 @@ def main():
     p.add_argument("--out")
     p.set_defaults(fn=cmd_motion)
 
-    p = sub.add_parser("audio", help="trilhas originais, SFX e fontes de áudio livres")
-    p.add_argument("action", choices=["styles", "gen", "sfx", "sources"])
-    p.add_argument("name", nargs="?", default="pop")
+    p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")
+    p.add_argument("action", choices=["styles", "gen", "sfx", "sources", "providers", "brief", "tts", "music", "sfxgen", "fetch", "import", "mix"])
+    p.add_argument("name", nargs="?", default="pop", help="estilo (gen/sfx/brief) ou nome do arquivo (import)")
+    p.add_argument("text", nargs="?", default="", help="texto da locução (ou @arquivo.txt), prompt da trilha/SFX, busca (fetch) ou arquivo (import)")
     p.add_argument("--dur", type=float, default=20)
     p.add_argument("--bpm", type=float)
     p.add_argument("--key", default="A")
+    p.add_argument("--provider", default="auto", help="auto|kokoro|edge|elevenlabs|freesound|jamendo|openverse")
+    p.add_argument("--voice", help="id da voz (kokoro: pf_dora|pm_alex|pm_santa; edge: pt-BR-FranciscaNeural; elevenlabs: voice_id)")
+    p.add_argument("--speed", type=float, default=1.0)
+    p.add_argument("--kind", default="music", help="music|voice|sfx (fetch/import)")
+    p.add_argument("--as", dest="as_name", help="import: nome do arquivo na biblioteca")
+    p.add_argument("--video", help="mix: vídeo cujo áudio será refeito")
+    p.add_argument("--music-file", dest="music_file")
+    p.add_argument("--voice-file", dest="voice_file")
+    p.add_argument("--style", help="mix: trilha local (lofi|house|pop|corporate|cinematic|hype|ambient) se não houver arquivo")
+    p.add_argument("--music-vol", type=float, default=0.75, dest="music_vol")
+    p.add_argument("--voice-vol", type=float, default=1.0, dest="voice_vol")
+    p.add_argument("--duck", type=float, default=0.6)
     p.add_argument("--out")
     p.set_defaults(fn=cmd_audio)
 
