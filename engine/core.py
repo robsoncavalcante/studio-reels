@@ -43,6 +43,20 @@ TRANSITIONS = [
     "squeezeh", "squeezev", "zoomin", "distance", "hblur",
 ]
 TRANSITION_POOL = ["slideleft", "smoothleft", "wipeleft", "circleopen", "zoomin", "radial", "slideup", "fade", "pixelize", "diagtl", "hlslice", "squeezeh"]
+# conjuntos por clima (use --transition set:NOME); cada transição conhece o SFX que combina com ela
+TRANSITION_SETS = {
+    "clean": ["smoothleft", "fade", "slideup", "wipeleft", "smoothup"],
+    "energetic": ["slideleft", "hblur", "zoomin", "wipeleft", "squeezeh", "slideup", "coverleft"],
+    "cinematic": ["fadeblack", "fade", "circleopen", "revealleft", "fadegrays", "vertopen"],
+    "editorial": ["wipeleft", "wiperight", "slideup", "coverup", "revealup", "hlslice"],
+    "punch": ["zoomin", "hblur", "squeezev", "circlecrop", "fadewhite", "distance"],
+}
+TRANSITION_SFX = {
+    "slideleft": "whoosh", "slideright": "whoosh", "slideup": "swipe", "slidedown": "swipe", "smoothleft": "whoosh", "smoothup": "swipe",
+    "hblur": "whoosh", "wipeleft": "swipe", "wiperight": "swipe", "coverleft": "whoosh", "coverup": "swipe", "revealleft": "swipe", "revealup": "swipe",
+    "zoomin": "impact", "squeezeh": "swipe", "squeezev": "swipe", "circlecrop": "pop", "circleopen": "shimmer", "fadewhite": "shimmer",
+    "fadeblack": "riser", "fade": None, "fadegrays": None, "dissolve": None, "distance": "whoosh", "vertopen": "swipe", "hlslice": "swipe",
+}
 
 
 # --------------------------------------------------------------------------- registry
@@ -333,11 +347,12 @@ window.__prep=function(){
     const words=cv.classList.contains('mw');
     const sel='.k,.t,.s,.b,.photo,.item,.badge,.cta,.sticker,.chip,.surface,[data-a]';
     let i=0;
+    const jit=(el,n)=>{ if(!cv.classList.contains('hm')) return; const r=Math.sin((n+1)*12.9898+7.13)*43758.5453; const f=r-Math.floor(r); el.style.setProperty('--j',((f-.5)*.12).toFixed(3)+'s'); };
     cv.querySelectorAll(sel).forEach(el=>{
       if(el.closest('.no-anim')||el.parentElement.closest('.photo')) return;
       if(words&&el.classList.contains('t')){
-        el.querySelectorAll('.w').forEach(w=>{w.style.setProperty('--i',i);w.setAttribute('data-i','');i++;});
-      }else{el.style.setProperty('--i',i);el.setAttribute('data-i','');i++;}
+        el.querySelectorAll('.w').forEach(w=>{w.style.setProperty('--i',i);w.setAttribute('data-i','');jit(w,i);i++;});
+      }else{el.style.setProperty('--i',i);el.setAttribute('data-i','');jit(el,i);i++;}
     });
   }
   const counters=[];
@@ -397,6 +412,7 @@ def head_html(reel=False) -> str:
     if reel:
         css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "easings.css").as_uri()}">')
         css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "motions.css").as_uri()}">')
+        css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "human.css").as_uri()}">')
     return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' + "".join(css)
 
 
@@ -643,7 +659,7 @@ def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: i
     return out
 
 
-def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td: float, fps: int, out: Path, audio: str | None = None):
+def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td: float, fps: int, out: Path, audio: str | None = None, ass: tuple | None = None):
     total = sum(durs)
     cmd = [_ffmpeg(), "-y", "-loglevel", "error"]
     for c in clips:
@@ -662,7 +678,11 @@ def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td
             prev = tag
         parts.append(f"[{prev}]format=yuv420p[vout]")
         fc = ";".join(parts)
-    cmd += ["-filter_complex", fc, "-map", "[vout]"]
+    vmap = "[vout]"
+    if ass:
+        fc += f";[vout]ass=filename={ass[0]}:fontsdir={ass[1]}[vsub]"
+        vmap = "[vsub]"
+    cmd += ["-filter_complex", fc, "-map", vmap]
     if audio:
         cmd += ["-map", f"{len(clips)}:a", "-c:a", "aac", "-b:a", "192k", "-af", f"afade=t=in:d=0.3,afade=t=out:st={max(0, total - 1):.2f}:d=1,loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.84:level=disabled"]
     cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-t", f"{total:.3f}", str(out)]
@@ -678,7 +698,8 @@ def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
 def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade-up", transition="smooth", tdur=None, fps=30,
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
-                sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0):
+                sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -703,7 +724,12 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         durs.append(d)
     tr_list = []
     for i in range(max(0, len(scenes) - 1)):
-        if transition in ("smooth", "random", "mix"):
+        if transition.startswith("set:"):
+            pool = TRANSITION_SETS.get(transition[4:])
+            if not pool:
+                raise SystemExit(f"Conjunto de transições '{transition[4:]}' não existe: {', '.join(TRANSITION_SETS)}")
+            tr_list.append(pool[(i + sum(map(ord, theme))) % len(pool)])
+        elif transition in ("smooth", "random", "mix"):
             tr_list.append(TRANSITION_POOL[(i + sum(map(ord, theme))) % len(TRANSITION_POOL)])
         elif "," in transition:
             seq = transition.split(",")
@@ -721,7 +747,8 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
             html = page_html(slide_canvas(s["layout"], theme, fmt, s.get("content", {}), brand, base_dir=base_dir, sample=sample,
                                           reel=dict(motion=s.get("motion", motion), scene_dur=durs[i] + tdur, extra_delay=(tdur if i > 0 else 0.0),
                                                     pace=pace, speed=speed, stagger_scale=stagger_scale, intensity=intensity, ease=ease,
-                                                    kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm),
+                                                    kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm,
+                                                    human=human, parallax=parallax, highlight=highlight),
                                           pager=(i, len(scenes)) if pager else None), reel=True)
             clip = tmpd / f"s{i}.mp4"
             if verbose:
@@ -733,18 +760,48 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         events = []
         if sfx:
             for i in range(1, len(scenes)):
-                events.append(dict(t=max(0, starts[i] - .08), kind="whoosh", vol=.9))
+                kind = TRANSITION_SFX.get(tr_list[i - 1], "whoosh")
+                if kind:
+                    events.append(dict(t=max(0, starts[i] - .08), kind=kind, vol=.9, vary=bool(human)))
+                if kind == "riser" or (sfx == "full" and i == len(scenes) - 1):
+                    events.append(dict(t=max(0, starts[i] - 1.1), kind="riser", vol=.5, vary=bool(human)))
             if sfx == "full":
                 for i in range(len(scenes)):
-                    events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7))
+                    events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7, vary=bool(human)))
                 events.append(dict(t=max(0, starts[-1] + tdur + .5), kind="shimmer", vol=.7))
+        audio_src = audio
         if music or events or audio or voice:
             from . import audio as _audio
             wav = out.with_suffix(".mix.wav")
             _audio.build_track(total, music, bpm, events, wav, music_file=None if music else audio, music_vol=music_vol, key=key,
                                voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start)
             audio = str(wav)
-        join_scenes(clips, durs, tr_list, tdur, fps, out, audio)
+        ass_arg, cap_files = None, {}
+        if captions:
+            from . import captions as _cap
+            if not script:
+                raise SystemExit("--captions precisa do texto da locução: use --script \"texto\" ou --script @roteiro.txt")
+            th = resolve_theme(theme, brand)
+            words = _cap.align(script, voice, total, voice_start)
+            assp, fdir = _cap.build_ass(words, tmpd / "legendas.ass", style=captions, W=W, H=H, font_slug=th.get("font_display", "Space Grotesk").lower().replace(" ", "-"),
+                                        accent=th.get("accent2", th.get("accent", "#FFFFFF")), fg="#FFFFFF", pos_y=.74)
+            ass_arg = (assp, fdir)
+            cap_files = {"legendas.ass": assp, "legendas.srt": assp.with_suffix(".srt"), "palavras.json": assp.with_suffix(".words.json")}
+        join_scenes(clips, durs, tr_list, tdur, fps, out, audio, ass_arg)
+        if stems:
+            from . import audio as _audio, export as _export
+            stem_files = {}
+            if music or events or audio or voice:
+                for part in ("mix", "musica", "voz", "sfx"):
+                    solo = {"mix": None, "musica": "music", "voz": "voice", "sfx": "sfx"}[part]
+                    pth = tmpd / f"{part}.wav"
+                    _audio.build_track(total, music, bpm, events, pth, music_file=None if music else audio_src, music_vol=music_vol, key=key,
+                                       voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start, solo=solo)
+                    stem_files[part] = pth
+            _tl = dict(total=round(total, 3), scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3)) for i, s in enumerate(scenes)],
+                       transitions=[dict(at=round(starts[i], 3), dur=tdur, type=tr_list[i - 1]) for i in range(1, len(scenes))], sfx_events=events, fps=fps, bpm=bpm)
+            _export.export_all(stems, clips=clips, durs=durs, starts=starts, tdur=tdur, fps=fps, timeline=_tl, audio_stems=stem_files, caption_files=cap_files,
+                               spec=dict(theme=theme, motion=motion, transition=transition, human=human, parallax=parallax, highlight=highlight, captions=captions))
         if audio and str(audio).endswith(".mix.wav"):
             Path(audio).unlink(missing_ok=True)
         beat = 60.0 / float(bpm) if bpm else None

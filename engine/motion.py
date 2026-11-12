@@ -148,6 +148,12 @@ def style_for(m: dict, reel: dict) -> tuple[list[str], str]:
         classes.append(f"kb-{kb}")
     if reel.get("count_up"):
         classes.append("cu")
+    if reel.get("human"):
+        classes.append("hm")
+    if reel.get("parallax"):
+        classes.append("px")
+    if reel.get("highlight") in ("box", "marker", "underline"):
+        classes.append(f"hl-{reel['highlight']}")
     return classes, style
 
 

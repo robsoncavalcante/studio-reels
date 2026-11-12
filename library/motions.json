@@ -395,5 +395,50 @@
   "words": true,
   "desc": "Letra a letra, instantâneo",
   "chars": true
+ },
+ {
+  "id": "settle",
+  "name": "Assentar (peso real)",
+  "dur": 0.85,
+  "stagger": 0.13,
+  "delay": 0.12,
+  "words": false,
+  "level": "premium"
+ },
+ {
+  "id": "anticipate",
+  "name": "Antecipar e disparar",
+  "dur": 0.8,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "premium"
+ },
+ {
+  "id": "whip",
+  "name": "Whip com borrão",
+  "dur": 0.55,
+  "stagger": 0.09,
+  "delay": 0.1,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "mask",
+  "name": "Máscara de régua",
+  "dur": 0.7,
+  "stagger": 0.12,
+  "delay": 0.12,
+  "words": false,
+  "level": "intermediario"
+ },
+ {
+  "id": "rack",
+  "name": "Puxar foco",
+  "dur": 0.9,
+  "stagger": 0.14,
+  "delay": 0.12,
+  "words": false,
+  "level": "premium"
  }
 ]

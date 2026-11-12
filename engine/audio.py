@@ -399,7 +399,8 @@ def sfx_any(kind: str, vol: float = 1.0) -> np.ndarray:
 
 def build_track(duration: float, style: str | None, bpm: float | None, events: list[dict], out: Path,
                 music_file: str | None = None, music_vol: float = .75, key: str = "A", sfx_vol: float = .8,
-                voice_file: str | None = None, voice_vol: float = 1.0, duck: float = .6, voice_start: float = 0.0) -> Path:
+                voice_file: str | None = None, voice_vol: float = 1.0, duck: float = .6, voice_start: float = 0.0,
+                solo: str | None = None) -> Path:
     """Mix: música (gerada ou arquivo, com loop) + voz com ducking + SFX nos instantes de `events`
     [{t, kind|file, vol?}] -> wav estéreo. SFX usa o pacote em library/audio/sfx quando existir."""
     n = int(duration * SR)
@@ -420,18 +421,25 @@ def build_track(duration: float, style: str | None, bpm: float | None, events: l
         m = _fades(m[:n], .3, 1.2)
     elif style:
         m = music(style, duration, bpm, key)
-    if m is not None:
+    if m is not None and solo in (None, "music"):
         g = duck_envelope(voice, duck)[:len(m), None] if voice is not None and duck > 0 else 1.0
         mix[:len(m)] += m[:n] * music_vol * g
-    if voice is not None:
+    if voice is not None and solo in (None, "voice"):
         mix += voice * voice_vol
-    for ev in events:
-        s = load_audio(ev["file"]) * ev.get("vol", 1.0) * sfx_vol if ev.get("file") else sfx_any(ev["kind"], ev.get("vol", 1.0) * sfx_vol)
-        i = int(ev["t"] * SR)
-        if i >= n:
-            continue
-        j = min(n, i + len(s))
-        mix[i:j] += s[:j - i]
+    if solo in (None, "sfx"):
+        for k, ev in enumerate(events):
+            s = load_audio(ev["file"]) * ev.get("vol", 1.0) * sfx_vol if ev.get("file") else sfx_any(ev["kind"], ev.get("vol", 1.0) * sfx_vol)
+            if ev.get("vary"):  # humaniza: cada disparo com altura e volume ligeiramente diferentes
+                rng = np.random.default_rng(100 + k)
+                rate = rng.uniform(.93, 1.07)
+                idx = np.arange(0, len(s) - 1, rate)
+                s = np.stack([np.interp(idx, np.arange(len(s)), s[:, c]) for c in range(2)], 1).astype(np.float32)
+                s *= 10 ** (rng.uniform(-1.4, 1.0) / 20)
+            i = int(ev["t"] * SR)
+            if i >= n:
+                continue
+            j = min(n, i + len(s))
+            mix[i:j] += s[:j - i]
     mix = np.tanh(mix * 1.05)
     return write_wav(out, mix)
 

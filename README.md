@@ -78,3 +78,15 @@ python studio.py audio mix --video reel.mp4 --music-file trilha.wav --voice-file
 
 SFX próprios: solte `whoosh.wav`, `pop.wav`, `swipe.wav`… em `library/audio/sfx/` e eles substituem os sintéticos nos reels.
 Magnific (conector do Claude): o sandbox não baixa o CDN deles; baixe o arquivo pelo Magnific (ou peça ao Claude para baixar com o computador conectado) e use `audio import`.
+
+## Motion humanizado + legendas + export (v4)
+
+Objetivo: sair do "visual de IA" (tudo no tempo exato, easing único) para motion graphics com cara de editor humano. Princípios próprios (não copiados de nenhum plugin): antecipação, overshoot/assentamento, follow-through, timing irregular (jitter com semente ±60 ms), câmera de mão leve, parallax por camadas, motion blur no whip, caixas/marca-texto animados.
+
+Flags do `reel`:
+- `--human` ativa jitter, drift de câmera e movimentos novos (settle, anticipate, whip, mask, stamp, rack).
+- `--parallax` profundidade entre fundo/foto/texto.
+- `--highlight box|marker|underline` anima o `*destaque*` do título.
+- `--transition set:clean|energetic|cinematic|editorial|punch` conjuntos de transição com SFX casado.
+- `--captions karaoke|pop|box|clean --script texto|@arquivo` legendas ASS queimadas (timing estimado pela fala).
+- `--stems DIR` exporta cenas, stems de áudio, SRT/ASS, palavras.json, EDL CMX3600, marcadores JSON/CSV e projeto.json para Premiere/After Effects/DaVinci.

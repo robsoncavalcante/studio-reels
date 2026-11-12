@@ -6,5 +6,13 @@
   "chars": 109,
   "file": "/tmp/aud/t/voz.wav",
   "date": "2026-11-12"
+ },
+ {
+  "kind": "voz",
+  "provider": "kokoro",
+  "voice": null,
+  "chars": 118,
+  "file": "/tmp/aud/t/voz2.wav",
+  "date": "2026-11-12"
  }
 ]

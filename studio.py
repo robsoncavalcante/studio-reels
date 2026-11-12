@@ -207,7 +207,9 @@ def cmd_reel(a):
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
                      pace=a.pace, speed=a.speed, stagger_scale=a.stagger_scale, intensity=a.intensity, ease=a.ease,
                      kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
-                     voice=a.voice, voice_vol=a.voice_vol, duck=a.duck)
+                     voice=a.voice, voice_vol=a.voice_vol, duck=a.duck,
+                     human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
+                     script=(Path(a.script[1:]).read_text(encoding='utf-8') if a.script and a.script.startswith('@') else a.script))
     print("✓", out)
     return 0
 
@@ -768,6 +770,12 @@ def main():
     p.add_argument("--voice", help="locução (wav/mp3) a mixar com ducking da trilha; gere com `studio.py audio tts`")
     p.add_argument("--voice-vol", type=float, default=1.0, dest="voice_vol")
     p.add_argument("--duck", type=float, default=0.6, help="quanto a trilha abaixa enquanto a voz fala (0..1)")
+    p.add_argument("--human", action="store_true", help="motion humanizado: tempos irregulares, câmera de mão, SFX com variação")
+    p.add_argument("--parallax", action="store_true", help="profundidade: fundo, foto e texto em velocidades diferentes")
+    p.add_argument("--highlight", choices=["box", "marker", "underline"], help="anima o *destaque* do título como caixa, marca-texto ou sublinhado")
+    p.add_argument("--captions", help="legendas por palavra: estilo (karaoke|pop|box|clean) usando o texto da locução; veja `studio.py captions`")
+    p.add_argument("--script", help="texto da locução para as legendas (ou @roteiro.txt)")
+    p.add_argument("--stems", help="pasta para exportar cenas, trilha, voz, SFX, legendas (.srt/.ass) e EDL para o Premiere/After Effects")
     p.add_argument("--dur", type=float, default=5.0, help="duração (modo --layout)")
     p.add_argument("--fps", type=int, default=30)
     p.add_argument("--bpm", type=float)
