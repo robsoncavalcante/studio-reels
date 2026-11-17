@@ -19,18 +19,43 @@ def duration(src):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)], capture_output=True, text=True)
     return float(r.stdout.strip())
 
-def keep_segments(src, ritmo="ritmo"):
-    c = RITMO[ritmo]; total = duration(src); cur = 0.0; keep = []
+FILLERS = {"ahn", "ahnn", "hum", "hmm", "hm", "uh", "uhm", "um", "eh", "ééé", "éé", "ãh", "ah", "né"}
+
+
+def word_cuts(words, fillers=True, repeats=True):
+    """Intervalos a remover a partir de palavras com tempo: vícios de fala (ahn, hum...) e repetições (fica só a última vez)."""
+    norm = lambda w: re.sub(r"[^\wÀ-ÿ]", "", w.lower())
+    cuts = []
+    for i, w in enumerate(words):
+        n = norm(w["w"])
+        if fillers and n in FILLERS and n != "né":
+            cuts.append((w["t0"] - 0.03, w["t1"] + 0.05))
+        elif repeats and i + 1 < len(words) and n and n == norm(words[i + 1]["w"]) and n not in FILLERS:
+            cuts.append((w["t0"] - 0.02, words[i + 1]["t0"] - 0.02))
+    return cuts
+
+
+def keep_segments(src, ritmo="ritmo", words=None, fillers=True, repeats=True):
+    c = RITMO[ritmo]; total = duration(src); rem = []
     for a, b in silences(src, c["min_sil"], c["db"]):
-        a2 = min(a + c["pad"], b)
-        if a2 - cur > 0.15: keep.append((cur, a2))
-        cur = max(b - c["pad"], a2)
+        a2, b2 = a + c["pad"], b - c["pad"]
+        if b2 - a2 > 0.05: rem.append((a2, b2))
+    if words:
+        rem += word_cuts(words, fillers, repeats)
+    rem.sort(); merged = []
+    for a, b in rem:
+        if merged and a <= merged[-1][1]: merged[-1] = (merged[-1][0], max(b, merged[-1][1]))
+        else: merged.append((max(0, a), min(total, b)))
+    keep, cur = [], 0.0
+    for a, b in merged:
+        if a - cur > 0.15: keep.append((cur, a))
+        cur = max(cur, b)
     if total - cur > 0.15: keep.append((cur, total))
     return keep
 
-def run(src, out, ritmo="ritmo", jcut=0.0):
+def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=True):
     """jcut>0: o áudio de cada corte entra `jcut` s antes da imagem."""
-    keep = keep_segments(src, ritmo); n = len(keep)
+    keep = keep_segments(src, ritmo, words, fillers, repeats); n = len(keep)
     has_v = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=index", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip()
     parts = []
     for i, (a, b) in enumerate(keep):

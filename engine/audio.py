@@ -400,7 +400,7 @@ def sfx_any(kind: str, vol: float = 1.0) -> np.ndarray:
 def build_track(duration: float, style: str | None, bpm: float | None, events: list[dict], out: Path,
                 music_file: str | None = None, music_vol: float = .75, key: str = "A", sfx_vol: float = .8,
                 voice_file: str | None = None, voice_vol: float = 1.0, duck: float = .6, voice_start: float = 0.0,
-                solo: str | None = None) -> Path:
+                solo: str | None = None, extra_voice: str | None = None) -> Path:
     """Mix: música (gerada ou arquivo, com loop) + voz com ducking + SFX nos instantes de `events`
     [{t, kind|file, vol?}] -> wav estéreo. SFX usa o pacote em library/audio/sfx quando existir."""
     n = int(duration * SR)
@@ -414,6 +414,11 @@ def build_track(duration: float, style: str | None, bpm: float | None, events: l
         voice[i0:i0 + len(seg)] = seg
         if len(v) + i0 > n:
             print(f"  ! a voz ({len(v) / SR + voice_start:.1f}s) é mais longa que o vídeo ({duration:.1f}s): ela será cortada")
+    if extra_voice:  # áudio de clipes de vídeo (já alinhado à linha do tempo): trata como fala (ducking na trilha)
+        ev_ = load_audio(extra_voice)[:n]
+        if voice is None:
+            voice = np.zeros((n, 2), np.float32)
+        voice[:len(ev_)] += ev_
     m = None
     if music_file:
         m = load_audio(music_file)
@@ -502,3 +507,27 @@ def clean_voice(src, out, nr_db: float = 12.0, target_lufs: float = -20.0, lead:
     af = f"atrim={t0:.3f}:{t1:.3f},asetpts=PTS-STARTPTS,afftdn=nr={nr_db}:nf=-40,afade=t=in:d=0.03,afade=t=out:st={max(0, dur - 0.13):.3f}:d=0.13,loudnorm=I={target_lufs}:TP=-2:LRA=7"
     _sp.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-af", af, str(out)], check=True)
     return {"corte_inicio_s": round(t0, 3), "duracao_s": round(dur, 3), **levels(out)}
+
+
+def clips_track(items: list[dict], total: float, out) -> Path:
+    """Áudio dos clipes de vídeo das cenas, alinhado à linha do tempo. items: [{src,t,dur,start,speed,volume,loop}]."""
+    n = int(total * SR)
+    mix = np.zeros((n, 2), np.float32)
+    for k, it in enumerate(items):
+        has = _sp.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", it["src"]], capture_output=True, text=True).stdout.strip()
+        if not has:
+            print(f"  ! clipe sem áudio: {it['src']}")
+            continue
+        sp = max(0.5, min(2.0, it["speed"]))
+        tmp = Path(str(out) + f".c{k}.wav")
+        loop = ["-stream_loop", "-1"] if it["loop"] else []
+        af = f"atempo={sp}" if abs(sp - 1) > .01 else "anull"
+        _sp.run(["ffmpeg", "-y", "-loglevel", "error", *loop, "-ss", f"{it['start']}", "-i", it["src"], "-t", f"{it['dur'] * sp:.3f}", "-vn", "-af", af,
+                 "-ar", str(SR), "-ac", "2", str(tmp)], check=True)
+        a = load_audio(tmp) * it["volume"]
+        tmp.unlink(missing_ok=True)
+        i = int(it["t"] * SR)
+        j = min(n, i + len(a))
+        if j > i:
+            mix[i:j] += a[:j - i]
+    return write_wav(Path(out), mix)

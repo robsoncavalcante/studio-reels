@@ -1,0 +1,39 @@
+<style>
+.L-chart-line .pad{gap:4cqw;justify-content:center}
+.L-chart-line .t{font-size:9cqw;line-height:1.02}
+.L-chart-line .box{position:relative;height:44cqh}
+.L-chart-line svg{width:100%;height:100%;overflow:visible}
+.L-chart-line .ln{fill:none;stroke:var(--accent);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.L-chart-line .ar{fill:var(--accent);opacity:.14}
+.L-chart-line .dt{fill:var(--bg,#000);stroke:var(--accent);stroke-width:.8}
+.L-chart-line .gl{stroke:var(--line);stroke-width:.25}
+.L-chart-line .xl{display:flex;justify-content:space-between;font-size:3.1cqw;color:var(--muted);margin-top:1cqw}
+.L-chart-line .end{font-family:var(--font-display);font-weight:800;font-size:11cqw;line-height:1}
+@keyframes kf-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes kf-pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+@keyframes kf-fadein{from{opacity:0}to{opacity:.14}}
+.reel .L-chart-line .ln{stroke-dasharray:1;animation:kf-draw 1.6s cubic-bezier(.4,.1,.2,1) .4s both}
+.reel .L-chart-line .ar{animation:kf-fadein .8s ease 1.6s both}
+.reel .L-chart-line .dt{transform-box:fill-box;transform-origin:center;animation:kf-pop .35s cubic-bezier(.3,1.6,.4,1) calc(.4s + var(--bi) * .22s) both}
+</style>
+{% set vals = c['items'] | map(attribute='value') | map('float') | list %}
+{% set mx = (vals | max) if vals else 1 %}
+{% set mn = (vals | min) if vals else 0 %}
+{% set rg = (mx - mn) or 1 %}
+{% set n = vals | length %}
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.number %}<div class="end">{{ c.number }}</div>{% endif %}
+  {% set ns = namespace(pts=[]) %}
+  {% for v in vals %}{% set ns.pts = ns.pts + [[(loop.index0 / ((n - 1) or 1) * 100) | round(2), (92 - ((v - mn) / rg * 80)) | round(2)]] %}{% endfor %}
+  <div class="box" data-a>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      {% for g in [12, 38, 64, 92] %}<line class="gl" x1="0" x2="100" y1="{{ g }}" y2="{{ g }}"/>{% endfor %}
+      <polygon class="ar" points="{% for p in ns.pts %}{{ p[0] }},{{ p[1] }} {% endfor %}100,100 0,100"/>
+      <polyline class="ln" pathLength="1" points="{% for p in ns.pts %}{{ p[0] }},{{ p[1] }} {% endfor %}"/>
+      {% for p in ns.pts %}<circle class="dt" style="--bi:{{ loop.index0 }}" cx="{{ p[0] }}" cy="{{ p[1] }}" r="1.6"/>{% endfor %}
+    </svg>
+  </div>
+  <div class="xl" data-a>{% for it in c['items'] %}<span>{{ it.title }}</span>{% endfor %}</div>
+</div>

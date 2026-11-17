@@ -99,3 +99,14 @@ Flags do `reel`:
 - Legendas: padrão em 2 linhas curtas (~20 car.), centro em 64% da altura; `qa reel` avisa texto abaixo de ~69% (boa prática, não regra oficial).
 - `audio clean` (limpa locução, ~-20 LUFS), `audio levels` (LUFS/pico), `audio.bar_len(bpm)`.
 - Guia completo: `references/producao-reels.md` e `templates/checklist-reel.md`.
+
+## v4.3 — vídeo nas cenas, transcrição, gráficos, saída em cascata, prévia
+
+- **Vídeo dentro das cenas**: em `photos`, use objeto `{src,start,speed,volume,loop}`. O quadro é buscado por tempo (determinístico); o áudio do clipe entra na mixagem e a música/voz abaixam (ducking).
+- **Legendas reais**: `reel --words arquivo.srt|.json` (importa) ou `--transcribe` (Whisper local; precisa baixar o modelo uma vez, então rode no seu computador com internet).
+- **Autocut por palavras**: `autocut --words arquivo.srt|--transcribe` remove vícios ("ahn", "né") e repetições, além dos silêncios.
+- **Gráficos animados**: layouts `chart-bars`, `chart-donut`, `chart-line` (campo `items:[{title,value,text}]`). Não invente números.
+- **Saída em cascata**: `--exit pop|fade|slide|drop|blur` (a última cena não sai).
+- **Prévia rápida**: `--preview` (432×768, 15 fps) para aprovar antes do render final.
+- `--human` agora usa mola (`spring-soft`) por padrão.
+- **Testes**: `python tests/run_tests.py` (7 cenários) e `tests/cenarios.md` (cenários para rodar com Claude).

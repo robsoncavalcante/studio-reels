@@ -196,12 +196,18 @@ def cmd_reel(a):
         motion = a.motion or rec["motion"]
         transition = a.transition or rec["transition"]
         name = a.recipe
+    elif not a.layout and content.get("scenes") and all("layout" in x for x in content["scenes"]):
+        # roteiro direto: scenes[{layout, dur?, ...conteúdo}] sem receita (aceita photos com clipes de vídeo)
+        for x in content["scenes"]:
+            c = dict(x); d = c.pop("dur", 3.0)
+            scenes.append(dict(layout=c.pop("layout"), content=c, dur=d))
+        motion, transition, name = a.motion or "fade-up", a.transition or "smooth", "roteiro"
     elif a.layout:
         scenes = [dict(layout=a.layout, content=content, dur=a.dur)]
         motion, transition, name = a.motion or "fade-up", a.transition or "fade", a.layout
     else:
         raise SystemExit("Use --recipe R ou --layout L")
-    out = Path(a.out) if a.out else ROOT / "samples" / f"reel_{name}__{a.theme}.mp4"
+    out = Path(a.out) if a.out else ROOT / "samples" / f"reel_{name}__{a.theme}{'_previa' if a.preview else ''}.mp4"
     print(f"Renderizando reel '{name}' · tema {a.theme} · movimento {motion} · transição {transition}")
     core.render_reel(scenes, a.theme, out, fmt=a.format, motion=motion, transition=transition, tdur=a.tdur, fps=a.fps,
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
@@ -209,6 +215,7 @@ def cmd_reel(a):
                      kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
                      voice=a.voice, voice_vol=a.voice_vol, duck=a.duck,
                      human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
+                     words_file=a.words, transcribe=a.transcribe, exit=a.exit, preview=a.preview,
                      script=(Path(a.script[1:]).read_text(encoding='utf-8') if a.script and a.script.startswith('@') else a.script))
     print("✓", out)
     return 0
@@ -394,7 +401,14 @@ def cmd_fonts(a):
 def cmd_autocut(a):
     from engine import autocut
     out = a.out or str(Path(a.video).with_suffix("")) + "_autocut.mp4"
-    k = autocut.run(a.video, out, a.ritmo, a.jcut)
+    words = None
+    if a.words:
+        from engine import captions
+        words = captions.from_file(a.words)
+    elif a.transcribe:
+        from engine import captions
+        words = captions.transcribe(a.video, a.lang, a.model)
+    k = autocut.run(a.video, out, a.ritmo, a.jcut, words)
     print(f"✓ {out}  ({len(k)} trechos mantidos)")
     return 0
 
@@ -791,6 +805,10 @@ def main():
     p.add_argument("--highlight", choices=["box", "marker", "underline"], help="anima o *destaque* do título como caixa, marca-texto ou sublinhado")
     p.add_argument("--captions", help="legendas por palavra: estilo (karaoke|pop|box|clean) usando o texto da locução; veja `studio.py captions`")
     p.add_argument("--script", help="texto da locução para as legendas (ou @roteiro.txt)")
+    p.add_argument("--words", help="palavras com tempo reais (SRT ou JSON) para as legendas, em vez de estimar pelo roteiro")
+    p.add_argument("--exit", choices=["pop", "fade", "slide", "drop", "blur"], help="saída em cascata dos elementos antes da transição (consistente em todas as cenas)")
+    p.add_argument("--preview", action="store_true", help="prévia rápida: 40%% da resolução e até 15 fps, para aprovar antes do render final")
+    p.add_argument("--transcribe", action="store_true", help="transcreve a voz com faster-whisper (exige internet no 1º uso)")
     p.add_argument("--stems", help="pasta para exportar cenas, trilha, voz, SFX, legendas (.srt/.ass) e EDL para o Premiere/After Effects")
     p.add_argument("--dur", type=float, default=5.0, help="duração (modo --layout)")
     p.add_argument("--fps", type=int, default=30)
@@ -835,6 +853,9 @@ def main():
     p.add_argument("video"); p.add_argument("-o", "--out", default=None)
     p.add_argument("--ritmo", choices=["suave", "ritmo", "dinamico"], default="ritmo")
     p.add_argument("--jcut", type=float, default=0.0, help="segundos que o áudio antecipa a imagem")
+    p.add_argument("--words", help="palavras com tempo (SRT/JSON) para cortar vícios de fala e repetições")
+    p.add_argument("--transcribe", action="store_true", help="transcreve com faster-whisper (exige internet no 1º uso)")
+    p.add_argument("--lang", default="pt"); p.add_argument("--model", default="small")
     p.set_defaults(fn=cmd_autocut)
 
     p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")

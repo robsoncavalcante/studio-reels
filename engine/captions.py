@@ -130,6 +130,65 @@ def _join(parts: list[str], brk: int) -> str:
     return " ".join(parts[:brk]) + "\\N" + " ".join(parts[brk:]) if brk > 0 else " ".join(parts)
 
 
+# ------------------------------------------------------------------ transcrição real e import (v4.3)
+def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
+    """Transcreve com faster-whisper (tempos reais por palavra). Exige `pip install faster-whisper` e internet no 1º uso
+    (baixa o modelo). Sem isso, use `from_file()` com um SRT/JSON exportado de outra ferramenta (Whisper local, Premiere, CapCut)."""
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:
+        raise SystemExit("faster-whisper não instalado: pip install faster-whisper (ou use --words arquivo.srt/json)")
+    try:
+        m = WhisperModel(model, device="cpu", compute_type="int8")
+        seg, _ = m.transcribe(str(audio), language=lang, word_timestamps=True, vad_filter=True)
+        words = [dict(w=w.word.strip(), t0=round(w.start, 3), t1=round(w.end, 3)) for s in seg for w in s.words if w.word.strip()]
+    except Exception as e:  # rede bloqueada, modelo ausente...
+        raise SystemExit(f"Transcrição falhou ({type(e).__name__}). Rode em um ambiente com internet ou importe um SRT/JSON: --words arquivo")
+    if out:
+        Path(out).write_text(json.dumps(words, ensure_ascii=False, indent=1), encoding="utf-8")
+    return words
+
+
+def _srt_time(x: str) -> float:
+    h, m, s = x.replace(",", ".").split(":")
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def from_file(path, offset: float = 0.0) -> list[dict]:
+    """Palavras com tempo a partir de: JSON do motor/Whisper ([{w,t0,t1}] ou {segments:[{words:[{word,start,end}]}]}) ou SRT
+    (as palavras de cada legenda são distribuídas pelo tempo da legenda, ponderadas pelo tamanho)."""
+    p = Path(path)
+    txt = p.read_text(encoding="utf-8")
+    if p.suffix.lower() == ".json":
+        d = json.loads(txt)
+        if isinstance(d, dict):
+            d = [w for s in d.get("segments", []) for w in s.get("words", [])] or d.get("words", [])
+        out = []
+        for w in d:
+            if "t0" in w:
+                out.append(dict(w=w["w"], t0=w["t0"] + offset, t1=w["t1"] + offset))
+            else:
+                out.append(dict(w=(w.get("word") or w.get("text", "")).strip(), t0=w["start"] + offset, t1=w["end"] + offset))
+        return [w for w in out if w["w"]]
+    words = []
+    for blk in re.split(r"\n\s*\n", txt.strip()):
+        ln = [x for x in blk.strip().splitlines() if x.strip()]
+        tm = next((x for x in ln if "-->" in x), None)
+        if not tm:
+            continue
+        a, b = [_srt_time(x.strip().split(" ")[0]) for x in tm.split("-->")]
+        toks = " ".join(ln[ln.index(tm) + 1:]).split()
+        if not toks:
+            continue
+        wt = [len(t) + (4 if re.search(r"[.,;:!?…]$", t) else 0) + 1 for t in toks]
+        tot, cur = sum(wt), a + offset
+        for t, x in zip(toks, wt):
+            d = (b - a) * x / tot
+            words.append(dict(w=t, t0=round(cur, 3), t1=round(cur + d, 3)))
+            cur += d
+    return words
+
+
 # ------------------------------------------------------------------ fontes (woff2 -> ttf para o libass)
 def ttf_for(family_slug: str, weight: int = 700) -> tuple[Path, str]:
     """Converte a fonte da marca (woff2 do Fontsource) em TTF e devolve (pasta, nome da família)."""

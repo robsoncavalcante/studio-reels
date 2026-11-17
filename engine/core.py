@@ -252,7 +252,17 @@ def normalize_content(content: dict, base_dir: Path | None) -> dict:
     c = dict(content or {})
     if "text" in c and "body" not in c:
         c["body"] = c["text"]
-    c["photos"] = [resolve_media(p, base_dir) for p in (c.get("photos") or [])]
+    metas = []
+    plist = []
+    for p in (c.get("photos") or []):
+        if isinstance(p, dict):  # clipe: {"src","start","dur","speed","volume","loop"}
+            metas.append({k: v for k, v in p.items() if k != "src"})
+            plist.append(resolve_media(p.get("src"), base_dir))
+        else:
+            metas.append({})
+            plist.append(resolve_media(p, base_dir))
+    c["photos"] = plist
+    c["photo_meta"] = metas
     if c.get("cutout"):
         c["cutout"] = resolve_media(c["cutout"], base_dir)
     c["items"] = [dict(i) if isinstance(i, dict) else {"title": str(i)} for i in (c.get("items") or [])]
@@ -272,7 +282,9 @@ def make_helpers(c: dict):
         src = photos[i] if i < len(photos) else None
         if src:
             if src.lower().split("?")[0].endswith(VIDEO_EXT):
-                inner = f'<video src="{src}" muted playsinline preload="auto"></video>'
+                m = (c.get("photo_meta") or [{}] * (i + 1))[i] if i < len(c.get("photo_meta") or []) else {}
+                inner = (f'<video src="{src}" muted playsinline preload="auto" data-start="{float(m.get("start", 0))}" '
+                         f'data-speed="{float(m.get("speed", 1))}" data-loop="{1 if m.get("loop", True) else 0}"></video>')
             else:
                 inner = f'<img src="{src}" alt="">'
         else:
@@ -363,13 +375,42 @@ window.__prep=function(){
       const val=parseFloat(raw.replace(',','.'));counters.push({el:tgt,pre:m[1],suf:m[3],val,dec,sep,orig:tgt.textContent});
     });
   }
+  const exm=(cv.className.match(/ex-(\w+)/)||[])[1];
+  if(exm){
+    const at=parseFloat(getComputedStyle(cv).getPropertyValue('--exit-at'));
+    if(at>0.6){
+      const els=[...document.querySelectorAll('[data-i]')].filter(e=>!e.parentElement.closest('[data-i]'));
+      const dur=.42,stg=Math.min(.09,Math.max(.03,(at-1.2)/Math.max(1,els.length)/2)),n=els.length;
+      const KF={
+        pop:[{opacity:1,scale:'1'},{opacity:1,scale:'1.07',offset:.3},{opacity:0,scale:'.15'}],
+        fade:[{opacity:1,translate:'0 0'},{opacity:0,translate:'0 -2.2cqw'}],
+        slide:[{opacity:1,translate:'0 0'},{opacity:0,translate:'-14cqw 0'}],
+        drop:[{opacity:1,translate:'0 0'},{opacity:0,translate:'0 9cqw'}],
+        blur:[{opacity:1,filter:'blur(0)'},{opacity:0,filter:'blur(2.4cqw)'}]
+      }[exm]||null;
+      if(KF) els.forEach((el,k)=>{
+        const start=Math.max(.4,at-dur-(n-1-k)*stg);
+        el.animate(KF,{duration:dur*1000,delay:start*1000,fill:'forwards',easing:'cubic-bezier(.5,0,.75,0)'});
+      });
+    }
+  }
+  const vids=[...document.querySelectorAll('video')];
+  window.__vidready=Promise.all(vids.map(v=>v.readyState>=1?1:new Promise(r=>{v.addEventListener('loadedmetadata',r,{once:true});setTimeout(r,4000)})));
   window.__seek=function(t){
+    const ps=[];
+    vids.forEach(v=>{
+      const st=parseFloat(v.dataset.start||0),sp=parseFloat(v.dataset.speed||1),lp=v.dataset.loop!=='0';
+      let tt=st+(t/1000)*sp; const d=v.duration||0;
+      if(d>0){ if(lp){const span=Math.max(.05,d-st);tt=st+(((t/1000)*sp)%span);} else tt=Math.min(tt,d-.05); }
+      if(Math.abs(v.currentTime-tt)>0.001){ps.push(new Promise(r=>{const f=()=>{v.removeEventListener('seeked',f);r()};v.addEventListener('seeked',f);setTimeout(r,1500);v.currentTime=tt;}));}
+    });
     document.getAnimations().forEach(a=>{a.pause();a.currentTime=t;});
     counters.forEach(c=>{
       const host=c.el.closest('[data-i]')||c.el;const dl=parseFloat(getComputedStyle(host).animationDelay)||0;
       const p=Math.min(1,Math.max(0,(t-dl)/1.1));const e=1-Math.pow(1-p,3);
       c.el.textContent=p>=1?c.orig:c.pre+(c.val*e).toFixed(c.dec).replace('.',c.sep)+c.suf;
     });
+    return Promise.all(ps);
   };
   return true;
 };
@@ -651,7 +692,7 @@ def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: i
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     try:
         for i in range(n):
-            pg.evaluate("t=>{__seek(t);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}", i * 1000.0 / fps)
+            pg.evaluate("async t=>{await __seek(t);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}", i * 1000.0 / fps)
             proc.stdin.write(pg.screenshot(type="jpeg", quality=94, clip={"x": 0, "y": 0, "width": w, "height": h}))
     finally:
         proc.stdin.close()
@@ -699,12 +740,14 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
                 sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
-                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None):
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
     sync: alinha stagger/duração do movimento/transição ao BPM (exige bpm)."""
     from . import motion as _motion
+    if human and not ease:
+        ease = 'spring-soft'  # motion humanizado: entradas com física de mola por padrão
     F = FORMATS[fmt]
     W, H = F["w"], F["h"]
     out = Path(out)
@@ -737,7 +780,9 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         else:
             tr_list.append(transition)
     own = renderer is None
-    r = renderer or Renderer(1.0).__enter__()
+    if preview:
+        fps = min(fps, 15)
+    r = renderer or Renderer(0.4 if preview else 1.0).__enter__()
     tmpd = CACHE / f"reel_{uuid.uuid4().hex[:6]}"
     tmpd.mkdir()
     clips = []
@@ -748,7 +793,8 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                                           reel=dict(motion=s.get("motion", motion), scene_dur=durs[i] + tdur, extra_delay=(tdur if i > 0 else 0.0),
                                                     pace=pace, speed=speed, stagger_scale=stagger_scale, intensity=intensity, ease=ease,
                                                     kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm,
-                                                    human=human, parallax=parallax, highlight=highlight),
+                                                    human=human, parallax=parallax, highlight=highlight,
+                                                    exit=(exit if i < len(scenes) - 1 else None), exit_at=durs[i]),
                                           pager=(i, len(scenes)) if pager else None), reel=True)
             clip = tmpd / f"s{i}.mp4"
             if verbose:
@@ -769,20 +815,38 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 for i in range(len(scenes)):
                     events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7, vary=bool(human)))
                 events.append(dict(t=max(0, starts[-1] + tdur + .5), kind="shimmer", vol=.7))
+        clip_wav = None
+        clip_items = []
+        for i, s_ in enumerate(scenes):
+            for ph in ((s_.get("content") or {}).get("photos") or []):
+                if isinstance(ph, dict) and float(ph.get("volume", 0)) > 0:
+                    src_ = resolve_media(ph.get("src"), base_dir)
+                    if src_:
+                        clip_items.append(dict(src=src_.replace("file://", ""), t=starts[i], dur=durs[i] + (tdur if i < len(scenes) - 1 else 0),
+                                               start=float(ph.get("start", 0)), speed=float(ph.get("speed", 1)), volume=float(ph["volume"]), loop=bool(ph.get("loop", True))))
+        if clip_items:
+            from . import audio as _audio
+            clip_wav = tmpd / "clipes.wav"
+            _audio.clips_track(clip_items, total, clip_wav)
         audio_src = audio
-        if music or events or audio or voice:
+        if music or events or audio or voice or clip_wav:
             from . import audio as _audio
             wav = out.with_suffix(".mix.wav")
             _audio.build_track(total, music, bpm, events, wav, music_file=None if music else audio, music_vol=music_vol, key=key,
-                               voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start)
+                               voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start, extra_voice=str(clip_wav) if clip_wav else None)
             audio = str(wav)
         ass_arg, cap_files = None, {}
         if captions:
             from . import captions as _cap
-            if not script:
-                raise SystemExit("--captions precisa do texto da locução: use --script \"texto\" ou --script @roteiro.txt")
+            if not (script or words_file or transcribe):
+                raise SystemExit("--captions precisa de tempos: use --script \"texto\"|@roteiro.txt, --words arquivo.srt|json ou --transcribe")
             th = resolve_theme(theme, brand)
-            words = _cap.align(script, voice, total, voice_start)
+            if words_file:
+                words = _cap.from_file(words_file, voice_start)
+            elif transcribe:
+                words = _cap.transcribe(voice or audio_src, "pt", "small")
+            else:
+                words = _cap.align(script, voice, total, voice_start)
             assp, fdir = _cap.build_ass(words, tmpd / "legendas.ass", style=captions, W=W, H=H, font_slug=th.get("font_display", "Space Grotesk").lower().replace(" ", "-"),
                                         accent=th.get("accent2", th.get("accent", "#FFFFFF")), fg="#FFFFFF", pos_y=.64)
             ass_arg = (assp, fdir)
@@ -791,12 +855,12 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         if stems:
             from . import audio as _audio, export as _export
             stem_files = {}
-            if music or events or audio or voice:
+            if music or events or audio or voice or clip_wav:
                 for part in ("mix", "musica", "voz", "sfx"):
                     solo = {"mix": None, "musica": "music", "voz": "voice", "sfx": "sfx"}[part]
                     pth = tmpd / f"{part}.wav"
                     _audio.build_track(total, music, bpm, events, pth, music_file=None if music else audio_src, music_vol=music_vol, key=key,
-                                       voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start, solo=solo)
+                                       voice_file=voice, voice_vol=voice_vol, duck=duck, voice_start=voice_start, solo=solo, extra_voice=str(clip_wav) if clip_wav else None)
                     stem_files[part] = pth
             _tl = dict(total=round(total, 3), scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3)) for i, s in enumerate(scenes)],
                        transitions=[dict(at=round(starts[i], 3), dur=tdur, type=tr_list[i - 1]) for i in range(1, len(scenes))], sfx_events=events, fps=fps, bpm=bpm)

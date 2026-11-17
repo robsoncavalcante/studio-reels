@@ -1105,5 +1105,131 @@
    "title": "Título *teste*",
    "items": []
   }
+ },
+ {
+  "id": "chart-bars",
+  "name": "Gráfico de barras animado",
+  "kind": "dados",
+  "photos": 0,
+  "desc": "Barras crescendo com valores; destaque na maior",
+  "tags": [
+   "dados",
+   "gráfico"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Crescimento *anual*",
+   "kicker": "Dados",
+   "number": "130",
+   "label": "em 2026",
+   "items": [
+    {
+     "title": "2023",
+     "value": 40,
+     "text": "40"
+    },
+    {
+     "title": "2024",
+     "value": 65,
+     "text": "65"
+    },
+    {
+     "title": "2025",
+     "value": 90,
+     "text": "90"
+    },
+    {
+     "title": "2026",
+     "value": 130,
+     "text": "130"
+    }
+   ]
+  }
+ },
+ {
+  "id": "chart-donut",
+  "name": "Gráfico de rosca animado",
+  "kind": "dados",
+  "photos": 0,
+  "desc": "Rosca que se desenha, número no centro e legenda",
+  "tags": [
+   "dados",
+   "gráfico"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Crescimento *anual*",
+   "kicker": "Dados",
+   "number": "130",
+   "label": "em 2026",
+   "items": [
+    {
+     "title": "2023",
+     "value": 40,
+     "text": "40"
+    },
+    {
+     "title": "2024",
+     "value": 65,
+     "text": "65"
+    },
+    {
+     "title": "2025",
+     "value": 90,
+     "text": "90"
+    },
+    {
+     "title": "2026",
+     "value": 130,
+     "text": "130"
+    }
+   ]
+  }
+ },
+ {
+  "id": "chart-line",
+  "name": "Gráfico de linha animado",
+  "kind": "dados",
+  "photos": 0,
+  "desc": "Linha que se desenha com pontos e área",
+  "tags": [
+   "dados",
+   "gráfico"
+  ],
+  "roles": [
+   "body"
+  ],
+  "sample": {
+   "title": "Crescimento *anual*",
+   "kicker": "Dados",
+   "number": "130",
+   "label": "em 2026",
+   "items": [
+    {
+     "title": "2023",
+     "value": 40,
+     "text": "40"
+    },
+    {
+     "title": "2024",
+     "value": 65,
+     "text": "65"
+    },
+    {
+     "title": "2025",
+     "value": 90,
+     "text": "90"
+    },
+    {
+     "title": "2026",
+     "value": 130,
+     "text": "130"
+    }
+   ]
+  }
  }
 ]

@@ -1,0 +1,34 @@
+<style>
+.L-chart-donut .pad{gap:4cqw;justify-content:center;align-items:center;text-align:center}
+.L-chart-donut .t{font-size:8.6cqw;line-height:1.02}
+.L-chart-donut .dnring{position:relative;width:62cqw;height:62cqw}
+.L-chart-donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.L-chart-donut .seg{fill:none;stroke-width:8;stroke-linecap:butt}
+.L-chart-donut .dnc{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.L-chart-donut .big{font-family:var(--font-display);font-weight:800;font-size:13cqw;line-height:1}
+.L-chart-donut .cap{font-size:3.4cqw;color:var(--muted);margin-top:1cqw}
+.L-chart-donut .lg{display:flex;flex-wrap:wrap;gap:2cqw 4cqw;justify-content:center}
+.L-chart-donut .lg span{display:flex;align-items:center;gap:1.6cqw;font-size:3.4cqw}
+.L-chart-donut .lg i{width:3cqw;height:3cqw;border-radius:50%}
+@keyframes kf-seg{from{stroke-dasharray:0 100}}
+.reel .L-chart-donut .seg{animation:kf-seg 1s cubic-bezier(.3,.7,.2,1) calc(.4s + var(--bi) * .25s) both}
+</style>
+{% set vals = c['items'] | map(attribute='value') | map('float') | list %}
+{% set tot = (vals | sum) or 1 %}
+{% set pal = ['var(--accent)', 'var(--accent2, var(--fg))', 'color-mix(in srgb, var(--accent) 55%, var(--fg))', 'color-mix(in srgb, var(--fg) 45%, transparent)'] %}
+<div class="pad col">
+  {% if c.kicker %}<div class="k">{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="dnring" data-a>
+    {% set ns = namespace(off=0) %}
+    <svg viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.915" fill="none" stroke="var(--line)" stroke-width="8"/>
+    {% for it in c['items'] %}
+      {% set p = ((it.value | float) / tot * 100) %}
+      <circle class="seg" cx="21" cy="21" r="15.915" style="--bi:{{ loop.index0 }};stroke:{{ pal[loop.index0 % 4] }}" stroke-dasharray="{{ (p - 0.6) | round(2) }} {{ (100 - p + 0.6) | round(2) }}" stroke-dashoffset="{{ (-ns.off) | round(2) }}"/>
+      {% set ns.off = ns.off + p %}
+    {% endfor %}
+    </svg>
+    <div class="dnc"><div class="big">{{ c.number or (c['items'][0].text if c['items'] else '') }}</div><div class="cap">{{ c.label or '' }}</div></div>
+  </div>
+  <div class="lg" data-a>{% for it in c['items'] %}<span><i style="background:{{ pal[loop.index0 % 4] }}"></i>{{ it.title }} · {{ it.text or it.value }}</span>{% endfor %}</div>
+</div>

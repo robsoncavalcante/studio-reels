@@ -152,6 +152,9 @@ def style_for(m: dict, reel: dict) -> tuple[list[str], str]:
         classes.append("hm")
     if reel.get("parallax"):
         classes.append("px")
+    if reel.get("exit"):
+        classes.append(f"ex-{reel['exit']}")
+        style += f";--exit-at:{float(reel.get('exit_at', 0)):.3f}"
     if reel.get("highlight") in ("box", "marker", "underline"):
         classes.append(f"hl-{reel['highlight']}")
     return classes, style
