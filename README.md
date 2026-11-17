@@ -115,3 +115,7 @@ Flags do `reel`:
 - **Ajuste automático de texto**: além dos títulos, subtítulo, corpo, kicker e CTA encolhem sozinhos se vazarem a área segura.
 - **Duração guiada pela locução**: `reel --voice voz.wav --fit-voice` distribui o tempo das cenas pelo tamanho da voz (peso = palavras da cena ou `content.say`).
 - **GIF, vídeo com transparência e Lottie** nos slots de `photos`: `.gif` e `.mov` com alpha viram WebM VP9 com transparência (cache em /tmp); `.json` Lottie renderiza via lottie-web (MIT, em `library/vendor/`) e avança por tempo. Mídia com alpha entra sem moldura/fundo.
+
+## v4.5 — Premiere e Whisper
+- `--stems PASTA` agora grava também `sequencia.xml` (XML do Final Cut 7): no Premiere, File > Import abre a sequência com as cenas (V1/V2 alternadas, a sobreposição é a transição), os stems de áudio em faixas e marcadores por cena. Não foi aberto no Premiere de verdade; relate qualquer problema.
+- `--transcribe` / `autocut --transcribe` aceitam faster-whisper, openai-whisper (módulo) ou o comando `whisper` do terminal. Primeiro uso baixa o modelo (internet).

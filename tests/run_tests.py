@@ -134,6 +134,35 @@ def _():
     assert 5.5 < d < 7.5, d
 
 
+@case("Premiere: --stems gera sequencia.xml válido (vídeo, áudio, marcadores)")
+def _():
+    import xml.dom.minidom as md
+    (TMP / "ex.json").write_text(json.dumps({"scenes": [{"layout": "typographic", "dur": 2, "title": "Um"}, {"layout": "typographic", "dur": 2, "title": "Dois"}]}))
+    voz = TMP / "voz2.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "sine=f=200:d=3", voz)
+    studio("reel", "--content", TMP / "ex.json", "--theme", "criative-dark", "--voice", voz, "--preview", "--stems", TMP / "stems", "--out", TMP / "ex.mp4")
+    d = md.parse(str(TMP / "stems" / "sequencia.xml"))
+    assert len(d.getElementsByTagName("clipitem")) >= 3 and len(d.getElementsByTagName("marker")) == 2
+
+
+@case("transcrição: aceita o comando whisper (openai-whisper) como alternativa")
+def _():
+    from engine import captions as c
+    fb = TMP / "fakebin"
+    fb.mkdir()
+    (fb / "whisper").write_text('#!/usr/bin/env python3\nimport sys,json,os\na=sys.argv;od=a[a.index("--output_dir")+1]\n'
+                                'json.dump({"segments":[{"words":[{"word":" Oi","start":0.1,"end":0.4}]}]},open(os.path.join(od,"x.json"),"w"))\n')
+    (fb / "whisper").chmod(0o755)
+    import os
+    old = os.environ["PATH"]
+    os.environ["PATH"] = f"{fb}:{old}"
+    try:
+        w = c.transcribe(TMP / "voz.wav" if (TMP / "voz.wav").exists() else TMP / "a.wav")
+    finally:
+        os.environ["PATH"] = old
+    assert w and w[0]["w"] == "Oi"
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)

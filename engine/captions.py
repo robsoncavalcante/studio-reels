@@ -10,6 +10,7 @@ Legendas por palavra (estilo Reels/TikTok) com tempo ajustado à locução, sem 
 from __future__ import annotations
 
 import json
+import shutil
 import re
 import subprocess
 from pathlib import Path
@@ -132,21 +133,49 @@ def _join(parts: list[str], brk: int) -> str:
 
 # ------------------------------------------------------------------ transcrição real e import (v4.3)
 def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
-    """Transcreve com faster-whisper (tempos reais por palavra). Exige `pip install faster-whisper` e internet no 1º uso
-    (baixa o modelo). Sem isso, use `from_file()` com um SRT/JSON exportado de outra ferramenta (Whisper local, Premiere, CapCut)."""
+    """Transcreve com tempos reais por palavra. Tenta, na ordem: faster-whisper, openai-whisper (módulo `whisper`) e o comando
+    `whisper` do terminal. Precisa de internet só na 1ª vez (baixa o modelo). Alternativa: importe um SRT/JSON com --words."""
+    words, erros = None, []
     try:
         from faster_whisper import WhisperModel
-    except ImportError:
-        raise SystemExit("faster-whisper não instalado: pip install faster-whisper (ou use --words arquivo.srt/json)")
-    try:
         m = WhisperModel(model, device="cpu", compute_type="int8")
         seg, _ = m.transcribe(str(audio), language=lang, word_timestamps=True, vad_filter=True)
         words = [dict(w=w.word.strip(), t0=round(w.start, 3), t1=round(w.end, 3)) for s in seg for w in s.words if w.word.strip()]
-    except Exception as e:  # rede bloqueada, modelo ausente...
-        raise SystemExit(f"Transcrição falhou ({type(e).__name__}). Rode em um ambiente com internet ou importe um SRT/JSON: --words arquivo")
+    except ImportError:
+        pass
+    except Exception as e:
+        erros.append(f"faster-whisper: {type(e).__name__}")
+    if words is None:
+        try:
+            import whisper  # openai-whisper
+            m = whisper.load_model(model)
+            r = m.transcribe(str(audio), language=lang, word_timestamps=True, fp16=False)
+            words = _words_from_segments(r.get("segments", []))
+        except ImportError:
+            pass
+        except Exception as e:
+            erros.append(f"openai-whisper: {type(e).__name__}")
+    if words is None and shutil.which("whisper"):
+        import subprocess, tempfile
+        with tempfile.TemporaryDirectory() as td:
+            r = subprocess.run(["whisper", str(audio), "--model", model, "--language", lang, "--word_timestamps", "True",
+                                "--output_format", "json", "--output_dir", td, "--fp16", "False"], capture_output=True, text=True)
+            js = next(Path(td).glob("*.json"), None)
+            if r.returncode == 0 and js:
+                words = _words_from_segments(json.loads(js.read_text(encoding="utf-8")).get("segments", []))
+            else:
+                erros.append("whisper (terminal): " + (r.stderr or "")[-120:].strip())
+    if not words:
+        det = ("; ".join(erros)) if erros else "nenhum Whisper encontrado (pip install faster-whisper, ou openai-whisper)"
+        raise SystemExit(f"Transcrição falhou: {det}. Importe um SRT/JSON com --words arquivo.")
     if out:
         Path(out).write_text(json.dumps(words, ensure_ascii=False, indent=1), encoding="utf-8")
     return words
+
+
+def _words_from_segments(segs) -> list[dict]:
+    return [dict(w=(w.get("word") or "").strip(), t0=round(w["start"], 3), t1=round(w["end"], 3))
+            for sg in segs for w in sg.get("words", []) if (w.get("word") or "").strip()]
 
 
 def _srt_time(x: str) -> float:
