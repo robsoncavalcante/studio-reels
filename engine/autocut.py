@@ -69,3 +69,28 @@ def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=Tru
     subprocess.run(cmd, check=True)
     Path(str(out) + ".cuts.json").write_text(json.dumps({"ritmo": ritmo, "jcut": jcut, "keep": keep, "original": duration(src), "final": duration(out)}, indent=1))
     return keep
+
+
+def remap_words(words, keep):
+    """Leva as palavras do vídeo original para a linha do tempo do vídeo cortado (descarta as que caíram fora dos trechos mantidos)."""
+    out, acc = [], 0.0
+    for a, b in keep:
+        for w in words:
+            mid = (w["t0"] + w["t1"]) / 2
+            if a <= mid < b:
+                out.append(dict(w=w["w"], t0=round(max(a, w["t0"]) - a + acc, 3), t1=round(min(b, w["t1"]) - a + acc, 3)))
+        acc += b - a
+    return out
+
+
+def size(src):
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:stream_tags=rotate:side_data=rotation", "-of", "json", str(src)], capture_output=True, text=True)
+    st = json.loads(r.stdout)["streams"][0]
+    w, h = int(st["width"]), int(st["height"])
+    rot = abs(int(st.get("tags", {}).get("rotate", 0) or (st.get("side_data_list") or [{}])[0].get("rotation", 0) or 0))
+    return (h, w) if rot in (90, 270) else (w, h)
+
+
+def burn(src, ass, fontsdir, out):
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", f"ass=filename={ass}:fontsdir={fontsdir}",
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "copy", str(out)], check=True)

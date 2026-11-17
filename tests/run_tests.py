@@ -163,6 +163,16 @@ def _():
     assert w and w[0]["w"] == "Oi"
 
 
+@case("autocut --captions: gera SRT e vídeo legendado, frases separadas por pausa")
+def _():
+    src = TMP / "ac.mp4"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=s=360x640:r=25:d=6", "-f", "lavfi", "-i", "sine=f=300:d=6", "-shortest", "-c:v", "libx264", "-c:a", "aac", src)
+    (TMP / "ac.srt").write_text("1\n00:00:00,200 --> 00:00:02,000\nOla pessoal tudo bem\n\n2\n00:00:03,500 --> 00:00:05,500\nvamos testar hoje\n")
+    studio("autocut", src, "--words", TMP / "ac.srt", "--captions", "karaoke")
+    srt = (TMP / "ac_autocut.srt").read_text()
+    assert (TMP / "ac_autocut_legendado.mp4").exists() and srt.count("-->") == 2, srt
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)

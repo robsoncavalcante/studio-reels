@@ -410,6 +410,21 @@ def cmd_autocut(a):
         words = captions.transcribe(a.video, a.lang, a.model)
     k = autocut.run(a.video, out, a.ritmo, a.jcut, words)
     print(f"✓ {out}  ({len(k)} trechos mantidos)")
+    if words:
+        from engine import captions
+        nw = autocut.remap_words(words, k)
+        base = Path(out).with_suffix("")
+        (Path(str(base) + ".palavras.json")).write_text(json.dumps(nw, ensure_ascii=False, indent=1), encoding="utf-8")
+        W, H = autocut.size(out)
+        assp, fdir = captions.build_ass(nw, Path(str(base) + ".ass"), style=a.captions or "karaoke", W=W, H=H,
+                                        pos_y=.64 if H > W else .84, size=int(min(W, H) * .078))
+        print(f"✓ legenda (SRT): {assp.with_suffix('.srt')}")
+        if a.captions:
+            outc = Path(str(base) + "_legendado.mp4")
+            autocut.burn(out, assp, fdir, outc)
+            print(f"✓ com legenda: {outc}")
+    elif a.captions:
+        print("! --captions precisa de --words ou --transcribe")
     return 0
 
 
@@ -857,6 +872,7 @@ def main():
     p.add_argument("--words", help="palavras com tempo (SRT/JSON) para cortar vícios de fala e repetições")
     p.add_argument("--transcribe", action="store_true", help="transcreve com faster-whisper (exige internet no 1º uso)")
     p.add_argument("--lang", default="pt"); p.add_argument("--model", default="small")
+    p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe)")
     p.set_defaults(fn=cmd_autocut)
 
     p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")

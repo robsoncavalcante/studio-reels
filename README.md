@@ -119,3 +119,6 @@ Flags do `reel`:
 ## v4.5 — Premiere e Whisper
 - `--stems PASTA` agora grava também `sequencia.xml` (XML do Final Cut 7): no Premiere, File > Import abre a sequência com as cenas (V1/V2 alternadas, a sobreposição é a transição), os stems de áudio em faixas e marcadores por cena. Não foi aberto no Premiere de verdade; relate qualquer problema.
 - `--transcribe` / `autocut --transcribe` aceitam faster-whisper, openai-whisper (módulo) ou o comando `whisper` do terminal. Primeiro uso baixa o modelo (internet).
+
+## v4.6 — autocut com legendas
+`python studio.py autocut video.mp4 --transcribe --captions karaoke` corta silêncios/vícios, e além do `_autocut.mp4` grava `.srt`, `.palavras.json` (tempos já na linha do tempo cortada) e `_autocut_legendado.mp4` com legenda por palavra (karaoke|pop|box|clean). As legendas começam uma nova frase a cada pausa maior que 0,5 s. Confirmado com Whisper (faster-whisper) em Mac Apple Silicon, Python 3.9.

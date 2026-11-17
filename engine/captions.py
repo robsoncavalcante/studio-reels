@@ -105,6 +105,9 @@ def align(text: str, audio: str | None = None, total: float | None = None, offse
 def chunks(words: list[dict], max_words=5, max_chars=40) -> list[list[dict]]:
     out, cur = [], []
     for w in words:
+        if cur and w.get("t0") is not None and w["t0"] - cur[-1]["t1"] > 0.5:  # pausa: começa legenda nova
+            out.append(cur)
+            cur = []
         cur.append(w)
         n = len(" ".join(x["w"] for x in cur))
         if len(cur) >= max_words or n >= max_chars or re.search(r"[.!?…]$", w["w"]):
