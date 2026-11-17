@@ -454,6 +454,14 @@ def _cmd_audio(a):
     from engine import audio, voice
     if a.action in ("tts", "music", "sfxgen", "fetch", "import") and not a.text:
         a.text = a.name  # o 1º argumento posicional é o texto/prompt/busca/arquivo
+    if a.action == "clean":
+        src = a.text or a.name
+        out = a.out if getattr(a, "out", None) else str(Path(src).with_suffix("")) + "_limpo.wav"
+        print(audio.clean_voice(src, out), "->", out)
+        return 0
+    if a.action == "levels":
+        print(audio.levels(a.text or a.name))
+        return 0
     if a.action == "styles":
         for k, v in audio.STYLES.items():
             print(f"{k:<10} {v['bpm']:>3} bpm  {v['desc']}  [{v['mood']}]")
@@ -830,7 +838,7 @@ def main():
     p.set_defaults(fn=cmd_autocut)
 
     p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")
-    p.add_argument("action", choices=["styles", "gen", "sfx", "sources", "providers", "brief", "tts", "music", "sfxgen", "fetch", "import", "mix"])
+    p.add_argument("action", choices=["styles", "gen", "sfx", "sources", "providers", "brief", "tts", "music", "sfxgen", "fetch", "import", "mix", "clean", "levels"])
     p.add_argument("name", nargs="?", default="pop", help="estilo (gen/sfx/brief) ou nome do arquivo (import)")
     p.add_argument("text", nargs="?", default="", help="texto da locução (ou @arquivo.txt), prompt da trilha/SFX, busca (fetch) ou arquivo (import)")
     p.add_argument("--dur", type=float, default=20)

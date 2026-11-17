@@ -94,3 +94,8 @@ Flags do `reel`:
 ### v4.1
 - 9 novas animações de texto: `bscale` `pbup` `pbdn` `blurfade` `stretch` `split` `glitch` `distort` `jump` (55 movimentos no total; prévia: `studio.py motion preview ID`).
 - `studio.py autocut VIDEO --ritmo suave|ritmo|dinamico [--jcut 0.1]`: remove silêncios de vídeo falado, com J-cut opcional; grava `.cuts.json`.
+
+### v4.2 (aprendizados de produção)
+- Legendas: padrão em 2 linhas curtas (~20 car.), centro em 64% da altura; `qa reel` avisa texto abaixo de ~69% (boa prática, não regra oficial).
+- `audio clean` (limpa locução, ~-20 LUFS), `audio levels` (LUFS/pico), `audio.bar_len(bpm)`.
+- Guia completo: `references/producao-reels.md` e `templates/checklist-reel.md`.

@@ -156,6 +156,8 @@ def check_static(page_html: str, fmt: str, renderer: core.Renderer, name: str = 
             add("warn", "safe-top", f"texto invade zona do topo ({sz['top']}px) coberta pela interface", it, "descer o bloco de texto")
         if it["b"] > H - sz["bottom"] and not re.search(r"pager|brand|handle", it["cls"]):
             add("warn", "safe-bottom", f"texto invade zona inferior ({sz['bottom']}px) coberta por legenda/botões", it, "subir o bloco de texto")
+        if fmt == "reel" and it["b"] > H * .69 and not re.search(r"pager|brand|handle|cta|btn|button", it["cls"]):
+            add("warn", "reel-ui-zone", "borda inferior do texto passa de ~69% da altura (boa prática, não é regra oficial: a interface do Instagram cobre a faixa inferior)", it, "subir o texto ou dividir em legendas de 2 linhas")
         if it["l"] < sz["side"] - 2 or it["r"] > W - sz["side"] + 2:
             add("warn", "safe-side", "texto muito próximo da borda lateral (corte no grid 3:4/ em telas diferentes)", it, "aumentar margem lateral")
     # ---- hierarquia

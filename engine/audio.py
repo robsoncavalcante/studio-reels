@@ -463,3 +463,42 @@ def remix_video(video, out, *, music_file=None, voice_file=None, style=None, bpm
 
 def sources() -> list[dict]:
     return json.loads((ROOT / "library" / "audio_sources.json").read_text(encoding="utf-8"))["sources"]
+
+
+# ------------------------------------------------------------------ limpeza de locução e medição (v4.2)
+import re as _re
+import subprocess as _sp
+
+
+def bar_len(bpm: float, beats: int = 4) -> float:
+    """Duração de um compasso em segundos (4/4 a 120 bpm = 2,0 s). Cortar/emendar música em múltiplos disso evita batida tropeçando."""
+    return beats * 60.0 / float(bpm)
+
+
+def levels(path) -> dict:
+    """Loudness integrado (LUFS) e pico (dBFS) via ffmpeg ebur128/volumedetect."""
+    r = _sp.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af", "ebur128=peak=true,volumedetect", "-f", "null", "-"], capture_output=True, text=True)
+    t = r.stderr
+    lufs = _re.findall(r"I:\s+(-?[\d.]+) LUFS", t)
+    peak = _re.findall(r"max_volume: (-?[\d.]+) dB", t)
+    out = {"lufs": float(lufs[-1]) if lufs else None, "peak_db": float(peak[-1]) if peak else None}
+    out["alerta"] = "pico acima de -1 dBFS: risco de estourar, baixe alguns dB" if (out["peak_db"] is not None and out["peak_db"] > -1) else None
+    return out
+
+
+def clean_voice(src, out, nr_db: float = 12.0, target_lufs: float = -20.0, lead: float = 0.1, tail: float = 0.15) -> dict:
+    """Limpa uma frase de locução: corta o ruído antes da 1ª palavra (folga `lead`), deixa `tail` depois da voz,
+    fade de 0,03 s na entrada e 0,13 s na saída, redução de ruído moderada (afftdn) e normaliza para ~-20 LUFS.
+    A eficácia da redução de ruído só se confirma de ouvido."""
+    d = float(_sp.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout)
+    sil = _sp.run(["ffmpeg", "-hide_banner", "-i", str(src), "-af", "silencedetect=n=-38dB:d=0.12", "-f", "null", "-"], capture_output=True, text=True).stderr
+    st = [float(x) for x in _re.findall(r"silence_start: (-?[\d.]+)", sil)]
+    en = [float(x) for x in _re.findall(r"silence_end: ([\d.]+)", sil)]
+    t0 = max(0.0, (en[0] if en and (not st or st[0] <= 0.05) else 0.0) - lead)
+    t1 = d
+    if st and (not en or st[-1] > (en[-1] if en else 0)):
+        t1 = min(d, st[-1] + tail)
+    dur = max(0.2, t1 - t0)
+    af = f"atrim={t0:.3f}:{t1:.3f},asetpts=PTS-STARTPTS,afftdn=nr={nr_db}:nf=-40,afade=t=in:d=0.03,afade=t=out:st={max(0, dur - 0.13):.3f}:d=0.13,loudnorm=I={target_lufs}:TP=-2:LRA=7"
+    _sp.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-af", af, str(out)], check=True)
+    return {"corte_inicio_s": round(t0, 3), "duracao_s": round(dur, 3), **levels(out)}

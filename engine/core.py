@@ -784,7 +784,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
             th = resolve_theme(theme, brand)
             words = _cap.align(script, voice, total, voice_start)
             assp, fdir = _cap.build_ass(words, tmpd / "legendas.ass", style=captions, W=W, H=H, font_slug=th.get("font_display", "Space Grotesk").lower().replace(" ", "-"),
-                                        accent=th.get("accent2", th.get("accent", "#FFFFFF")), fg="#FFFFFF", pos_y=.74)
+                                        accent=th.get("accent2", th.get("accent", "#FFFFFF")), fg="#FFFFFF", pos_y=.64)
             ass_arg = (assp, fdir)
             cap_files = {"legendas.ass": assp, "legendas.srt": assp.with_suffix(".srt"), "palavras.json": assp.with_suffix(".words.json")}
         join_scenes(clips, durs, tr_list, tdur, fps, out, audio, ass_arg)

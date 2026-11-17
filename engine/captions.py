@@ -101,7 +101,7 @@ def align(text: str, audio: str | None = None, total: float | None = None, offse
     return out
 
 
-def chunks(words: list[dict], max_words=4, max_chars=26) -> list[list[dict]]:
+def chunks(words: list[dict], max_words=5, max_chars=40) -> list[list[dict]]:
     out, cur = [], []
     for w in words:
         cur.append(w)
@@ -112,6 +112,22 @@ def chunks(words: list[dict], max_words=4, max_chars=26) -> list[list[dict]]:
     if cur:
         out.append(cur)
     return out
+
+
+def _brk(txt: list[str], line_chars: int = 20) -> int:
+    """Índice da palavra que abre a 2ª linha (-1 = linha única). Linhas curtas (~20 caracteres), quebra no meio."""
+    if len(" ".join(txt)) <= line_chars or len(txt) < 2:
+        return -1
+    best, bi = 10**9, -1
+    for i in range(1, len(txt)):
+        d = abs(len(" ".join(txt[:i])) - len(" ".join(txt[i:])))
+        if d < best:
+            best, bi = d, i
+    return bi
+
+
+def _join(parts: list[str], brk: int) -> str:
+    return " ".join(parts[:brk]) + "\\N" + " ".join(parts[brk:]) if brk > 0 else " ".join(parts)
 
 
 # ------------------------------------------------------------------ fontes (woff2 -> ttf para o libass)
@@ -147,7 +163,7 @@ def _ts(t: float) -> str:
 
 
 def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, font_slug="space-grotesk", weight=700, accent="#FB2C36",
-              fg="#FFFFFF", pos_y=.74, size=None, upper=False, max_words=4) -> tuple[Path, Path]:
+              fg="#FFFFFF", pos_y=.64, size=None, upper=False, max_words=5) -> tuple[Path, Path]:
     fontsdir, fam = ttf_for(font_slug, weight)
     size = size or int(W * .078)
     fg_, ac_, dim_ = _c(fg), _c(accent), _c(fg, 0x90)
@@ -164,19 +180,20 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
     chs = chunks(words, max_words=max_words)
     for ci, ch in enumerate(chs):
         txt = [(w["w"].upper() if upper else w["w"]) for w in ch]
+        brk = _brk(txt)
         c0, c1 = ch[0]["t0"], ch[-1]["t1"] + .12
         if ci + 1 < len(chs):
             c1 = min(c1, chs[ci + 1][0]["t0"])  # nunca sobrepor a frase seguinte
         if style == "clean":
-            ev.append((c0, c1, pos + "\\fad(160,140)}" + " ".join(txt)))
+            ev.append((c0, c1, pos + "\\fad(160,140)}" + _join(txt, brk)))
             continue
         for k, w in enumerate(ch):
             a = w["t0"] if k else c0
             b = ch[k + 1]["t0"] if k + 1 < len(ch) else c1
             if style == "pop":
                 shown = " ".join(txt[:k + 1])
-                prefix = " ".join(txt[:k])
-                body = (prefix + " " if prefix else "") + f"{{\\1c{ac_}\\fscx118\\fscy118\\t(0,140,\\fscx100\\fscy100\\1c{fg_})}}{txt[k]}"
+                cur = f"{{\\1c{ac_}\\fscx118\\fscy118\\t(0,140,\\fscx100\\fscy100\\1c{fg_})}}{txt[k]}"
+                body = _join(txt[:k] + [cur], brk if brk <= k else -1)
                 ev.append((a, b, pos + "}" + body))
                 continue
             parts = []
@@ -187,7 +204,7 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
                     parts.append(f"{{\\1c{ac_}\\fscx116\\fscy116\\t(0,130,\\fscx100\\fscy100)}}{t_}{{\\fscx100\\fscy100}}")
                 else:
                     parts.append(f"{{\\1c{dim_}}}{t_}")
-            ev.append((a, b, pos + "}" + " ".join(parts)))
+            ev.append((a, b, pos + "}" + _join(parts, brk)))
     for a, b, t in ev:
         lines.append(f"Dialogue: 0,{_ts(a)},{_ts(b)},Cap,,0,0,0,,{t}")
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")

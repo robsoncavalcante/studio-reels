@@ -1,0 +1,12 @@
+# Checklist de Reel (v4.2)
+- [ ] Texto: borda inferior ≤ ~69% da altura; legenda 1–2 linhas (≤ ~20 car./linha), centro ~64%
+- [ ] Nada de texto sobre o rosto; capa respeita a zona segura (quadros renderizados e medidos)
+- [ ] Legenda literal começa na 1ª palavra falada, sem sobreposição; rótulo sem fala foi cortado ou ganhou som
+- [ ] Versões A (marketing) e B (literal) criadas; qual rende mais = hipótese a testar
+- [ ] Estrutura: gancho → pessoa real → prova/B-roll → CTA; duração ≤ ~50 s
+- [ ] Voz limpa (`audio clean`), pico < -1 dBFS (`audio levels`), voz ~-20 LUFS, música 12–16 dB abaixo, ducking
+- [ ] Música emendada em múltiplos de compasso; sem sobreposição locução/pessoa (0,2–0,5 s)
+- [ ] CTA com dado faltante marcado PROVISÓRIO e pedido ao cliente
+- [ ] Design system do cliente aplicado; acento em blocos, não em texto sobre foto
+- [ ] `qa reel` sem bloqueios; estado atual do projeto relido; nada salvo/exportado sem aprovação
+- [ ] Relato do que NÃO foi verificado (áudio de ouvido, redução de ruído) e próximos passos
