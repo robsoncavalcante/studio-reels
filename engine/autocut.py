@@ -69,26 +69,39 @@ def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=Tru
     from . import ffsetup
     keep = keep_segments(src, ritmo, words, fillers, repeats); n = len(keep)
     has_v = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=index", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip()
-    parts = []
     plan = camera_plan(keep, zoom, push) if camera else None
     W, H = size(src) if (camera and has_v) else (0, 0)
-    for i, (a, b) in enumerate(keep):
-        aa = max(0, a - jcut) if i else a
-        parts.append(f"[0:a]atrim={aa:.3f}:{b:.3f},asetpts=PTS-STARTPTS[a{i}]")
-        if has_v:
-            cam = ""
-            if camera:
-                z0, z1 = plan[i]
-                d = max(b - a, 0.1)
-                # escala variável no tempo e recorte centralizado (um pouco acima do centro, onde costuma ficar o rosto)
-                cam = (f",scale=w='trunc(iw*({z0}+({z1}-{z0})*min(t/{d:.3f},1))/2)*2':h=-2:eval=frame:flags=bicubic,"
-                       f"crop={W}:{H}:x='(iw-ow)/2':y='(ih-oh)*0.4',setsar=1")
-            parts.append(f"[0:v]trim={a:.3f}:{b:.3f},setpts=PTS-STARTPTS{cam}[v{i}]")
-    cat = "".join((f"[v{i}]" if has_v else "") + f"[a{i}]" for i in range(n))
-    parts.append(f"{cat}concat=n={n}:v={1 if has_v else 0}:a=1" + ("[v][a]" if has_v else "[a]"))
-    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", ";".join(parts)]
-    cmd += (["-map", "[v]", "-map", "[a]", *ffsetup.vcodec(fast, 18)] if has_v else ["-map", "[a]"]) + ["-c:a", "aac", str(out)]
-    subprocess.run(cmd, check=True)
+
+    def build(animated):
+        parts = []
+        for i, (a, b) in enumerate(keep):
+            aa = max(0, a - jcut) if i else a
+            parts.append(f"[0:a]atrim={aa:.3f}:{b:.3f},asetpts=PTS-STARTPTS[a{i}]")
+            if has_v:
+                cam = ""
+                if camera:
+                    z0, z1 = plan[i]
+                    d = max(b - a, 0.1)
+                    # recorte centralizado, um pouco acima do centro (onde costuma ficar o rosto)
+                    if animated:  # escala variável no tempo (aproximação lenta)
+                        sc = f"scale=w='trunc(iw*({z0}+({z1}-{z0})*min(if(gt(t,0),t,0)/{d:.3f},1))/2)*2':h=-2:eval=frame:flags=bicubic"
+                    else:  # plano fixo por trecho: mais simples e à prova de versão do ffmpeg
+                        sc = f"scale=w='trunc(iw*{z0}/2)*2':h=-2:flags=bicubic"
+                    cam = f",{sc},crop={W}:{H}:x='(iw-ow)/2':y='(ih-oh)*0.4',setsar=1"
+                parts.append(f"[0:v]trim={a:.3f}:{b:.3f},setpts=PTS-STARTPTS{cam}[v{i}]")
+        cat = "".join((f"[v{i}]" if has_v else "") + f"[a{i}]" for i in range(n))
+        parts.append(f"{cat}concat=n={n}:v={1 if has_v else 0}:a=1" + ("[v][a]" if has_v else "[a]"))
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", ";".join(parts)]
+        return cmd + (["-map", "[v]", "-map", "[a]", *ffsetup.vcodec(fast, 18)] if has_v else ["-map", "[a]"]) + ["-c:a", "aac", str(out)]
+
+    try:
+        subprocess.run(build(True), check=True)
+    except subprocess.CalledProcessError:
+        if not (camera and has_v):
+            raise
+        print("! A aproximação lenta falhou neste ffmpeg; usando plano fixo por trecho (alterna aberto/fechado do mesmo jeito).")
+        plan = [(z0, z0) for z0, _ in plan]
+        subprocess.run(build(False), check=True)
     Path(str(out) + ".cuts.json").write_text(json.dumps({"ritmo": ritmo, "jcut": jcut, "camera": plan, "keep": keep, "original": duration(src), "final": duration(out)}, indent=1))
     return keep
 
