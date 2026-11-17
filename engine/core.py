@@ -320,8 +320,9 @@ def make_helpers(c: dict):
                 data = Path(src.replace("file://", "")).read_text(encoding="utf-8")
                 c["_lottie"] = True
                 cls += " ov"
+                safe = data.replace("</", "<\\/")
                 inner = (f'<div class="lot" data-speed="{float(m.get("speed", 1))}" data-loop="{1 if m.get("loop", True) else 0}"></div>'
-                         f'<script type="application/json" class="lotdata">{data.replace("</", "<\\/")}</script>')
+                         f'<script type="application/json" class="lotdata">{safe}</script>')
             elif src.lower().split("?")[0].endswith(VIDEO_EXT):
                 if m.get("overlay") or Path(src.replace("file://", "")).name.startswith("sr_media_"):
                     cls += " ov"
