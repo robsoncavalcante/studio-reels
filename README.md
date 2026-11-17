@@ -122,3 +122,6 @@ Flags do `reel`:
 
 ## v4.6 — autocut com legendas
 `python studio.py autocut video.mp4 --transcribe --captions karaoke` corta silêncios/vícios, e além do `_autocut.mp4` grava `.srt`, `.palavras.json` (tempos já na linha do tempo cortada) e `_autocut_legendado.mp4` com legenda por palavra (karaoke|pop|box|clean). As legendas começam uma nova frase a cada pausa maior que 0,5 s. Confirmado com Whisper (faster-whisper) em Mac Apple Silicon, Python 3.9.
+
+## v4.7 — ffmpeg com legendas
+O ffmpeg padrão do Homebrew (2026) não traz o filtro `ass`. `studio.py doctor` agora avisa; no Mac rode `brew install ffmpeg-full` (keg-only: o motor o detecta sozinho em /opt/homebrew/opt/ffmpeg-full). Sem o filtro, o autocut grava o .srt e explica o que fazer.

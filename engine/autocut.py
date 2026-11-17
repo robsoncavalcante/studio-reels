@@ -92,5 +92,8 @@ def size(src):
 
 
 def burn(src, ass, fontsdir, out):
+    from . import ffsetup
+    if not ffsetup.has_filter("ass"):
+        raise SystemExit("Seu ffmpeg não tem o filtro de legendas (ass). No Mac: brew install ffmpeg-full  (as legendas .srt já foram gravadas).")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", f"ass=filename={ass}:fontsdir={fontsdir}",
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "copy", str(out)], check=True)

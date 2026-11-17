@@ -24,6 +24,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from engine import ffsetup  # noqa: E402
+ffsetup.prefer_ffmpeg_with_ass()
 from engine import core  # noqa: E402
 from engine.core import REG, FORMATS, STATIC_FORMATS, Renderer  # noqa: E402
 
@@ -83,6 +85,8 @@ def cmd_doctor(a):
     if ff:
         out = subprocess.run([ff, "-hide_banner", "-h", "filter=xfade"], capture_output=True, text=True).stdout
         print("• xfade (transições):", "ok" if "transition" in out else "versão do ffmpeg sem xfade — atualize (>=4.3)")
+        ass_ok = ffsetup.has_filter("ass")
+        print("• ass (legendas queimadas):", "ok" if ass_ok else "AUSENTE — rode: brew install ffmpeg-full (o ffmpeg padrão do Homebrew não tem legendas)")
     print(f"• Biblioteca: {len(REG.layouts)} layouts · {len(REG.themes)} temas · {len(REG.carousels)} receitas de carrossel · {len(REG.reels)} receitas de reel · {len(REG.motions)} movimentos")
     print("• Fontes embutidas:", len(json.loads((ROOT / 'fonts' / 'manifest.json').read_text())), "famílias open source")
     return 0 if ok else 1
