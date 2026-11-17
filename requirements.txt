@@ -6,4 +6,4 @@ numpy
 scipy
 requests
 soundfile
-kokoro-onnx
+kokoro-onnx; python_version >= "3.10"
