@@ -119,7 +119,16 @@ def remap_words(words, keep):
 
 
 def size(src):
-    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:stream_tags=rotate:side_data=rotation", "-of", "json", str(src)], capture_output=True, text=True)
+    """Largura x altura do quadro como o ffmpeg realmente o entrega (já com a rotação do iPhone aplicada).
+    Decodifica 1 quadro e lê o cabeçalho do PNG; se falhar, cai para o ffprobe."""
+    import struct
+    try:
+        r = subprocess.run(["ffmpeg", "-v", "error", "-i", str(src), "-frames:v", "1", "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True, check=True)
+        if r.stdout[:8] == b"\x89PNG\r\n\x1a\n":
+            return struct.unpack(">II", r.stdout[16:24])
+    except (subprocess.CalledProcessError, OSError):
+        pass
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:stream_tags=rotate:stream_side_data=rotation", "-of", "json", str(src)], capture_output=True, text=True)
     st = json.loads(r.stdout)["streams"][0]
     w, h = int(st["width"]), int(st["height"])
     rot = abs(int(st.get("tags", {}).get("rotate", 0) or (st.get("side_data_list") or [{}])[0].get("rotation", 0) or 0))

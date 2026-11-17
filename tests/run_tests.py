@@ -241,6 +241,21 @@ def _():
     assert len([e for e in out if abs(e["t"] - 1.0) < .25]) <= 3 and not any(e["kind"] == "shimmer" for e in out) and len(out) == 4, out
 
 
+@case("autocut --camera: vídeo de celular com rotação (4K vertical gravado deitado) mantém o tamanho certo")
+def _():
+    base = TMP / "rot_base.mp4"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=s=640x360:r=25:d=6",
+       "-f", "lavfi", "-i", "sine=f=300:d=6,volume='if(lt(mod(t,3),2),1,0)':eval=frame", "-shortest", "-c:v", "libx264", "-c:a", "aac", base)
+    rot = TMP / "rot.mov"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-display_rotation", "90", "-i", base, "-c", "copy", rot)
+    from engine import autocut as ac
+    assert tuple(ac.size(rot)) == (360, 640), ac.size(rot)
+    studio("autocut", rot, "--camera", "--ritmo", "suave")
+    w, h = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0:s=x", str(TMP / "rot_autocut.mp4")],
+                          capture_output=True, text=True).stdout.strip().split("x")
+    assert (w, h) == ("360", "640"), (w, h)
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
