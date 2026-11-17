@@ -405,6 +405,8 @@ def cmd_fonts(a):
 
 def cmd_autocut(a):
     from engine import autocut
+    if not Path(a.video).expanduser().exists():
+        raise SystemExit(f"Arquivo não encontrado: {a.video}\nDica: arraste o vídeo para o Terminal para colar o caminho certo, ou rode: find ~ -name \"{Path(a.video).name}\" -not -path \"*/Library/*\"")
     out = a.out or str(Path(a.video).with_suffix("")) + "_autocut.mp4"
     words = None
     if a.words:
