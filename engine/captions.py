@@ -135,15 +135,15 @@ def _join(parts: list[str], brk: int) -> str:
 
 
 # ------------------------------------------------------------------ transcrição real e import (v4.3)
-def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
+def transcribe(audio, lang="pt", model="small", out=None, vocab=None) -> list[dict]:
     """Transcreve com tempos reais por palavra. Tenta, na ordem: faster-whisper, openai-whisper (módulo `whisper`) e o comando
     `whisper` do terminal. Precisa de internet só na 1ª vez (baixa o modelo). Alternativa: importe um SRT/JSON com --words."""
     words, erros = None, []
     try:
         from faster_whisper import WhisperModel
         m = WhisperModel(model, device="cpu", compute_type="int8")
-        seg, _ = m.transcribe(str(audio), language=lang, word_timestamps=True, vad_filter=True)
-        words = [dict(w=w.word.strip(), t0=round(w.start, 3), t1=round(w.end, 3)) for s in seg for w in s.words if w.word.strip()]
+        seg, _ = m.transcribe(str(audio), language=lang, word_timestamps=True, vad_filter=True, initial_prompt=vocab)
+        words = _merge_pieces([dict(word=w.word, start=w.start, end=w.end) for s in seg for w in s.words])
     except ImportError:
         pass
     except Exception as e:
@@ -152,7 +152,7 @@ def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
         try:
             import whisper  # openai-whisper
             m = whisper.load_model(model)
-            r = m.transcribe(str(audio), language=lang, word_timestamps=True, fp16=False)
+            r = m.transcribe(str(audio), language=lang, word_timestamps=True, fp16=False, initial_prompt=vocab)
             words = _words_from_segments(r.get("segments", []))
         except ImportError:
             pass
@@ -162,7 +162,7 @@ def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
         import subprocess, tempfile
         with tempfile.TemporaryDirectory() as td:
             r = subprocess.run(["whisper", str(audio), "--model", model, "--language", lang, "--word_timestamps", "True",
-                                "--output_format", "json", "--output_dir", td, "--fp16", "False"], capture_output=True, text=True)
+                                "--output_format", "json", "--output_dir", td, "--fp16", "False"] + (["--initial_prompt", vocab] if vocab else []), capture_output=True, text=True)
             js = next(Path(td).glob("*.json"), None)
             if r.returncode == 0 and js:
                 words = _words_from_segments(json.loads(js.read_text(encoding="utf-8")).get("segments", []))
@@ -176,9 +176,24 @@ def transcribe(audio, lang="pt", model="small", out=None) -> list[dict]:
     return words
 
 
+def _merge_pieces(ws) -> list[dict]:
+    """Une pedaços sem espaço inicial à palavra anterior ("Construvá" + "-le," -> "Construvá-le,")."""
+    out = []
+    for w in ws:
+        raw = w.get("word") or ""
+        txt = raw.strip()
+        if not txt:
+            continue
+        if out and not raw.startswith(" "):
+            out[-1]["w"] += txt
+            out[-1]["t1"] = round(w["end"], 3)
+        else:
+            out.append(dict(w=txt, t0=round(w["start"], 3), t1=round(w["end"], 3)))
+    return out
+
+
 def _words_from_segments(segs) -> list[dict]:
-    return [dict(w=(w.get("word") or "").strip(), t0=round(w["start"], 3), t1=round(w["end"], 3))
-            for sg in segs for w in sg.get("words", []) if (w.get("word") or "").strip()]
+    return _merge_pieces([w for sg in segs for w in sg.get("words", [])])
 
 
 def _srt_time(x: str) -> float:

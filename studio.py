@@ -407,7 +407,7 @@ def cmd_autocut(a):
         words = captions.from_file(a.words)
     elif a.transcribe:
         from engine import captions
-        words = captions.transcribe(a.video, a.lang, a.model)
+        words = captions.transcribe(a.video, a.lang, a.model, vocab=a.vocab)
     k = autocut.run(a.video, out, a.ritmo, a.jcut, words)
     print(f"✓ {out}  ({len(k)} trechos mantidos)")
     if words:
@@ -872,6 +872,7 @@ def main():
     p.add_argument("--words", help="palavras com tempo (SRT/JSON) para cortar vícios de fala e repetições")
     p.add_argument("--transcribe", action="store_true", help="transcreve com faster-whisper (exige internet no 1º uso)")
     p.add_argument("--lang", default="pt"); p.add_argument("--model", default="small")
+    p.add_argument("--vocab", help='nomes/termos para o Whisper acertar, ex.: "Construvale, Petra Condomínios"')
     p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe)")
     p.set_defaults(fn=cmd_autocut)
 
