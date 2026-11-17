@@ -420,8 +420,9 @@ def cmd_autocut(a):
         base = Path(out).with_suffix("")
         (Path(str(base) + ".palavras.json")).write_text(json.dumps(nw, ensure_ascii=False, indent=1), encoding="utf-8")
         W, H = autocut.size(out)
-        assp, fdir = captions.build_ass(nw, Path(str(base) + ".ass"), style=a.captions or "karaoke", W=W, H=H,
-                                        pos_y=.64 if H > W else .84, size=int(min(W, H) * .078))
+        assp, fdir = captions.build_ass(nw, Path(str(base) + ".ass"), style=a.captions or "karaoke", W=W, H=H, font_slug=a.fonte,
+                                        accent=a.cor, fg=a.texto, upper=a.maiusculas,
+                                        pos_y=a.posicao if a.posicao is not None else (.64 if H > W else .84), size=int(min(W, H) * a.tamanho / 100))
         print(f"✓ legenda (SRT): {assp.with_suffix('.srt')}")
         if a.captions:
             outc = Path(str(base) + "_legendado.mp4")
@@ -876,6 +877,12 @@ def main():
     p.add_argument("--words", help="palavras com tempo (SRT/JSON) para cortar vícios de fala e repetições")
     p.add_argument("--transcribe", action="store_true", help="transcreve com faster-whisper (exige internet no 1º uso)")
     p.add_argument("--lang", default="pt"); p.add_argument("--model", default="small")
+    p.add_argument("--cor", default="#FB2C36", help="cor do destaque (palavra falada), ex.: #FFD400")
+    p.add_argument("--texto", default="#FFFFFF", help="cor do texto, ex.: #FFFFFF")
+    p.add_argument("--posicao", type=float, help="altura da legenda de 0 (topo) a 1 (base); padrão 0.64 no vertical")
+    p.add_argument("--tamanho", type=float, default=7.8, help="tamanho da letra em %% da largura (padrão 7.8)")
+    p.add_argument("--fonte", default="space-grotesk", help="fonte da biblioteca (ver `studio.py fonts`), ex.: inter, poppins")
+    p.add_argument("--maiusculas", action="store_true", help="legenda em MAIÚSCULAS")
     p.add_argument("--vocab", help='nomes/termos para o Whisper acertar, ex.: "Construvale, Petra Condomínios"')
     p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe)")
     p.set_defaults(fn=cmd_autocut)

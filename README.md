@@ -125,3 +125,5 @@ Flags do `reel`:
 
 ## v4.7 — ffmpeg com legendas
 O ffmpeg padrão do Homebrew (2026) não traz o filtro `ass`. `studio.py doctor` agora avisa; no Mac rode `brew install ffmpeg-full` (keg-only: o motor o detecta sozinho em /opt/homebrew/opt/ffmpeg-full). Sem o filtro, o autocut grava o .srt e explica o que fazer.
+
+`autocut --captions` aceita `--cor "#FFD400"` (destaque), `--texto`, `--posicao 0.64`, `--tamanho 7.8`, `--fonte inter` e `--maiusculas`.
