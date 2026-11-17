@@ -1,3 +1,4 @@
+import subprocess
 #!/usr/bin/env python3
 """Testes de fumaça do Studio Reels (sem pytest). Uso: python tests/run_tests.py
 Cada cenário imprime OK/FALHA. Não testa provedores com rede (ElevenLabs, Whisper, Magnific)."""
@@ -143,6 +144,15 @@ def _():
     studio("reel", "--content", TMP / "ex.json", "--theme", "criative-dark", "--voice", voz, "--preview", "--stems", TMP / "stems", "--out", TMP / "ex.mp4")
     d = md.parse(str(TMP / "stems" / "sequencia.xml"))
     assert len(d.getElementsByTagName("clipitem")) >= 3 and len(d.getElementsByTagName("marker")) == 2
+    xml = (TMP / "stems" / "sequencia.xml").read_text()
+    assert 'premiereTrackType="Stereo"' in xml and 'premiereChannelType="stereo"' in xml, "áudio deve entrar como estéreo"
+    sr = int(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=sample_rate", "-of", "csv=p=0", str(TMP / "stems" / "audio" / "voz.wav")],
+                            capture_output=True, text=True).stdout.split()[0])
+    assert f"<samplerate>{sr}</samplerate>" in xml, "taxa de amostragem deve ser a real do arquivo"
+    from engine import export as ex
+    sil = TMP / "silencio.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo", "-t", "1", sil)
+    assert ex._silent(sil) and not ex._silent(TMP / "stems" / "audio" / "voz.wav")
 
 
 @case("transcrição: aceita o comando whisper (openai-whisper) como alternativa")

@@ -46,6 +46,21 @@ def _url(p: Path) -> str:
     return "file://localhost" + quote(str(Path(p).resolve()))
 
 
+def _silent(path: Path, limit: float = 1e-4) -> bool:
+    """True se o wav não tem som (pico abaixo de ~-80 dBFS); se não der para ler, considera com som."""
+    try:
+        import wave
+        import numpy as np
+        with wave.open(str(path), "rb") as w:
+            raw = w.readframes(w.getnframes())
+            width = w.getsampwidth()
+        if width != 2:
+            return False
+        return float(np.abs(np.frombuffer(raw, dtype="<i2")).max(initial=0)) / 32768 < limit
+    except Exception:
+        return False
+
+
 def xmeml(path: Path, out_dir: Path, names: list[str], starts: list[float], durs: list[float], tdur: float, fps: int,
           stems: list[str], marks: list[dict], title="Studio Reels"):
     """Sequência no formato XML do Final Cut Pro 7 (xmeml v4), importável no Premiere (File > Import) e no DaVinci.
@@ -74,14 +89,20 @@ def xmeml(path: Path, out_dir: Path, names: list[str], starts: list[float], durs
         f = out_dir / "audio" / stem
         try:
             dur = float(_probe(f, "format=duration")[0])
+            sr, ch = (int(x) for x in _probe(f, "stream=sample_rate,channels")[:2])
         except Exception:
             continue
+        if _silent(f):
+            continue  # stem sem som (ex.: sem locução): não ocupa faixa na sequência
         n = fr(dur)
+        st = ch >= 2
+        tattr = ' currentExplodedTrackIndex="0" totalExplodedTrackCount="2" premiereTrackType="Stereo"' if st else ""
+        cattr = ' premiereChannelType="stereo"' if st else ""
         au.append(
-            f'<track><clipitem id="a{k + 1}"><name>{escape(stem)}</name><enabled>TRUE</enabled><duration>{n}</duration>{rate}'
+            f'<track{tattr}><clipitem id="a{k + 1}"{cattr}><name>{escape(stem)}</name><enabled>TRUE</enabled><duration>{n}</duration>{rate}'
             f'<start>0</start><end>{n}</end><in>0</in><out>{n}</out>'
             f'<file id="fa{k + 1}"><name>{escape(stem)}</name><pathurl>{escape(_url(f))}</pathurl>{rate}<duration>{n}</duration>'
-            f'<media><audio><samplecharacteristics><depth>16</depth><samplerate>48000</samplerate></samplecharacteristics><channelcount>2</channelcount></audio></media></file>'
+            f'<media><audio><samplecharacteristics><depth>16</depth><samplerate>{sr}</samplerate></samplecharacteristics><channelcount>{ch}</channelcount></audio></media></file>'
             f'<sourcetrack><mediatype>audio</mediatype><trackindex>1</trackindex></sourcetrack></clipitem></track>')
     mk = "".join(f"<marker><name>{escape(m['nome'])}</name><comment>{escape(m['tipo'])}</comment><in>{fr(m['t'])}</in><out>-1</out></marker>"
                  for m in marks if m["tipo"] == "cena")
