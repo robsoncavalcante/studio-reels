@@ -110,6 +110,30 @@ def _():
     assert out.returncode in (0, 1), out.stderr[-300:]
 
 
+@case("mídia: GIF, MOV com alpha e Lottie renderizam e animam")
+def _():
+    gif, mov, lot = TMP / "a.gif", TMP / "b.mov", TMP / "l.json"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=s=160x160:r=10:d=3", "-vf", "format=rgb8", gif)
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=0xff3300:s=200x200:r=25:d=2,format=yuva444p,geq=lum='lum(X,Y)':cb='cb(X,Y)':cr='cr(X,Y)':a='if(lt(hypot(X-100,Y-100),60),255,0)'", "-c:v", "prores_ks", "-profile:v", "4444", "-pix_fmt", "yuva444p10le", mov)
+    lot.write_text(json.dumps({"v": "5.5.7", "fr": 30, "ip": 0, "op": 60, "w": 200, "h": 200, "nm": "t", "ddd": 0, "assets": [], "layers": [{"ddd": 0, "ind": 1, "ty": 4, "nm": "r", "sr": 1, "ks": {"o": {"a": 0, "k": 100}, "r": {"a": 1, "k": [{"t": 0, "s": [0], "i": {"x": [0.5], "y": [1]}, "o": {"x": [0.5], "y": [0]}}, {"t": 60, "s": [360]}]}, "p": {"a": 0, "k": [100, 100, 0]}, "a": {"a": 0, "k": [0, 0, 0]}, "s": {"a": 0, "k": [100, 100, 100]}}, "ao": 0, "shapes": [{"ty": "gr", "it": [{"ty": "rc", "d": 1, "s": {"a": 0, "k": [100, 100]}, "p": {"a": 0, "k": [0, 0]}, "r": {"a": 0, "k": 12}}, {"ty": "fl", "c": {"a": 0, "k": [1, 0.2, 0, 1]}, "o": {"a": 0, "k": 100}}, {"ty": "tr", "p": {"a": 0, "k": [0, 0]}, "a": {"a": 0, "k": [0, 0]}, "s": {"a": 0, "k": [100, 100]}, "r": {"a": 0, "k": 0}, "o": {"a": 0, "k": 100}}]}], "ip": 0, "op": 60, "st": 0}]}))
+    for name, f in (("gif", gif), ("mov", mov), ("lottie", lot)):
+        (TMP / f"{name}.json").write_text(json.dumps({"scenes": [{"layout": "full-bleed-bottom", "dur": 2, "title": name, "photos": [str(f)]}]}))
+        out = TMP / f"{name}.mp4"
+        studio("reel", "--content", TMP / f"{name}.json", "--theme", "criative-dark", "--preview", "--out", out)
+        dd = frame_diff(out, 0.9, 1.6); assert dd > 0.1, (name, dd)
+
+
+@case("--fit-voice: duração das cenas segue a locução")
+def _():
+    voz = TMP / "voz.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "sine=f=200:d=6", voz)
+    (TMP / "fv.json").write_text(json.dumps({"scenes": [{"layout": "typographic", "title": "Curta"}, {"layout": "typographic", "title": "Esta cena tem bem mais palavras para falar na locução hoje"}]}))
+    out = TMP / "fv.mp4"
+    studio("reel", "--content", TMP / "fv.json", "--theme", "criative-dark", "--voice", voz, "--fit-voice", "--preview", "--out", out)
+    d = float(sh("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out).stdout)
+    assert 5.5 < d < 7.5, d
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)

@@ -110,3 +110,8 @@ Flags do `reel`:
 - **Prévia rápida**: `--preview` (432×768, 15 fps) para aprovar antes do render final.
 - `--human` agora usa mola (`spring-soft`) por padrão.
 - **Testes**: `python tests/run_tests.py` (7 cenários) e `tests/cenarios.md` (cenários para rodar com Claude).
+
+## v4.4 — lacunas do Remotion fechadas
+- **Ajuste automático de texto**: além dos títulos, subtítulo, corpo, kicker e CTA encolhem sozinhos se vazarem a área segura.
+- **Duração guiada pela locução**: `reel --voice voz.wav --fit-voice` distribui o tempo das cenas pelo tamanho da voz (peso = palavras da cena ou `content.say`).
+- **GIF, vídeo com transparência e Lottie** nos slots de `photos`: `.gif` e `.mov` com alpha viram WebM VP9 com transparência (cache em /tmp); `.json` Lottie renderiza via lottie-web (MIT, em `library/vendor/`) e avança por tempo. Mídia com alpha entra sem moldura/fundo.

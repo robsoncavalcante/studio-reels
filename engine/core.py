@@ -245,7 +245,41 @@ def resolve_media(p, base_dir: Path | None) -> str | None:
     if not path.exists():
         print(f"  ! mídia não encontrada: {path}")
         return None
+    path = _prepare_media(path)
     return path.resolve().as_uri()
+
+
+def is_lottie(path) -> bool:
+    try:
+        if str(path).lower().split("?")[0].endswith(".json"):
+            d = json.loads(Path(str(path).replace("file://", "")).read_text(encoding="utf-8"))
+            return all(k in d for k in ("fr", "ip", "op", "layers"))
+    except Exception:
+        pass
+    return False
+
+
+def _prepare_media(path: Path) -> Path:
+    """GIF e vídeos com alpha (MOV ProRes 4444) viram WebM VP9 com transparência, que o Chrome toca e busca por tempo."""
+    import hashlib, subprocess, tempfile
+    ext = path.suffix.lower()
+    if ext not in (".gif", ".apng", ".mov"):
+        return path
+    if ext == ".mov":
+        r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=pix_fmt", "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+        pf = r.stdout.strip()
+        if not any(k in pf for k in ("yuva", "rgba", "argb", "bgra", "gbra")):
+            return path
+    key = hashlib.md5(f"{path.resolve()}{path.stat().st_mtime}".encode()).hexdigest()[:12]
+    outp = Path(tempfile.gettempdir()) / f"sr_media_{key}.webm"
+    if not outp.exists():
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(path), "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-b:v", "0", "-crf", "30",
+               "-auto-alt-ref", "0", "-an", str(outp)]
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode != 0:
+            print(f"  ! não consegui converter {path.name}: {r.stderr[-200:]}")
+            return path
+    return outp
 
 
 def normalize_content(content: dict, base_dir: Path | None) -> dict:
@@ -281,8 +315,16 @@ def make_helpers(c: dict):
     def photo(i=0, cls="", style=""):
         src = photos[i] if i < len(photos) else None
         if src:
-            if src.lower().split("?")[0].endswith(VIDEO_EXT):
-                m = (c.get("photo_meta") or [{}] * (i + 1))[i] if i < len(c.get("photo_meta") or []) else {}
+            m = (c.get("photo_meta") or [{}] * (i + 1))[i] if i < len(c.get("photo_meta") or []) else {}
+            if is_lottie(src):
+                data = Path(src.replace("file://", "")).read_text(encoding="utf-8")
+                c["_lottie"] = True
+                cls += " ov"
+                inner = (f'<div class="lot" data-speed="{float(m.get("speed", 1))}" data-loop="{1 if m.get("loop", True) else 0}"></div>'
+                         f'<script type="application/json" class="lotdata">{data.replace("</", "<\\/")}</script>')
+            elif src.lower().split("?")[0].endswith(VIDEO_EXT):
+                if m.get("overlay") or Path(src.replace("file://", "")).name.startswith("sr_media_"):
+                    cls += " ov"
                 inner = (f'<video src="{src}" muted playsinline preload="auto" data-start="{float(m.get("start", 0))}" '
                          f'data-speed="{float(m.get("speed", 1))}" data-loop="{1 if m.get("loop", True) else 0}"></video>')
             else:
@@ -333,6 +375,17 @@ window.__prep=function(){
     const over=()=>brokenWord()||(inner?(inner.offsetHeight>el.clientHeight+2||inner.scrollWidth>el.clientWidth+2):(el.scrollHeight>el.clientHeight+Math.max(2,fs*0.03)||el.scrollWidth>el.clientWidth+2));
     while(over()&&fs>min&&n++<70){fs*=0.95;el.style.fontSize=fs+'px';}
   });
+  /* auto-fit v4.4: subtítulo/corpo/kicker sem .fit encolhem se vazarem a área segura do canvas */
+  (function(){
+    const cr=cv.getBoundingClientRect(), isReel=cv.classList.contains('reel')||cv.classList.contains('story');
+    const maxB=cr.top+cr.height*(isReel?0.93:0.96), maxR=cr.left+cr.width*0.97, minL=cr.left+cr.width*0.02;
+    document.querySelectorAll('.canvas .s,.canvas .b,.canvas .k,.canvas .cta').forEach(el=>{
+      if(el.classList.contains('fit')) return;
+      let fs=parseFloat(getComputedStyle(el).fontSize),min=fs*0.6,n=0;
+      const out=()=>{const r=el.getBoundingClientRect();return r.height>0&&(r.bottom>maxB||r.right>maxR||r.left<minL||el.scrollWidth>el.clientWidth+2&&getComputedStyle(el).overflow!=='visible')};
+      while(out()&&fs>min&&n++<25){fs*=0.95;el.style.fontSize=fs+'px';}
+    });
+  })();
   if(cv.classList.contains('reel')&&cv.classList.contains('mw')){
     const wrap=(node)=>{
       [...node.childNodes].forEach(ch=>{
@@ -394,6 +447,11 @@ window.__prep=function(){
       });
     }
   }
+  const lots=[...document.querySelectorAll('.lot')].map(el=>{
+    const d=JSON.parse(el.parentElement.querySelector('.lotdata').textContent);
+    const anim=window.lottie.loadAnimation({container:el,renderer:'svg',loop:false,autoplay:false,animationData:d,rendererSettings:{preserveAspectRatio:'xMidYMid meet'}});
+    return {el,anim,fr:d.fr,ip:d.ip,op:d.op,sp:parseFloat(el.dataset.speed||1),lp:el.dataset.loop!=='0'};
+  });
   const vids=[...document.querySelectorAll('video')];
   window.__vidready=Promise.all(vids.map(v=>v.readyState>=1?1:new Promise(r=>{v.addEventListener('loadedmetadata',r,{once:true});setTimeout(r,4000)})));
   window.__seek=function(t){
@@ -404,6 +462,7 @@ window.__prep=function(){
       if(d>0){ if(lp){const span=Math.max(.05,d-st);tt=st+(((t/1000)*sp)%span);} else tt=Math.min(tt,d-.05); }
       if(Math.abs(v.currentTime-tt)>0.001){ps.push(new Promise(r=>{const f=()=>{v.removeEventListener('seeked',f);r()};v.addEventListener('seeked',f);setTimeout(r,1500);v.currentTime=tt;}));}
     });
+    lots.forEach(L=>{const n=L.op-L.ip;let f=(t/1000)*L.sp*L.fr;f=L.lp?(f%n):Math.min(f,n-.01);L.anim.goToAndStop(L.ip+f,true);});
     document.getAnimations().forEach(a=>{a.pause();a.currentTime=t;});
     counters.forEach(c=>{
       const host=c.el.closest('[data-i]')||c.el;const dl=parseFloat(getComputedStyle(host).animationDelay)||0;
@@ -485,8 +544,14 @@ def slide_canvas(layout_id: str, theme_id: str, fmt: str, content: dict, brand: 
     return f'<div class="{" ".join(classes)}" style="{style}">{under}<div class="content">{inner}</div>{bar}{pg}{over}</div>'
 
 
+def _lottie_lib(html: str) -> str:
+    if 'class="lot"' not in html:
+        return ""
+    return "<script>" + (LIB / "vendor" / "lottie_light.min.js").read_text(encoding="utf-8") + "</script>"
+
+
 def page_html(canvas_html: str, reel=False) -> str:
-    return head_html(reel) + f"</head><body>{canvas_html}<script>{PREP_JS}</script></body></html>"
+    return head_html(reel) + f"</head><body>{canvas_html}{_lottie_lib(canvas_html)}<script>{PREP_JS}</script></body></html>"
 
 
 # --------------------------------------------------------------------------- navegador
@@ -664,7 +729,7 @@ def render_carousel(recipe_id, theme, fmt, content, outdir, *, brand=None, base_
             vars_ = theme_css_vars(t)
             wrap = (f'<div id="pano" style="position:relative;width:{n * W}px;height:{H}px;{vars_}">{"".join(cells)}'
                     f'<div style="position:absolute;inset:0;z-index:40;pointer-events:none">{ov}</div></div>')
-            html = head_html(False) + f'</head><body>{wrap}<script>{PREP_JS}</script></body></html>'
+            html = head_html(False) + f'</head><body>{wrap}{_lottie_lib(wrap)}<script>{PREP_JS}</script></body></html>'
             pg = r.load(html, n * W, H)
             for i in range(n):
                 out = outdir / f"{prefix}_{i + 1:02d}.png"
@@ -740,7 +805,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
                 sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
-                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False):
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -765,6 +830,24 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         if bpm:
             d = snap_to_beat(d, float(bpm))
         durs.append(d)
+    if fit_voice:
+        if not voice:
+            raise SystemExit("--fit-voice precisa de --voice arquivo.wav")
+        from . import voice as _vz
+        vlen = _vz.duration(voice)
+        def _w(s):  # peso = palavras faladas ("say") ou textos da cena
+            c = s.get("content") or {}
+            txt = c.get("say") or " ".join(str(c.get(k, "")) for k in ("kicker", "title", "subtitle", "body", "text"))
+            txt += " " + " ".join(str(i.get("title", i) if isinstance(i, dict) else i) for i in (c.get("items") or []))
+            return max(3, len(txt.replace("*", "").split()))
+        ws = [_w(s) for s in scenes]
+        avail = max(1.0, vlen + 0.8 - tdur * max(0, len(scenes) - 1) - voice_start)
+        durs = [max(1.8, avail * w / sum(ws)) for w in ws]
+        durs[0] += voice_start
+        if bpm:
+            durs = [snap_to_beat(d, float(bpm)) for d in durs]
+        if verbose:
+            print(f"  --fit-voice: voz {vlen:.1f}s -> cenas {[round(d, 1) for d in durs]}")
     tr_list = []
     for i in range(max(0, len(scenes) - 1)):
         if transition.startswith("set:"):

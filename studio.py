@@ -213,7 +213,7 @@ def cmd_reel(a):
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
                      pace=a.pace, speed=a.speed, stagger_scale=a.stagger_scale, intensity=a.intensity, ease=a.ease,
                      kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
-                     voice=a.voice, voice_vol=a.voice_vol, duck=a.duck,
+                     voice=a.voice, voice_vol=a.voice_vol, duck=a.duck, fit_voice=a.fit_voice,
                      human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
                      words_file=a.words, transcribe=a.transcribe, exit=a.exit, preview=a.preview,
                      script=(Path(a.script[1:]).read_text(encoding='utf-8') if a.script and a.script.startswith('@') else a.script))
@@ -799,6 +799,7 @@ def main():
     p.add_argument("--music-vol", type=float, default=0.75, dest="music_vol")
     p.add_argument("--voice", help="locução (wav/mp3) a mixar com ducking da trilha; gere com `studio.py audio tts`")
     p.add_argument("--voice-vol", type=float, default=1.0, dest="voice_vol")
+    p.add_argument("--fit-voice", action="store_true", dest="fit_voice", help="ajusta a duração das cenas à duração da locução (peso = palavras da cena ou campo content.say)")
     p.add_argument("--duck", type=float, default=0.6, help="quanto a trilha abaixa enquanto a voz fala (0..1)")
     p.add_argument("--human", action="store_true", help="motion humanizado: tempos irregulares, câmera de mão, SFX com variação")
     p.add_argument("--parallax", action="store_true", help="profundidade: fundo, foto e texto em velocidades diferentes")

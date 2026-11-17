@@ -217,3 +217,9 @@ body{width:max-content}
 .canvas[class*="L-ds-"] .t{padding-bottom:.14em;line-height:1.04}
 .L-ds-cta .acts{justify-content:space-between}
 .L-ds-cta .ab{flex:1 1 0;justify-content:center;padding:0 2cqw}
+
+/* mídia com transparência (GIF, WebM/MOV alpha, Lottie) */
+.photo.ov{background:transparent;border:0;box-shadow:none;overflow:visible}
+.photo.ov>video,.photo.ov>img{object-fit:contain;filter:none}
+.photo.ov .lot{position:absolute;inset:0}
+.photo.ov .lot svg{width:100%;height:100%}
