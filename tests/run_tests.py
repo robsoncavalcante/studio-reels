@@ -183,6 +183,64 @@ def _():
     assert (TMP / "ac_autocut_legendado.mp4").exists() and srt.count("-->") == 2, srt
 
 
+
+@case("autocut --camera: alterna plano a cada corte, mantém o tamanho e registra o plano")
+def _():
+    src = TMP / "cam.mp4"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=s=360x640:r=25:d=9",
+       "-f", "lavfi", "-i", "sine=f=300:d=9,volume='if(lt(mod(t,3),2),1,0)':eval=frame", "-shortest", "-c:v", "libx264", "-c:a", "aac", src)
+    studio("autocut", src, "--camera", "--ritmo", "suave")
+    out = TMP / "cam_autocut.mp4"
+    w, h = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0:s=x", str(out)],
+                          capture_output=True, text=True).stdout.strip().split("x")
+    assert (w, h) == ("360", "640"), (w, h)
+    plan = json.loads((TMP / "cam_autocut.mp4.cuts.json").read_text())["camera"]
+    assert len(plan) >= 2 and plan[0][0] == 1.0 and plan[1][0] == 1.25, plan
+    from engine import autocut as ac
+    assert ac.camera_plan([(0, 1), (2, 3), (4, 5)], 1.3, .05) == [(1.0, 1.05), (1.3, 1.365), (1.0, 1.05)]
+
+
+@case("legenda curta: até 3 palavras, 1 linha, sem terminar em palavra fraca")
+def _():
+    from engine import captions as c
+    ws, t = [], 0.0
+    for w in "Hoje eu vou mostrar como a gente faz um corte de vídeo que prende a atenção das pessoas".split():
+        ws.append(dict(w=w, t0=round(t, 2), t1=round(t + .3, 2)))
+        t += .32
+    ch = c.chunks(ws, max_words=3, max_chars=22, avoid_weak=True, min_dur=.3)
+    assert all(len(x) <= 3 for x in ch) and not any(c._weak(x[-1]) and len(x) > 1 for x in ch[:-1]), [[w["w"] for w in x] for x in ch]
+    assp, _ = c.build_ass(ws, TMP / "curta.ass", style="curta", W=1080, H=1920)
+    ass = assp.read_text()
+    assert "\\N" not in ass and "Dialogue" in ass
+    from engine import ffsetup as f
+    f._HW["h264"] = True
+    assert "h264_videotoolbox" in f.vcodec(True) and "libx264" in f.vcodec(False)
+    f._HW["h264"] = False
+    assert "libx264" in f.vcodec(True)
+    f._HW.clear()
+
+
+@case("reel: legenda com cor/posição próprias e --vocab aceito")
+def _():
+    (TMP / "cp.json").write_text(json.dumps({"scenes": [{"layout": "typographic", "dur": 2, "title": "Um"}, {"layout": "typographic", "dur": 2, "title": "Dois"}]}))
+    (TMP / "cp.srt").write_text("1\n00:00:00,200 --> 00:00:01,800\nOla pessoal tudo bem\n\n2\n00:00:02,200 --> 00:00:03,800\nvamos testar hoje\n")
+    voz = TMP / "voz3.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "sine=f=200:d=4", voz)
+    studio("reel", "--content", TMP / "cp.json", "--theme", "criative-dark", "--voice", voz, "--words", TMP / "cp.srt", "--captions", "curta",
+           "--cap-cor", "#FFD400", "--cap-pos", "0.7", "--cap-maiusculas", "--vocab", "Criative", "--preview", "--out", TMP / "cp.mp4")
+    assert (TMP / "cp.mp4").exists()
+
+
+@case("SFX: sem sons do mesmo tipo empilhados e no máximo 3 camadas por instante")
+def _():
+    from engine.core import tidy_sfx
+    ev = [dict(t=1.0, kind="whoosh", vol=.5), dict(t=1.05, kind="whoosh", vol=.9), dict(t=1.0, kind="pop", vol=.7),
+          dict(t=1.02, kind="riser", vol=.6), dict(t=1.1, kind="shimmer", vol=.3), dict(t=5.0, kind="pop", vol=.7)]
+    out = tidy_sfx(ev)
+    assert sum(1 for e in out if e["kind"] == "whoosh") == 1 and [e["vol"] for e in out if e["kind"] == "whoosh"] == [.9]
+    assert len([e for e in out if abs(e["t"] - 1.0) < .25]) <= 3 and not any(e["kind"] == "shimmer" for e in out) and len(out) == 4, out
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)

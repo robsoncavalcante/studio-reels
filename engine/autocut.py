@@ -53,21 +53,43 @@ def keep_segments(src, ritmo="ritmo", words=None, fillers=True, repeats=True):
     if total - cur > 0.15: keep.append((cur, total))
     return keep
 
-def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=True):
-    """jcut>0: o áudio de cada corte entra `jcut` s antes da imagem."""
+def camera_plan(keep, zoom=1.25, push=0.04):
+    """Plano de câmera por trecho: alterna aberto (1,0) e fechado (`zoom`) a cada corte, com aproximação lenta (`push`) dentro de cada trecho.
+    O corte sempre muda de plano, o que disfarça o jump cut. Retorna [(z0, z1)] por trecho."""
+    plan = []
+    for i in range(len(keep)):
+        base = 1.0 if i % 2 == 0 else zoom
+        plan.append((round(base, 4), round(base * (1 + push), 4)))
+    return plan
+
+
+def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=True, camera=False, zoom=1.25, push=0.04, fast=False):
+    """jcut>0: o áudio de cada corte entra `jcut` s antes da imagem. camera: alterna plano aberto/fechado e aproxima devagar em cada trecho.
+    fast: usa o codificador de hardware (rascunho)."""
+    from . import ffsetup
     keep = keep_segments(src, ritmo, words, fillers, repeats); n = len(keep)
     has_v = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=index", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip()
     parts = []
+    plan = camera_plan(keep, zoom, push) if camera else None
+    W, H = size(src) if (camera and has_v) else (0, 0)
     for i, (a, b) in enumerate(keep):
         aa = max(0, a - jcut) if i else a
         parts.append(f"[0:a]atrim={aa:.3f}:{b:.3f},asetpts=PTS-STARTPTS[a{i}]")
-        if has_v: parts.append(f"[0:v]trim={a:.3f}:{b:.3f},setpts=PTS-STARTPTS[v{i}]")
+        if has_v:
+            cam = ""
+            if camera:
+                z0, z1 = plan[i]
+                d = max(b - a, 0.1)
+                # escala variável no tempo e recorte centralizado (um pouco acima do centro, onde costuma ficar o rosto)
+                cam = (f",scale=w='trunc(iw*({z0}+({z1}-{z0})*min(t/{d:.3f},1))/2)*2':h=-2:eval=frame:flags=bicubic,"
+                       f"crop={W}:{H}:x='(iw-ow)/2':y='(ih-oh)*0.4',setsar=1")
+            parts.append(f"[0:v]trim={a:.3f}:{b:.3f},setpts=PTS-STARTPTS{cam}[v{i}]")
     cat = "".join((f"[v{i}]" if has_v else "") + f"[a{i}]" for i in range(n))
     parts.append(f"{cat}concat=n={n}:v={1 if has_v else 0}:a=1" + ("[v][a]" if has_v else "[a]"))
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-filter_complex", ";".join(parts)]
-    cmd += (["-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18"] if has_v else ["-map", "[a]"]) + ["-c:a", "aac", str(out)]
+    cmd += (["-map", "[v]", "-map", "[a]", *ffsetup.vcodec(fast, 18)] if has_v else ["-map", "[a]"]) + ["-c:a", "aac", str(out)]
     subprocess.run(cmd, check=True)
-    Path(str(out) + ".cuts.json").write_text(json.dumps({"ritmo": ritmo, "jcut": jcut, "keep": keep, "original": duration(src), "final": duration(out)}, indent=1))
+    Path(str(out) + ".cuts.json").write_text(json.dumps({"ritmo": ritmo, "jcut": jcut, "camera": plan, "keep": keep, "original": duration(src), "final": duration(out)}, indent=1))
     return keep
 
 
@@ -91,9 +113,9 @@ def size(src):
     return (h, w) if rot in (90, 270) else (w, h)
 
 
-def burn(src, ass, fontsdir, out):
+def burn(src, ass, fontsdir, out, fast=False):
     from . import ffsetup
     if not ffsetup.has_filter("ass"):
         raise SystemExit("Seu ffmpeg não tem o filtro de legendas (ass). No Mac: brew install ffmpeg-full  (as legendas .srt já foram gravadas).")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", f"ass=filename={ass}:fontsdir={fontsdir}",
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "copy", str(out)], check=True)
+                    *ffsetup.vcodec(fast, 18), "-c:a", "copy", str(out)], check=True)

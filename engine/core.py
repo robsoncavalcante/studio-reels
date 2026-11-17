@@ -18,6 +18,8 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import Markup
 
+from . import ffsetup
+
 ROOT = Path(__file__).resolve().parent.parent
 LIB = ROOT / "library"
 CACHE = ROOT / ".cache"
@@ -750,11 +752,11 @@ def _ffmpeg():
     return p
 
 
-def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: int, out: Path):
+def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: int, out: Path, fast: bool = False):
     pg = r.load(html, w, h)
     n = max(1, int(round(seconds * fps)))
     cmd = [_ffmpeg(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(fps), "-c:v", "mjpeg", "-i", "-",
-           "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-r", str(fps), str(out)]
+           *ffsetup.vcodec(fast, 17), "-r", str(fps), str(out)]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     try:
         for i in range(n):
@@ -766,7 +768,7 @@ def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: i
     return out
 
 
-def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td: float, fps: int, out: Path, audio: str | None = None, ass: tuple | None = None):
+def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td: float, fps: int, out: Path, audio: str | None = None, ass: tuple | None = None, fast: bool = False):
     total = sum(durs)
     cmd = [_ffmpeg(), "-y", "-loglevel", "error"]
     for c in clips:
@@ -792,9 +794,33 @@ def join_scenes(clips: list[Path], durs: list[float], transitions: list[str], td
     cmd += ["-filter_complex", fc, "-map", vmap]
     if audio:
         cmd += ["-map", f"{len(clips)}:a", "-c:a", "aac", "-b:a", "192k", "-af", f"afade=t=in:d=0.3,afade=t=out:st={max(0, total - 1):.2f}:d=1,loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.84:level=disabled"]
-    cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-t", f"{total:.3f}", str(out)]
+    cmd += [*ffsetup.vcodec(fast, 17), "-movflags", "+faststart", "-t", f"{total:.3f}", str(out)]
     subprocess.run(cmd, check=True)
     return out
+
+
+def tidy_sfx(events: list, same_kind_gap: float = 0.12, window: float = 0.25, max_layers: int = 3) -> list:
+    """Regras de mixagem dos efeitos: dois sons do mesmo tipo quase no mesmo instante embolam (fica o mais forte) e
+    no máximo `max_layers` sons por janela de `window` s (ficam os mais fortes)."""
+    ev = sorted(events, key=lambda e: e["t"])
+    out = []
+    for e in ev:
+        twin = next((o for o in out if o.get("kind") == e.get("kind") and abs(o["t"] - e["t"]) < same_kind_gap), None)
+        if twin:
+            if e.get("vol", 1) > twin.get("vol", 1):
+                out[out.index(twin)] = e
+            continue
+        out.append(e)
+    keep = []
+    for e in out:
+        near = [o for o in keep if abs(o["t"] - e["t"]) < window]
+        if len(near) >= max_layers:
+            weakest = min(near, key=lambda o: o.get("vol", 1))
+            if e.get("vol", 1) <= weakest.get("vol", 1):
+                continue
+            keep.remove(weakest)
+        keep.append(e)
+    return sorted(keep, key=lambda e: e["t"])
 
 
 def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
@@ -806,7 +832,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
                 sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
-                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False):
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False, cap_style=None, vocab=None):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -883,7 +909,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
             clip = tmpd / f"s{i}.mp4"
             if verbose:
                 print(f"  cena {i + 1}/{len(scenes)} · {s['layout']} · {seconds:.1f}s")
-            capture_scene(r, html, W, H, seconds, fps, clip)
+            capture_scene(r, html, W, H, seconds, fps, clip, fast=preview)
             clips.append(clip)
         total = sum(durs)
         starts = [sum(durs[:i]) for i in range(len(durs))]
@@ -899,6 +925,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 for i in range(len(scenes)):
                     events.append(dict(t=starts[i] + (tdur if i else 0) + .18, kind="pop", vol=.7, vary=bool(human)))
                 events.append(dict(t=max(0, starts[-1] + tdur + .5), kind="shimmer", vol=.7))
+        events = tidy_sfx(events)
         clip_wav = None
         clip_items = []
         for i, s_ in enumerate(scenes):
@@ -925,17 +952,19 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
             if not (script or words_file or transcribe):
                 raise SystemExit("--captions precisa de tempos: use --script \"texto\"|@roteiro.txt, --words arquivo.srt|json ou --transcribe")
             th = resolve_theme(theme, brand)
+            cs = cap_style or {}
             if words_file:
                 words = _cap.from_file(words_file, voice_start)
             elif transcribe:
-                words = _cap.transcribe(voice or audio_src, "pt", "small")
+                words = _cap.transcribe(voice or audio_src, "pt", "small", vocab=vocab)
             else:
                 words = _cap.align(script, voice, total, voice_start)
             assp, fdir = _cap.build_ass(words, tmpd / "legendas.ass", style=captions, W=W, H=H, font_slug=th.get("font_display", "Space Grotesk").lower().replace(" ", "-"),
-                                        accent=th.get("accent2", th.get("accent", "#FFFFFF")), fg="#FFFFFF", pos_y=.64)
+                                        accent=cs.get("accent") or th.get("accent2", th.get("accent", "#FFFFFF")), fg=cs.get("fg", "#FFFFFF"), pos_y=cs.get("pos_y", .64),
+                                        upper=bool(cs.get("upper")), size=int(min(W, H) * cs["size_pct"] / 100) if cs.get("size_pct") else None)
             ass_arg = (assp, fdir)
             cap_files = {"legendas.ass": assp, "legendas.srt": assp.with_suffix(".srt"), "palavras.json": assp.with_suffix(".words.json")}
-        join_scenes(clips, durs, tr_list, tdur, fps, out, audio, ass_arg)
+        join_scenes(clips, durs, tr_list, tdur, fps, out, audio, ass_arg, fast=preview)
         if stems:
             from . import audio as _audio, export as _export
             stem_files = {}

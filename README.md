@@ -127,3 +127,12 @@ Flags do `reel`:
 O ffmpeg padrão do Homebrew (2026) não traz o filtro `ass`. `studio.py doctor` agora avisa; no Mac rode `brew install ffmpeg-full` (keg-only: o motor o detecta sozinho em /opt/homebrew/opt/ffmpeg-full). Sem o filtro, o autocut grava o .srt e explica o que fazer.
 
 `autocut --captions` aceita `--cor "#FFD400"` (destaque), `--texto`, `--posicao 0.64`, `--tamanho 7.8`, `--fonte inter` e `--maiusculas`.
+
+## v4.8 — câmera no autocut, legenda curta, hardware e SFX mais limpos
+- `autocut --camera` alterna plano aberto (1,0) e fechado (`--zoom`, padrão 1,25) a cada corte, com aproximação lenta (`--push`, padrão 4 %) dentro de cada trecho. O plano fica em `.cuts.json`.
+- `--captions curta` (autocut e reel): até 3 palavras, uma linha, entrada rápida, sem fade de saída; não termina em artigo/preposição e junta legendas relâmpago (< 0,3 s).
+- `reel` ganhou `--cap-cor`, `--cap-texto`, `--cap-pos`, `--cap-tamanho`, `--cap-maiusculas` e `--vocab` (nomes para o Whisper acertar com `--transcribe`).
+- `--rapido` (autocut) e `--preview` (reel) usam o codificador de hardware (`h264_videotoolbox` no Mac) quando ele existe e passa no teste; senão, libx264. O render final é sempre libx264. `STUDIO_HW=0` desliga.
+- SFX: dois sons do mesmo tipo no mesmo instante viram um só (fica o mais forte) e no máximo 3 camadas por janela de 0,25 s.
+- Premiere: `sequencia.xml` com áudio estéreo, taxa real e sem stems silenciosos (validado no Premiere).
+Ideias vindas de luizflb/fluxo-de-edicao (MIT, a partir de LeiteZ/fluxo-de-edicao); nenhum código foi copiado.

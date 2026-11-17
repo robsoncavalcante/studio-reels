@@ -102,7 +102,16 @@ def align(text: str, audio: str | None = None, total: float | None = None, offse
     return out
 
 
-def chunks(words: list[dict], max_words=5, max_chars=40) -> list[list[dict]]:
+WEAK = {"de", "do", "da", "dos", "das", "e", "o", "a", "os", "as", "um", "uma", "que", "para", "pra", "com", "em", "no", "na", "nos", "nas", "por", "ou", "se", "ao", "à"}
+
+
+def _weak(w: dict) -> bool:
+    return re.sub(r"[^\wÀ-ÿ]", "", w["w"]).lower() in WEAK and not re.search(r"[.!?…,;:]$", w["w"])
+
+
+def chunks(words: list[dict], max_words=5, max_chars=40, avoid_weak=False, min_dur=0.0) -> list[list[dict]]:
+    """Agrupa palavras em legendas. avoid_weak: não termina em artigo/preposição (ela desce para a próxima).
+    min_dur: legenda que ficaria mais curta que isso (s) se junta à vizinha quando couber nos limites."""
     out, cur = [], []
     for w in words:
         if cur and w.get("t0") is not None and w["t0"] - cur[-1]["t1"] > 0.5:  # pausa: começa legenda nova
@@ -111,10 +120,23 @@ def chunks(words: list[dict], max_words=5, max_chars=40) -> list[list[dict]]:
         cur.append(w)
         n = len(" ".join(x["w"] for x in cur))
         if len(cur) >= max_words or n >= max_chars or re.search(r"[.!?…]$", w["w"]):
+            carry = []
+            if avoid_weak and len(cur) > 1 and _weak(cur[-1]) and not re.search(r"[.!?…]$", w["w"]):
+                carry = [cur.pop()]
             out.append(cur)
-            cur = []
+            cur = carry
     if cur:
         out.append(cur)
+    if min_dur > 0:
+        merged = []
+        for ch in out:
+            dur = ch[-1]["t1"] - ch[0]["t0"]
+            if merged and dur < min_dur and ch[0]["t0"] - merged[-1][-1]["t1"] <= 0.5 \
+                    and len(merged[-1]) + len(ch) <= max_words and len(" ".join(x["w"] for x in merged[-1] + ch)) <= max_chars:
+                merged[-1] = merged[-1] + ch
+            else:
+                merged.append(ch)
+        out = merged
     return out
 
 
@@ -283,15 +305,23 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
              "", "[Events]", "Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text"]
     pos = f"{{\\an5\\pos({W // 2},{int(H * pos_y)})"
     ev = []
-    chs = chunks(words, max_words=max_words)
+    curta = style == "curta"
+    chs = chunks(words, max_words=3, max_chars=22, avoid_weak=True, min_dur=0.3) if curta else chunks(words, max_words=max_words)
     for ci, ch in enumerate(chs):
         txt = [(w["w"].upper() if upper else w["w"]) for w in ch]
-        brk = _brk(txt)
+        brk = -1 if curta else _brk(txt)
         c0, c1 = ch[0]["t0"], ch[-1]["t1"] + .12
         if ci + 1 < len(chs):
             c1 = min(c1, chs[ci + 1][0]["t0"])  # nunca sobrepor a frase seguinte
         if style == "clean":
             ev.append((c0, c1, pos + "\\fad(160,140)}" + _join(txt, brk)))
+            continue
+        if curta:  # entrada rápida, sem fade de saída; a palavra falada ganha a cor de destaque
+            for k, w in enumerate(ch):
+                a = w["t0"] if k else c0
+                b = ch[k + 1]["t0"] if k + 1 < len(ch) else c1
+                parts = [(f"{{\\1c{ac_}}}{t_}" if j == k else f"{{\\1c{fg_}}}{t_}") for j, t_ in enumerate(txt)]
+                ev.append((a, b, pos + ("\\fad(70,0)" if k == 0 else "") + "}" + " ".join(parts)))
             continue
         for k, w in enumerate(ch):
             a = w["t0"] if k else c0
@@ -316,7 +346,7 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     srt = out.with_suffix(".srt")
     n = []
-    for i, ch in enumerate(chunks(words, max_words=7, max_chars=42), 1):
+    for i, ch in enumerate(chunks(words, max_words=3, max_chars=22, avoid_weak=True, min_dur=0.3) if curta else chunks(words, max_words=7, max_chars=42), 1):
         def st(t):
             return f"{int(t // 3600):02d}:{int(t % 3600 // 60):02d}:{int(t % 60):02d},{int(round((t % 1) * 1000)):03d}"
         n.append(f"{i}\n{st(ch[0]['t0'])} --> {st(ch[-1]['t1'] + .1)}\n{' '.join(w['w'] for w in ch)}\n")

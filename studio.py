@@ -220,6 +220,7 @@ def cmd_reel(a):
                      voice=a.voice, voice_vol=a.voice_vol, duck=a.duck, fit_voice=a.fit_voice,
                      human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
                      words_file=a.words, transcribe=a.transcribe, exit=a.exit, preview=a.preview,
+                     cap_style=dict(accent=a.cap_cor, fg=a.cap_texto, pos_y=a.cap_pos, size_pct=a.cap_tamanho, upper=a.cap_maiusculas), vocab=a.vocab,
                      script=(Path(a.script[1:]).read_text(encoding='utf-8') if a.script and a.script.startswith('@') else a.script))
     print("✓", out)
     return 0
@@ -412,7 +413,7 @@ def cmd_autocut(a):
     elif a.transcribe:
         from engine import captions
         words = captions.transcribe(a.video, a.lang, a.model, vocab=a.vocab)
-    k = autocut.run(a.video, out, a.ritmo, a.jcut, words)
+    k = autocut.run(a.video, out, a.ritmo, a.jcut, words, camera=a.camera, zoom=a.zoom, push=a.push / 100, fast=a.rapido)
     print(f"✓ {out}  ({len(k)} trechos mantidos)")
     if words:
         from engine import captions
@@ -426,7 +427,7 @@ def cmd_autocut(a):
         print(f"✓ legenda (SRT): {assp.with_suffix('.srt')}")
         if a.captions:
             outc = Path(str(base) + "_legendado.mp4")
-            autocut.burn(out, assp, fdir, outc)
+            autocut.burn(out, assp, fdir, outc, fast=a.rapido)
             print(f"✓ com legenda: {outc}")
     elif a.captions:
         print("! --captions precisa de --words ou --transcribe")
@@ -824,7 +825,13 @@ def main():
     p.add_argument("--human", action="store_true", help="motion humanizado: tempos irregulares, câmera de mão, SFX com variação")
     p.add_argument("--parallax", action="store_true", help="profundidade: fundo, foto e texto em velocidades diferentes")
     p.add_argument("--highlight", choices=["box", "marker", "underline"], help="anima o *destaque* do título como caixa, marca-texto ou sublinhado")
-    p.add_argument("--captions", help="legendas por palavra: estilo (karaoke|pop|box|clean) usando o texto da locução; veja `studio.py captions`")
+    p.add_argument("--captions", help="legendas por palavra: estilo (karaoke|pop|box|clean|curta) usando o texto da locução; veja `studio.py captions`")
+    p.add_argument("--cap-cor", help="cor da palavra falada na legenda (padrão: cor de destaque do tema), ex.: #FFD400")
+    p.add_argument("--cap-texto", default="#FFFFFF", help="cor do texto da legenda")
+    p.add_argument("--cap-pos", type=float, default=.64, help="altura da legenda de 0 (topo) a 1 (base)")
+    p.add_argument("--cap-tamanho", type=float, help="tamanho da letra em %% da largura (padrão 7.8)")
+    p.add_argument("--cap-maiusculas", action="store_true", help="legenda em MAIÚSCULAS")
+    p.add_argument("--vocab", help='nomes/termos para o Whisper acertar com --transcribe, ex.: "Construvale, Petra"')
     p.add_argument("--script", help="texto da locução para as legendas (ou @roteiro.txt)")
     p.add_argument("--words", help="palavras com tempo reais (SRT ou JSON) para as legendas, em vez de estimar pelo roteiro")
     p.add_argument("--exit", choices=["pop", "fade", "slide", "drop", "blur"], help="saída em cascata dos elementos antes da transição (consistente em todas as cenas)")
@@ -884,7 +891,11 @@ def main():
     p.add_argument("--fonte", default="space-grotesk", help="fonte da biblioteca (ver `studio.py fonts`), ex.: inter, poppins")
     p.add_argument("--maiusculas", action="store_true", help="legenda em MAIÚSCULAS")
     p.add_argument("--vocab", help='nomes/termos para o Whisper acertar, ex.: "Construvale, Petra Condomínios"')
-    p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe)")
+    p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean", "curta"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe); curta = até 3 palavras, 1 linha")
+    p.add_argument("--camera", action="store_true", help="câmera virtual: alterna plano aberto/fechado a cada corte e aproxima devagar (disfarça o jump cut)")
+    p.add_argument("--zoom", type=float, default=1.25, help="escala do plano fechado com --camera (padrão 1.25)")
+    p.add_argument("--push", type=float, default=4.0, help="aproximação lenta dentro de cada trecho, em %% (padrão 4)")
+    p.add_argument("--rapido", action="store_true", help="rascunho: usa o codificador de hardware (VideoToolbox no Mac) se disponível; o final sai em libx264")
     p.set_defaults(fn=cmd_autocut)
 
     p = sub.add_parser("audio", help="trilhas, voz (TTS), SFX, bancos livres, importação e remix de vídeo")
