@@ -924,6 +924,74 @@ def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
     return max(unit, round(d / unit) * unit)
 
 
+
+def render_storyboard(scenes: list, theme: str, out_dir: Path, *, brand: dict | None = None, base_dir: Path | None = None, title: str = "") -> Path:
+    """Renderiza um thumbnail de cada cena e monta `storyboard.png` em grade (3 colunas).
+    Serve para o Diretor de Arte aprovar o conjunto antes de pagar o render do reel."""
+    from PIL import Image, ImageDraw, ImageFont
+    out_dir = Path(out_dir)
+    thumbs_dir = out_dir / ".storyboard-thumbs"
+    thumbs_dir.mkdir(parents=True, exist_ok=True)
+    thumbs = []
+    with Renderer(0.5) as r:
+        for i, sc in enumerate(scenes, 1):
+            lay = sc["layout"]
+            ct = {k: v for k, v in sc.items() if k not in ("dur", "theme", "photo_meta")}
+            t = sc.get("theme") or theme
+            try:
+                p = thumbs_dir / f"{i:02d}-{lay}.png"
+                render_static(lay, t, "reel", ct, p, brand=brand, base_dir=base_dir or out_dir, scale=0.5, renderer=r, kind="png")
+                thumbs.append((i, lay, sc.get("title", ""), p))
+            except Exception as e:  # noqa
+                print(f"  ! storyboard: cena {i} ({lay}) não rasterizou ({type(e).__name__})")
+    if not thumbs:
+        return out_dir / "storyboard.png"
+    cols = 3
+    tw, th_ = 540, 960
+    for _, _, _, p in thumbs:
+        try:
+            with Image.open(p) as im:
+                th_ = max(th_, int(540 * im.height / im.width))
+        except Exception:  # noqa
+            pass
+    pad, gap, lbl = 24, 24, 56
+    rows = (len(thumbs) + cols - 1) // cols
+    W = pad * 2 + cols * tw + (cols - 1) * gap
+    hdr = 92 if title else 0
+    H = pad * 2 + hdr + rows * (th_ + lbl) + (rows - 1) * gap
+    sheet = Image.new("RGB", (W, H), (248, 248, 250))
+    d = ImageDraw.Draw(sheet)
+    try:
+        font = ImageFont.truetype(str((ROOT / "library" / "fonts" / "Inter-Bold.ttf")) if (ROOT / "library" / "fonts" / "Inter-Bold.ttf").exists() else "DejaVuSans-Bold.ttf", 34)
+        small = ImageFont.truetype("DejaVuSans.ttf", 22)
+    except Exception:  # noqa
+        font = ImageFont.load_default()
+        small = font
+    if title:
+        d.text((pad, pad), title, fill=(18, 18, 22), font=font)
+        d.text((pad, pad + 44), f"{len(thumbs)} cena(s) · aprove antes de renderizar", fill=(130, 130, 140), font=small)
+    for k, (num, lay, titulo, p) in enumerate(thumbs):
+        col, row = k % cols, k // cols
+        x = pad + col * (tw + gap)
+        y = pad + hdr + row * (th_ + lbl + gap)
+        try:
+            with Image.open(p) as im:
+                im = im.convert("RGB")
+                w2 = tw
+                h2 = int(im.height * w2 / im.width)
+                im = im.resize((w2, h2), Image.LANCZOS)
+                sheet.paste(im, (x, y))
+        except Exception:  # noqa
+            d.rectangle([x, y, x + tw, y + th_], outline=(200, 200, 210), width=2)
+        tag = f"#{num} · {lay}"
+        head = (titulo or "")[:48].replace("*", "")
+        d.text((x, y + th_ + 6), tag, fill=(70, 70, 80), font=small)
+        if head:
+            d.text((x, y + th_ + 30), head, fill=(18, 18, 22), font=small)
+    out_file = out_dir / "storyboard.png"
+    sheet.save(out_file)
+    return out_file
+
 def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade-up", transition="smooth", tdur=None, fps=30,
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,

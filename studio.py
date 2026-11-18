@@ -422,6 +422,11 @@ def cmd_site(a):
     if visual.LINGUAGENS[pv["linguagem"]]["transition"] and not a.clima:
         cl["transition"] = visual.LINGUAGENS[pv["linguagem"]]["transition"]
     print(f"  partido visual: {visual.LINGUAGENS[pv['linguagem']]['nome']} (variante {pv['variante']}) — {'; '.join(pv['motivos'][:2])}")
+    try:
+        sbp = core.render_storyboard(scenes, theme, out, brand=brand, base_dir=out, title=f"{name} — storyboard")
+        print(f"  storyboard visual: {sbp}  (abra para aprovar antes de pagar o render do reel)")
+    except Exception as _e:  # noqa
+        print(f"  ! storyboard visual não gerado ({type(_e).__name__})")
     for w in pv["repeticao"]:
         print(f"  ⚠ repetição: {w}")
     print("  » PARTIDO NÃO CONFIRMADO: o Diretor de Arte precisa ler partido.md, comparar com 2 alternativas (--linguagem/--variante) e registrar `partido_visual` no parecer. "
