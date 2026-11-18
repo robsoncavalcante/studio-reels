@@ -366,6 +366,8 @@ def cmd_site(a):
     if getattr(a, "video_lang", None) == "pt":
         scenes = [site.translate_scene(x) for x in scenes]
     scenes = visual.apply(scenes, pv["linguagem"], getattr(a, "variante", 0) or 0, name=name)
+    scenes = site.attach_icons(scenes, data.get("media") or [], set(), base_dir=out)
+    scenes = site.fill_lucide(scenes, out)
     pv["arquetipo"] = visual.arquetipo(pv["sinais"], bkey, forced=getattr(a, "arquetipo", None))
     if not a.brand:  # identidade cadastrada manda; sem ela, a pele da linguagem completa o que o site não definiu
         brand["style"] = visual.skin(brand, pv["linguagem"])

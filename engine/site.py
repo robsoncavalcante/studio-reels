@@ -510,9 +510,13 @@ def icons_pool(media: list, used: set) -> list:
     return sorted(pool, key=lambda m: m.get("top", 0))
 
 
-def attach_icons(scenes: list, media: list, used: set) -> list:
-    """Nunca deixa 'bolinha vazia': ícones e miniaturas reais do site rodam pelas listas em ordem de aparição."""
+def attach_icons(scenes: list, media: list, used: set, base_dir: Path | None = None) -> list:
+    """Nunca deixa 'bolinha vazia': ícones e miniaturas reais do site rodam pelas listas em ordem de aparição.
+    Arquivos abaixo de 3 KB (bitmaps minúsculos que a Apple espalha) ou com transparência total são rejeitados
+    e o Lucide preenche depois em `fill_lucide`."""
     pool = icons_pool(media, used)
+    if base_dir is not None:
+        pool = [m for m in pool if (base_dir / m["file"]).exists() and (base_dir / m["file"]).stat().st_size >= 3072]
     if not pool:
         return scenes
     pi = 0
@@ -526,6 +530,23 @@ def attach_icons(scenes: list, media: list, used: set) -> list:
             it["icon"] = m["file"]
             used.add(m["file"])
             pi += 1
+    return scenes
+
+
+def fill_lucide(scenes: list, base_dir: Path) -> list:
+    """Após attach_icons, qualquer item sem ícone recebe um Lucide escolhido pelo título (keyword-matching).
+    Os SVGs são gravados em `midia/lucide-<nome>.svg` e referenciados com caminho relativo."""
+    from . import icons as lucide
+    midia = base_dir / "midia"
+    for sc in scenes:
+        if sc["layout"] not in ("site-list", "site-icons", "service-grid", "checklist", "step-process", "tips-list"):
+            continue
+        for it in (sc.get("items") or []):
+            if it.get("icon"):
+                continue
+            name, _ = lucide.pick(it.get("title", ""))
+            it["icon"] = lucide.write_to(midia, name)
+            it["icon_generic"] = True
     return scenes
 
 

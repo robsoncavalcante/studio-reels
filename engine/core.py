@@ -314,7 +314,13 @@ def normalize_content(content: dict, base_dir: Path | None) -> dict:
     c["photo_meta"] = metas
     if c.get("cutout"):
         c["cutout"] = resolve_media(c["cutout"], base_dir)
-    c["items"] = [dict(i) if isinstance(i, dict) else {"title": str(i)} for i in (c.get("items") or [])]
+    items = []
+    for i in (c.get("items") or []):
+        it = dict(i) if isinstance(i, dict) else {"title": str(i)}
+        if it.get("icon") and not re.match(r"^(https?:|data:|file:)", str(it["icon"])):
+            it["icon"] = resolve_media(it["icon"], base_dir) or it["icon"]
+        items.append(it)
+    c["items"] = items
     return c
 
 
