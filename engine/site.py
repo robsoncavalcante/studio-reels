@@ -481,6 +481,7 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     top = sorted(sorted(range(len(body)), key=lambda i: -body[i]["_p"])[:keep])  # os mais relevantes, na ordem do site
     for i in top:
         scenes.append({k: v for k, v in body[i].items() if k != "_p"})
+    scenes = spread_media(scenes, media, used)
     short = hero_sub if len(hero_sub) <= 70 else (re.split(r"(?<=[.!?])\s", hero_sub)[0] if re.split(r"(?<=[.!?])\s", hero_sub)[0] else hero_sub)
     scenes.append(dict(layout="site-cta", kicker="Próximo passo", title=hl(sentence(cta)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
                        subtitle=short or sub, cta=sentence(cta), **({"theme": "brand-accent"} if cta_bg else tone)))
@@ -493,6 +494,31 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
         elif k == len(scenes) - 1:
             sc["dur"] = min(sc["dur"], 4.6)
     return scenes
+
+
+def spread_media(scenes: list, media: list, used: set, max_new: int = 4) -> list:
+    """Mídia que não casou com nenhuma seção pelo título (comum em páginas de produto/carrossel) não pode ficar na pasta:
+    antes de cada lista de texto entra uma cena com vídeo ou foto real do site, usando o 1º item da lista como título,
+    e a lista segue com o restante. Alterna vídeo e foto, na ordem em que aparecem na página."""
+    spare_v = sorted([m for m in media if m["kind"] == "video" and m["file"] not in used and m.get("w", 0) >= 320], key=lambda m: m.get("top", 0))
+    spare_i = sorted([m for m in media if m["kind"] == "image" and m["file"] not in used and m.get("w", 0) >= 500 and m.get("h", 0) >= 300], key=lambda m: m.get("top", 0))
+    out, added, turn = [], 0, 0
+    for sc in scenes:
+        its = sc.get("items") or []
+        if sc["layout"] in ("site-list", "site-icons") and len(its) >= 3 and added < max_new and (spare_v or spare_i):
+            use_v = bool(spare_v) and (turn % 2 == 0 or not spare_i)
+            m = spare_v.pop(0) if use_v else spare_i.pop(0)
+            used.add(m["file"])
+            it = its[0]
+            if use_v:
+                out.append(dict(layout="site-video", kicker="", title=hl(it["title"]), subtitle=it.get("text", ""), photos=[_clip(m)], photo_meta=[dict(loop=True)]))
+            else:
+                out.append(dict(layout="site-showcase", kicker="", title=hl(it["title"]), subtitle=it.get("text", ""), photos=[m["file"]], photo_meta=[dict(ar=_ar(m))]))
+            sc = dict(sc, items=its[1:])
+            added += 1
+            turn += 1
+        out.append(sc)
+    return out
 
 
 def _square(src: Path, dst: Path, pad: float = 0.18):

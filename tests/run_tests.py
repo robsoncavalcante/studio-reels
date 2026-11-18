@@ -459,6 +459,18 @@ def _():
     assert gate.validate(d)["ok"], gate.validate(d)["pend"]
 
 
+@case("v6.3 mídia solta (sem título casando) é distribuída pelas cenas em vez de ficar na pasta")
+def _():
+    from engine import site
+    media = [dict(kind="video", file=f"midia/v{i}.mp4", w=800, h=600, top=100 * i) for i in range(1, 4)] + [dict(kind="image", file=f"midia/i{i}.jpg", w=900, h=700, top=50 * i) for i in range(1, 4)]
+    sc = [dict(layout="site-video", title="x"), dict(layout="site-list", title="A", items=[dict(title=f"t{i}", text="") for i in range(4)]),
+          dict(layout="site-list", title="B", items=[dict(title=f"u{i}", text="") for i in range(3)]), dict(layout="site-cta", title="z")]
+    out = site.spread_media(sc, media, {"midia/v1.mp4"})
+    lay = [x["layout"] for x in out]
+    assert lay == ["site-video", "site-video", "site-list", "site-showcase", "site-list", "site-cta"], lay
+    assert len(out[2]["items"]) == 3 and out[1]["photos"], out
+
+
 @case("site com @font-face próprio → baixa a fonte real e usa no vídeo (sem trocar)")
 def _():
     import http.server, socketserver, threading, functools
