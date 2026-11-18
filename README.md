@@ -158,3 +158,14 @@ Abre o site (desktop 1440×900 para ler; celular 390 px para as telas 9:16), rol
 - **telas** `tela-NN.png` + `fundo-01.png` (hero sem texto) + `logo.png`/`logo-avatar.png`.
 
 Saída em `samples/site-<host>/` (`brand.json`, `content.json`, `site.json`). Com `--render` gera `reel.mp4` e roda o QA. Sem depender de empresa: qualquer URL.
+
+
+## v5.1 — portão dos agentes obrigatório + site → vídeo fiel ao site
+- **Portão dos agentes**: todo `render`/`carousel`/`reel`/`council build` mede a peça e gera `<peça>.agentes/` (checklist, folhas, parecer modelo).
+  `studio.py agentes <saída>` valida o parecer; `studio.py entregar <saída> [--para pasta]` só entrega peça aprovada e inalterada.
+  Bloqueios: logo invisível no fundo, fonte fora da marca, print do site usado como foto, texto duplicado. Avisos: cor fora da paleta, texto truncado, palavras coladas.
+- **Logo sempre visível** (`engine/logo.py`): logo clara sobre fundo claro é recolorida só nos pixels neutros (o símbolo colorido fica); avatar quadrado só com o símbolo.
+- **`studio.py site`**: lê a cor real dos títulos, caixa alta/espaçamento/raio de botão; baixa a logo original; cenas novas `site-hero`, `site-stats`, `site-list`,
+  `site-cta` (texto completo, nada cortado com «…», números com rótulo, sem telas do site como foto); `--brand` usa o design system cadastrado
+  (ex.: `--brand criative --theme criative-light`, hero e CTA no tema escuro par); `--handle @usuario`; música `corporate` + SFX por padrão no `--render`.
+- Tema por cena: `theme` dentro de cada item de `scenes` no content.json.

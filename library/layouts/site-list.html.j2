@@ -1,0 +1,22 @@
+<style>
+.L-site-list *{hyphens:manual!important;-webkit-hyphens:manual!important;overflow-wrap:normal!important;word-break:normal!important}
+.L-site-list .pad{justify-content:center;gap:4.4cqw}
+.canvas.fmt-reel.L-site-list .pad,.canvas.fmt-story.L-site-list .pad{padding-top:25cqw;padding-bottom:27cqw}
+.L-site-list .chip{align-self:flex-start;display:inline-flex;align-items:center;gap:2cqw;font-family:var(--font-body),Inter;font-size:3cqw;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.L-site-list .chip i{width:2.3cqw;height:2.3cqw;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1.1cqw color-mix(in srgb,var(--accent) 24%,transparent);display:block}
+.L-site-list .t{font-size:11.6cqw;line-height:.95;max-height:30cqh;flex:0 1 auto;min-height:0}
+.L-site-list .rows{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
+.L-site-list .rw{flex:1 1 0;min-height:0;display:flex;align-items:center;gap:4.4cqw;border-top:.3cqw solid var(--line);padding:1.4cqw 0}
+.L-site-list .rw:last-child{border-bottom:.3cqw solid var(--line)}
+.L-site-list .no{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:4.6cqw;color:var(--muted);width:9cqw;flex:none}
+.L-site-list .tt{font-family:var(--font-display),Inter;font-weight:700;font-size:5.2cqw;line-height:1.08;letter-spacing:-.02em}
+.L-site-list .sp{font-size:3.1cqw;line-height:1.3;color:var(--muted);margin-top:.8cqw}
+.L-site-list .go{margin-left:auto;flex:none;width:9cqw;height:9cqw;border-radius:50%;background:var(--surface);display:grid;place-items:center;color:var(--fg)}
+.L-site-list .go svg{width:4cqw;height:4cqw}
+.L-site-list .rw.hot .go{background:var(--accent);color:var(--on-accent)}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="chip"><i></i>{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="rows">{% for it in c['items'][:6] %}<div class="rw item{{ ' hot' if loop.first else '' }}"><div class="no">{{ '%02d' % loop.index }}</div><div><div class="tt">{{ it.title }}</div>{% if it.text %}<div class="sp">{{ it.text }}</div>{% endif %}</div><div class="go">{{ icon('arrow-up-right') }}</div></div>{% endfor %}</div>
+</div>

@@ -82,13 +82,20 @@ JS_EXTRACT = r"""() => {
     const r = s.getBoundingClientRect(), h = headingOf(s);
     const subs = Array.from(s.querySelectorAll('h3, h4, h5, .elementor-icon-box-title, .elementor-image-box-title')).filter(x => vis(x) && txt(x).length > 1 && txt(x).length < 70);
     const items = []; const seen = new Set();
-    for (const x of subs) { const t = txt(x); if (seen.has(t)) continue; seen.add(t); items.push({title: t, text: descOf(x).slice(0, 120)}); if (items.length >= 6) break; }
+    for (const x of subs) { const t = txt(x); if (seen.has(t)) continue; seen.add(t); items.push({title: t, text: descOf(x).slice(0, 260)}); if (items.length >= 6) break; }
     const quotes = Array.from(s.querySelectorAll('blockquote, [class*=testimonial] p, [class*=depoimento] p')).map(txt).filter(t => t.length > 40).slice(0, 3);
-    const nums = Array.from(s.querySelectorAll('*')).filter(e => e.children.length === 0 && /^[+\-]?\s*[\d.,]+\s*[%°kKmM+]*$/.test(txt(e)) && txt(e).length <= 9).map(txt);
+    const numEls = Array.from(s.querySelectorAll('*')).filter(e => e.children.length === 0 && /^[+\-]?\s*[\d.,]+\s*[%°kKmM+]*$/.test(txt(e)) && txt(e).length <= 9);
+    const nums = numEls.map(txt);
+    const stats = numEls.slice(0, 4).map(e => { let c = e.parentElement, label = '', text = '';
+      for (let i = 0; i < 4 && c && c !== s; i++, c = c.parentElement) {
+        const parts = Array.from(c.querySelectorAll('*')).filter(x => x.children.length === 0 && x !== e && vis(x) && txt(x)).map(txt)
+          .filter(t => !/^[+\-]?\s*[\d.,]+\s*[%°kKmM+]*$/.test(t));
+        if (parts.length) { label = parts[0]; text = parts.slice(1).join(' ').slice(0, 90); break; } }
+      return {number: txt(e), label: label.slice(0, 40), text}; });
     const sub = Array.from(s.querySelectorAll('p, .elementor-widget-text-editor')).find(p => vis(p) && txt(p).length > 25);
     const bg = rgba(getComputedStyle(s).backgroundColor);
     return {top: r.top + scrollY, height: r.height, heading: h ? txt(h).slice(0, 140) : '', sub: sub ? txt(sub).slice(0, 220) : '',
-            items, quotes, nums, bg: bg && bg.a >= 0.5 ? hex(bg) : '', imgs: s.querySelectorAll('img').length};
+            items, quotes, nums, stats, bg: bg && bg.a >= 0.5 ? hex(bg) : '', imgs: s.querySelectorAll('img').length};
   });
   const buttons = Array.from(document.querySelectorAll('a, button')).filter(e => vis(e) && isBtn(e) && !e.closest('header, nav') && txt(e).length > 1 && txt(e).length < 32).map(txt);
   const navBtn = Array.from(document.querySelectorAll('header a, header button')).filter(e => vis(e) && isBtn(e)).map(txt);
@@ -98,8 +105,14 @@ JS_EXTRACT = r"""() => {
   if (logo) { logo.setAttribute('data-sr-logo', '1'); }
   const m = n => { const e = document.querySelector(`meta[name="${n}"], meta[property="${n}"]`); return e ? e.content : ''; };
   const h1 = Array.from(document.querySelectorAll('h1')).find(vis);
+  const hs = h1 ? getComputedStyle(h1) : null;
+  const btnEl = Array.from(document.querySelectorAll('a, button')).find(e => vis(e) && isBtn(e) && !e.closest('header, nav'));
+  const bs = btnEl ? getComputedStyle(btnEl) : null;
+  const style = {hCase: hs ? hs.textTransform : '', hSpacing: hs ? hs.letterSpacing : '', hWeight: hs ? hs.fontWeight : '', hSize: hs ? parseFloat(hs.fontSize) : 0,
+                 btnRadius: bs ? parseFloat(bs.borderRadius) || 0 : 0, btnH: bs ? parseFloat(bs.height) : 0, hColor: hs ? hex(rgba(hs.color) || {r:0,g:0,b:0,a:1}) : ''};
+  const logoImg = logo && logo.tagName === 'IMG' ? (logo.currentSrc || logo.src) : '';
   return {pageBgSet, title: document.title, description: m('description') || m('og:description'), ogImage: m('og:image'), siteName: m('og:site_name'), lang: document.documentElement.lang,
-          h1: h1 ? txt(h1) : '', pageBg, fonts, tally, sections, buttons, navBtn, hasLogo: !!logo, height: document.documentElement.scrollHeight,
+          h1: h1 ? txt(h1) : '', pageBg, fonts, tally, sections, buttons, navBtn, hasLogo: !!logo, logoSrc: logoImg, style, height: document.documentElement.scrollHeight,
           loadedFonts: Array.from(document.fonts).filter(f => f.status === 'loaded').map(f => f.family.replace(/["']/g, ''))};
 }"""
 
@@ -175,7 +188,33 @@ def pick_brand(data: dict, fonts_catalog=None) -> dict:
             break
     if not accent2:
         accent2 = _mix(accent, "#FFFFFF" if _lum(bg) < 0.35 else "#000000", 0.25)
+    st_ = data.get("style") or {}
+    hc = (st_.get("hColor") or "").upper()
+    heads = sorted(t["heading"].items(), key=lambda kv: -kv[1])
+    ink = next((c for c in ([hc] if hc else []) + [c for c, _ in heads] if _contrast(c, bg) >= 7 and not _saturated(c)), None) or fg
+    muted = _mix(bg, ink, 0.55)
+    if _contrast(muted, bg) < 4.5:
+        muted = _mix(bg, ink, 0.7)
     bg2 = _mix(bg, fg, 0.07)
+    style = {}
+    cs = (st_.get("hCase") or "").lower()
+    if cs in ("uppercase", "lowercase", "capitalize"):
+        style["dcase"] = cs
+    try:
+        ls = float(str(st_.get("hSpacing", "")).replace("px", "")) / max(1.0, float(st_.get("hSize") or 0) or 1.0)
+        style["dls"] = f"{max(-0.06, min(0.12, ls)):.3f}em"
+    except Exception:  # noqa
+        pass
+    try:
+        w = int(float(st_.get("hWeight") or 0))
+        if 300 <= w <= 900:
+            style["dw"] = w
+    except Exception:  # noqa
+        pass
+    br = float(st_.get("btnRadius") or 0)
+    bh = float(st_.get("btnH") or 0)
+    if br:
+        style["btn_radius"] = "999px" if bh and br >= bh / 2 - 1 else f"{min(br, 40) / 14.4:.2f}cqw"
     f = data.get("fonts", {})
     disp = _family(f.get("h1")) or _family(f.get("h2")) or _family(f.get("body"))
     body = _family(f.get("p")) or _family(f.get("body")) or disp
@@ -189,15 +228,15 @@ def pick_brand(data: dict, fonts_catalog=None) -> dict:
         if body and body not in cat:
             subs[body] = "DM Sans"
             out_b = "DM Sans"
-    return dict(colors=dict(bg=bg, bg2=bg2, fg=fg, accent=accent, accent2=accent2), font_display=out_d or "Space Grotesk",
+    return dict(colors=dict(bg=bg, bg2=bg2, fg=ink, muted=muted, accent=accent, accent2=accent2), style=style, font_display=out_d or "Space Grotesk",
                 font_body=out_b or "DM Sans", dark=_lum(bg) < 0.35, fonts_site=dict(display=disp, body=body), fonts_substituted=subs)
 
 
 # ------------------------------------------------------------------ texto → cenas
-def sentence(s: str) -> str:
+def sentence(s: str, names: bool = False) -> str:
     s = re.sub(r"\s+", " ", (s or "").strip())
     if s and (s.isupper() or sum(c.isupper() for c in s) > 0.6 * max(1, sum(c.isalpha() for c in s))):
-        s = s.lower().capitalize()
+        s = s.title() if names and len(s.split()) <= 3 and len(s) <= 24 else s.lower().capitalize()
     return s
 
 
@@ -225,63 +264,78 @@ def is_local(h: str) -> bool:
     return bool(re.fullmatch(r"[\d.]+|localhost|\[?[0-9a-f:]+\]?", h or ""))
 
 
-def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_scenes: int = 7, hero_bg: str | None = None) -> list:
+GLUED = re.compile(r"[a-zà-ú]{2}[A-ZÀ-Ú]{4,}|[A-ZÀ-Ú]{5,}[a-zà-ú]{3,}")
+
+
+def glued(s: str) -> bool:
+    """Texto com palavras coladas (ex.: «CRIATIVIDADEQUE TRANSFORMAIDEIAS» vindo de meta description mal escrita)."""
+    return bool(GLUED.search(s or "")) or any(len(w) > 22 and w.isalpha() for w in (s or "").split())
+
+
+def _first(t: str, mx: int = 110) -> str:
+    """Primeira frase inteira (nunca corta no meio); se ela passa do limite, não usa texto de apoio."""
+    t = (t or "").strip()
+    if not t:
+        return ""
+    f = re.split(r"(?<=[.!?])\s", t)[0]
+    return f if len(f) <= mx else ""
+
+
+def _items(s: dict, n: int) -> list:
+    out = []
+    for i in s.get("items", []):
+        if i.get("title"):
+            out.append(dict(title=sentence(i["title"], names=True), text=_first(sentence(i.get("text", "")))))
+        if len(out) >= n:
+            break
+    for i in out:
+        if i["title"].isupper() or i["title"].lower() == i["title"] and False:
+            i["title"] = i["title"].title()
+    return out
+
+
+def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_scenes: int = 7, hero_bg: str | None = None, *,
+                 handle_at: str = "", alt_theme: str | None = None, name: str = "", author: str = "") -> list:
+    """Cenas fiéis ao site: títulos e textos completos (nada cortado com «…»), números com rótulo, sem prints como foto.
+    Texto longo ganha mais tempo de tela, nunca é cortado. Hero e CTA podem usar o tema alternativo (ex.: versão escura)."""
     from . import review
-    secs = [s for s in data["sections"] if s.get("heading") or s.get("items") or s.get("quotes")]
+    secs = [s for s in data["sections"] if s.get("heading") or s.get("items") or s.get("quotes") or s.get("stats")]
     cta = next((b for b in data.get("buttons", []) if len(b) < 26), None) or next(iter(data.get("navBtn", [])), None) or "Saiba mais"
     h1 = sentence(data.get("h1") or (secs[0]["heading"] if secs else data.get("title", "")))
-    scenes = []
-    sub = clip(sentence(data.get("description") or (secs[0].get("sub") if secs else "")), 95)
-    scenes.append(dict(layout="full-bleed-bottom", kicker="", title=hl(clip(h1, 52)),
-                       subtitle=sub, cta=clip(sentence(cta), 20), photos=[hero_bg or shots[0]] if (hero_bg or shots) else []))
-    used = 0
+    hero_sub = sentence(secs[0].get("sub", "")) if secs else ""
+    desc = sentence(data.get("description") or "")
+    sub = hero_sub or ("" if glued(data.get("description") or "") else desc)
+    tone = {"theme": alt_theme} if alt_theme else {}
+    scenes = [dict(layout="site-hero", kicker="", title=hl(h1), subtitle=sub, cta=sentence(cta), **tone)]
+    body = []
     for s in secs:
-        if len(scenes) >= max_scenes - 1:
-            break
         head = sentence(s.get("heading", ""))
-        its = [i for i in s.get("items", []) if i["title"]]
-        if head == h1 and not its:
+        if not head or head == h1:
             continue
+        stats = [x for x in s.get("stats", []) if re.search(r"\d", x.get("number", ""))]
+        its = _items(s, 6)
         if s.get("quotes"):
-            q = s["quotes"][0]
-            scenes.append(dict(layout="testimonial", kicker="Clientes", quote=clip(q, 100), author="Cliente", role=clip(data.get("siteName") or _host(handle), 30), rating=5, photos=[]))
-        elif 3 <= len(its) <= 4:
-            scenes.append(dict(layout="service-grid", kicker=clip(head, 24) if len(head) < 24 else "", title=hl(clip(head, 48)) if head else "O que fazemos",
-                               items=[dict(title=clip(sentence(i["title"]), 28), text=clip(sentence(i["text"]), 30)) for i in its[:4]], subtitle=""))
-        elif 5 <= len(its):
-            scenes.append(dict(layout="step-process", kicker="", title=hl(clip(head, 48)) if head else "Como funciona",
-                               items=[dict(title=clip(sentence(i["title"]), 28), text=clip(sentence(i["text"]), 30)) for i in its[:4]]))
-        elif head:
-            nums = [n for n in s.get("nums", []) if re.search(r"\d", n)]
-            if nums and len(head) < 70:
-                scenes.append(dict(layout="big-number", kicker="", number=nums[0].replace(" ", ""), label=clip(head, 60), title="", subtitle=clip(sentence(s.get("sub", "")), 80)))
-            else:
-                k = 1 + used % max(1, len(shots) - 1) if len(shots) > 1 else 0
-                scenes.append(dict(layout="framed-photo", kicker="", title=hl(clip(head, 60)), subtitle=clip(sentence(s.get("sub", "")), 100),
-                                   photos=[shots[k]] if shots else []))
-                used += 1
-    scenes.append(dict(layout="cta-follow", title=hl(clip(sentence(cta), 40)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
-                       subtitle=clip(sentence(data.get("description") or ""), 50), cta=clip(sentence(cta), 18), handle=("" if is_local(_host(handle)) else _host(handle)),
-                       photos=[logo.replace("logo.png", "logo-avatar.png")] if logo else []))
+            body.append(dict(layout="testimonial", kicker="Clientes", quote=s["quotes"][0], author=author or "Cliente", role=name, rating=5, photos=[], _p=3))
+        elif len(stats) >= 2 and not any(b["layout"] == "site-stats" for b in body):
+            body.append(dict(layout="site-stats", kicker=head if len(head) <= 26 else "", title=hl(head) if len(head) > 26 else "Em *números*",
+                             items=[dict(number=x["number"].replace(" ", ""), title=sentence(x.get("label", "")) or "", text=sentence(x.get("text", ""))) for x in stats[:3]], _p=2))
+        elif len(its) >= 3:
+            rows = its[:5] if any(i["text"] for i in its) else its[:6]
+            if len(rows) > 4:
+                rows = [dict(title=r["title"], text="") for r in rows]
+            body.append(dict(layout="site-list", kicker="", title=hl(head), items=rows, _p=2))
+    keep = max(0, max_scenes - 2)
+    top = sorted(sorted(range(len(body)), key=lambda i: -body[i]["_p"])[:keep])  # os mais relevantes, na ordem do site
+    for i in top:
+        scenes.append({k: v for k, v in body[i].items() if k != "_p"})
+    short = hero_sub if len(hero_sub) <= 70 else (re.split(r"(?<=[.!?])\s", hero_sub)[0] if re.split(r"(?<=[.!?])\s", hero_sub)[0] else hero_sub)
+    scenes.append(dict(layout="site-cta", kicker="Próximo passo", title=hl(sentence(cta)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
+                       subtitle=short or sub, cta=sentence(cta), **tone))
     for k, sc in enumerate(scenes):
-        body = lambda: review.count_words({a: b for a, b in sc.items() if a not in ("layout", "photos", "dur")})  # noqa: E731
-        if k == 0:  # gancho: só o título e o botão, entra em ~3 s
-            sc["subtitle"] = ""
-        budget = 20
-        if sc.get("kicker") and sc.get("title") and sc["kicker"].lower().rstrip(".") in sc["title"].lower().replace("*", ""):
-            sc["kicker"] = ""  # kicker repetindo o título
-        if body() > budget and sc.get("kicker"):
-            sc["kicker"] = ""
-        if body() > budget and sc.get("subtitle"):
-            sc["subtitle"] = ""
-        if body() > budget and sc.get("items"):
-            for it in sc["items"]:
-                it["text"] = ""
-        if body() > budget and sc.get("kicker"):
-            sc["kicker"] = ""
-        sc["dur"] = round(min(6.5, max(2.8, review.need_seconds(body()) + 0.4)), 1)
+        words = review.count_words({a: b for a, b in sc.items() if a not in ("layout", "photos", "dur", "theme")})
+        sc["dur"] = round(min(6.5, max(3.0, review.need_seconds(words) + 0.4)), 1)
         if k == 0:
-            sc["dur"] = min(sc["dur"], 3.4)
+            sc["dur"] = max(3.6, min(sc["dur"], 5.0))
         elif k == len(scenes) - 1:
             sc["dur"] = min(sc["dur"], 4.6)
     return scenes
@@ -339,13 +393,27 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         data = pg.evaluate(JS_EXTRACT)
         logo = None
         if data.get("hasLogo"):
-            try:
-                el = pg.query_selector("[data-sr-logo]")
-                el.screenshot(path=str(out / "logo.png"), omit_background=True)
+            got = False
+            src = data.get("logoSrc") or ""
+            if src and not src.startswith("data:") and not src.lower().split("?")[0].endswith(".svg"):
+                try:  # arquivo original (PNG/JPG/WebP com transparência), não um print do cabeçalho
+                    rsp = ctx.request.get(src, timeout=20000)
+                    if rsp.ok:
+                        from PIL import Image
+                        import io
+                        Image.open(io.BytesIO(rsp.body())).convert("RGBA").save(out / "logo.png")
+                        got = True
+                except Exception as e:  # noqa
+                    log(f"! logo original não baixou ({type(e).__name__}); uso a captura")
+            if not got:
+                try:
+                    el = pg.query_selector("[data-sr-logo]")
+                    el.screenshot(path=str(out / "logo.png"), omit_background=True)
+                    got = True
+                except Exception as e:  # noqa
+                    log(f"! logo não capturado: {type(e).__name__}")
+            if got:
                 logo = "logo.png"
-                _square(out / "logo.png", out / "logo-avatar.png")
-            except Exception as e:  # noqa
-                log(f"! logo não capturado: {type(e).__name__}")
         try:
             pg.screenshot(path=str(out / "site-desktop.png"), full_page=True)
         except Exception:  # noqa

@@ -1,0 +1,20 @@
+<style>
+.L-site-stats *{hyphens:manual!important;-webkit-hyphens:manual!important;overflow-wrap:normal!important;word-break:normal!important}
+.L-site-stats .pad{justify-content:center;gap:4.4cqw}
+.canvas.fmt-reel.L-site-stats .pad,.canvas.fmt-story.L-site-stats .pad{padding-top:25cqw;padding-bottom:27cqw}
+.L-site-stats .chip{align-self:flex-start;display:inline-flex;align-items:center;gap:2cqw;font-family:var(--font-body),Inter;font-size:3cqw;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.L-site-stats .chip i{width:2.3cqw;height:2.3cqw;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1.1cqw color-mix(in srgb,var(--accent) 24%,transparent);display:block}
+.L-site-stats .t{font-size:11.4cqw;line-height:.96;max-height:26cqh;flex:0 1 auto;min-height:0}
+.L-site-stats .cards{display:flex;flex-direction:column;gap:3.2cqw;flex:1 1 0;min-height:0}
+.L-site-stats .sc{flex:1 1 0;min-height:0;border-radius:var(--card-radius);padding:3.6cqw 5cqw;display:flex;align-items:center;gap:5cqw;background:var(--surface);box-shadow:0 0 0 .25cqw var(--line);overflow:hidden}
+.L-site-stats .sc:nth-child(1){background:var(--accent);color:var(--on-accent);box-shadow:none}
+.L-site-stats .sc:nth-child(2){background:var(--fg);color:var(--bg);box-shadow:none}
+.L-site-stats .n{font-family:var(--font-display),Inter;font-weight:var(--dw);font-size:15cqw;line-height:.9;letter-spacing:var(--dls);flex:none;white-space:nowrap}
+.L-site-stats .lb{font-family:var(--font-display),Inter;font-weight:var(--dw);text-transform:uppercase;letter-spacing:.04em;font-size:4.6cqw;line-height:1.1}
+.L-site-stats .tx{font-size:3.1cqw;line-height:1.32;opacity:.82;margin-top:1cqw}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="chip"><i></i>{{ c.kicker }}</div>{% endif %}
+  <div class="t fit">{{ rich(c.title) }}</div>
+  <div class="cards">{% for it in c['items'][:3] %}<div class="sc item"><div class="n">{{ it.number }}</div><div><div class="lb">{{ it.title }}</div>{% if it.text %}<div class="tx">{{ it.text }}</div>{% endif %}</div></div>{% endfor %}</div>
+</div>

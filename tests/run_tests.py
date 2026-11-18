@@ -2,10 +2,11 @@ import subprocess
 #!/usr/bin/env python3
 """Testes de fumaça do Studio Reels (sem pytest). Uso: python tests/run_tests.py
 Cada cenário imprime OK/FALHA. Não testa provedores com rede (ElevenLabs, Whisper, Magnific)."""
-import json, subprocess, sys, tempfile, shutil
+import json, os, subprocess, sys, tempfile, shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+os.environ.setdefault("STUDIO_PORTAO", "off")  # o portão tem testes próprios abaixo; nos demais cenários só atrasaria
 sys.path.insert(0, str(ROOT))
 TMP = Path(tempfile.mkdtemp(prefix="sr_test_"))
 results = []
@@ -340,14 +341,63 @@ def _():
     c = b["colors"]["accent"].lstrip("#")
     r, g, bl = (int(c[i:i + 2], 16) for i in (0, 2, 4))
     assert abs(r - 0x0E) < 24 and abs(g - 0x7C) < 24 and abs(bl - 0x66) < 24, b["colors"]
-    assert b["handle"] == "@casaverde", b["handle"]
+    assert not b.get("handle"), b.get("handle")  # nunca inventa @ do Instagram a partir do domínio
     assert "Zorblax" in o and "Space Grotesk" in o, o[-400:]
     sc = json.loads((out / "content.json").read_text())["scenes"]
-    assert len(sc) >= 4 and sc[-1]["layout"] == "cta-follow", [s["layout"] for s in sc]
+    assert len(sc) >= 3 and sc[0]["layout"] == "site-hero" and sc[-1]["layout"] == "site-cta", [s["layout"] for s in sc]
+    assert not any("…" in json.dumps(x, ensure_ascii=False) for x in sc), "texto cortado com reticências"
+    assert not any(x.get("photos") and any("tela-" in p for p in x["photos"]) for x in sc), "print do site usado como foto"
     from PIL import Image
     shots = sorted(out.glob("tela-*.png"))
     assert len(shots) >= 3 and Image.open(shots[0]).width == 1080
     assert (out / "logo.png").exists() and (out / "logo-avatar.png").exists() and (out / "site.json").exists()
+
+
+
+@case("portão dos agentes: bloqueia sem parecer, libera com parecer completo")
+def _():
+    out = TMP / "gate" / "peca.png"
+    out.parent.mkdir()
+    env = dict(os.environ, STUDIO_PORTAO="on")
+    r = subprocess.run([sys.executable, "studio.py", "render", "--layout", "ds-cover", "--theme", "criative-light", "--brand", "criative", "--sample",
+                        "--format", "post", "--out", str(out)], capture_output=True, text=True, cwd=ROOT, env=env)
+    assert r.returncode == 0 and "PORTÃO DOS AGENTES" in r.stdout, r.stdout[-300:] + r.stderr[-300:]
+    ad = out.parent / "peca.agentes"
+    assert (ad / "gate.json").exists() and (ad / "CHECKLIST.md").exists() and (ad / "parecer.modelo.json").exists()
+    assert sh(sys.executable, "studio.py", "agentes", out).returncode == 2
+    assert sh(sys.executable, "studio.py", "entregar", out, "--para", TMP / "ent").returncode != 0 and not (TMP / "ent").exists()
+    g = json.loads((ad / "gate.json").read_text())
+    par = json.loads((ad / "parecer.modelo.json").read_text())
+    for k, v in par["roles"].items():
+        v.update(veredito="ok", visto=[f.name for f in ad.iterdir() if f.suffix == ".png"][:1], notas=["P2 · geral · ok"])
+    par["diretor"] = dict(decisao="aprovar", nota=8.5, resumo="teste")
+    (ad / "parecer.json").write_text(json.dumps(par))
+    if g["blockers"]:
+        assert sh(sys.executable, "studio.py", "agentes", out).returncode == 2
+    else:
+        assert sh(sys.executable, "studio.py", "agentes", out).returncode == 0
+        assert sh(sys.executable, "studio.py", "entregar", out, "--para", TMP / "ent").returncode == 0 and (TMP / "ent" / "peca.png").exists()
+        out.write_bytes(out.read_bytes() + b"x")  # peça alterada depois do parecer
+        assert sh(sys.executable, "studio.py", "agentes", out).returncode == 2
+
+
+@case("portão: logo clara some em fundo claro? o motor ajusta; print como foto é bloqueado")
+def _():
+    from engine import logo, gate
+    from PIL import Image
+    p = TMP / "wl.png"
+    im = Image.new("RGBA", (400, 120), (0, 0, 0, 0))
+    for x in range(120, 380):
+        for y in range(40, 80):
+            im.putpixel((x, y), (255, 255, 255, 255))
+    for x in range(20, 100):
+        for y in range(20, 100):
+            im.putpixel((x, y), (200, 0, 7, 255))
+    im.save(p)
+    assert logo.analyze(p, "#F3F1F3")["readable"] < 0.8
+    q = logo.fit(p, "#F3F1F3", ink="#0C090C")
+    assert logo.analyze(q, "#F3F1F3")["readable"] > 0.95
+    assert gate.PHOTO_BAD.search("tela-03.png") and gate.PHOTO_BAD.search("site-desktop.png") and not gate.PHOTO_BAD.search("fachada.jpg")
 
 
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")

@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from engine import ffsetup  # noqa: E402
 ffsetup.prefer_ffmpeg_with_ass()
 from engine import core  # noqa: E402
+from engine import gate  # noqa: E402
 from engine.core import REG, FORMATS, STATIC_FORMATS, Renderer  # noqa: E402
 
 ROOT = core.ROOT
@@ -145,6 +146,7 @@ def cmd_render(a):
     layouts = list(REG.layouts) if a.layout == "all" else [a.layout]
     themes = list(REG.themes) if a.theme == "all" else [a.theme]
     n = 0
+    made = []
     with Renderer(a.scale) as r:
         for lay in layouts:
             for th in themes:
@@ -158,7 +160,12 @@ def cmd_render(a):
                     o.parent.mkdir(parents=True, exist_ok=True)
                     core.render_static(lay, th, f, content, o, brand=brand, base_dir=base, sample=sample, renderer=r)
                     n += 1
+                    made.append((lay, th, f, o))
                     print("✓", o)
+    if made and len(made) <= 6:
+        pages = [dict(name=f"{lay} · {f}", fmt=f, content=content, theme=th,
+                      html=core.page_html(core.slide_canvas(lay, th, f, content, brand, base_dir=base, sample=sample))) for lay, th, f, _ in made]
+        gate.run("static", made[0][3] if len(made) == 1 else made[0][3].parent, pages, brand or {}, made[0][1], [m[3] for m in made])
     return 0
 
 
@@ -177,6 +184,12 @@ def cmd_carousel(a):
                                      sample=sample, renderer=r, pager=not a.no_pager)
     for f in files:
         print("✓", f)
+    cont = {**REG.carousels[a.recipe].get("sample", {}), **content} if sample else content
+    plan = core.plan_carousel(a.recipe, cont)
+    pages = [dict(name=f"slide {i + 1} · {p['layout']}", fmt=a.format, content=p["content"], theme=a.theme,
+                  html=core.page_html(core.slide_canvas(p["layout"], a.theme, a.format, p["content"], brand, base_dir=base, sample=sample, pager=(i, len(plan)))))
+             for i, p in enumerate(plan)]
+    gate.run("carousel", out, pages, brand or {}, a.theme, [f for f in files if str(f).lower().endswith((".png", ".jpg", ".jpeg"))])
     return 0
 
 
@@ -203,8 +216,8 @@ def cmd_reel(a):
     elif not a.layout and content.get("scenes") and all("layout" in x for x in content["scenes"]):
         # roteiro direto: scenes[{layout, dur?, ...conteúdo}] sem receita (aceita photos com clipes de vídeo)
         for x in content["scenes"]:
-            c = dict(x); d = c.pop("dur", 3.0)
-            scenes.append(dict(layout=c.pop("layout"), content=c, dur=d))
+            c = dict(x); d = c.pop("dur", 3.0); th = c.pop("theme", None)
+            scenes.append(dict(layout=c.pop("layout"), content=c, dur=d, **({"theme": th} if th else {})))
         motion, transition, name = a.motion or "fade-up", a.transition or "smooth", "roteiro"
     elif a.layout:
         scenes = [dict(layout=a.layout, content=content, dur=a.dur)]
@@ -223,6 +236,15 @@ def cmd_reel(a):
                      cap_style=dict(accent=a.cap_cor, fg=a.cap_texto, pos_y=a.cap_pos, size_pct=a.cap_tamanho, upper=a.cap_maiusculas), vocab=a.vocab,
                      script=(Path(a.script[1:]).read_text(encoding='utf-8') if a.script and a.script.startswith('@') else a.script))
     print("✓", out)
+    def _cont(sc):
+        c = dict(sc.get("content", {}))
+        if sample:
+            c = {**(REG.layouts.get(sc["layout"], {}).get("sample") or {}), **c}
+        return c
+    pages = [dict(name=f"cena {i + 1} · {sc['layout']}", fmt="reel", content=_cont(sc), theme=sc.get("theme") or a.theme,
+                  html=core.page_html(core.slide_canvas(sc["layout"], sc.get("theme") or a.theme, "reel", _cont(sc), brand, base_dir=base, sample=sample)))
+             for i, sc in enumerate(scenes)]
+    gate.run("reel", out, pages, brand or {}, a.theme, [out], timeline=str(Path(out).with_suffix(".timeline.json")))
     return 0
 
 
@@ -238,8 +260,44 @@ def cmd_brand(a):
     return 0
 
 
+def cmd_agentes(a):
+    """Valida o parecer dos especialistas. Só libera a entrega (entregar) quando tudo estiver aprovado."""
+    res = gate.validate(a.saida)
+    if res.get("gate"):
+        g = res["gate"]
+        print(f"Portão: {g['blockers']} bloqueio(s) · {g['warnings']} aviso(s) · nota {g['score']}/100 · especialistas exigidos: {len(g['roles'])}")
+    if res["ok"]:
+        print("✓ APROVADO pelos agentes — liberado para: python studio.py entregar", a.saida)
+        return 0
+    print("✗ PENDENTE:")
+    for x in res["pend"]:
+        print("  -", x)
+    if res.get("dir"):
+        print("Checklist:", res["dir"] / "CHECKLIST.md")
+    return 2
+
+
+def cmd_entregar(a):
+    """Entrega final: copia a peça + parecer para a pasta de entrega, só se aprovada pelos agentes e inalterada."""
+    src = Path(a.saida)
+    if not gate.approved(src):
+        print("✗ ENTREGA BLOQUEADA: peça sem aprovação dos agentes (ou alterada depois do parecer).")
+        return cmd_agentes(a) or 2
+    dst = Path(a.para or ROOT / "entregas" / slug(src.stem))
+    dst.mkdir(parents=True, exist_ok=True)
+    ad = gate.agentes_dir(src)
+    g = json.loads((ad / "gate.json").read_text(encoding="utf-8"))
+    for name in g["files"]:
+        f = (src / name) if src.is_dir() else src.parent / name
+        (dst / name).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(f, dst / name)
+    shutil.copy2(ad / "parecer.json", dst / "parecer.json")
+    print("✓ entregue em", dst)
+    return 0
+
+
 def cmd_site(a):
-    from engine import site
+    from engine import site, logo as _logo
     from urllib.parse import urlparse
     host = (urlparse(a.url if "://" in a.url else "https://" + a.url).hostname or "site").replace("www.", "")
     out = Path(a.out or ROOT / "samples" / f"site-{slug(host)}")
@@ -249,23 +307,56 @@ def cmd_site(a):
     cat = json.loads((ROOT / "fonts" / "manifest.json").read_text())
     b = site.pick_brand(data, cat)
     name = a.name or data.get("siteName") or (data.get("title") or host).split("|")[0].split(" - ")[0].strip() or host
-    brand = dict(name=name, handle=("@" + re.sub(r"[^a-z0-9]", "", name.lower()) if site.is_local(host.split(":")[0]) else "@" + host.split(":")[0].split(".")[0]), colors=b["colors"], font_display=b["font_display"], font_body=b["font_body"], source=res["url"])
-    if res.get("logo"):
-        brand["logo"] = res["logo"]
-    (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
-    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=a.cenas, hero_bg=res.get("hero_bg"))
-    (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
-    (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"]),
-                                              ensure_ascii=False, indent=1), encoding="utf-8")
+    handle = a.handle or ""
+    if handle and not handle.startswith("@"):
+        handle = "@" + handle
+    if not handle and not site.is_local(host.split(":")[0]):
+        handle = ""  # nunca inventa @: sem --handle a assinatura mostra só o nome
+    if a.brand:  # identidade já cadastrada (design system da marca): ela manda, o site só fornece textos e logo
+        bp = Path(a.brand) if Path(a.brand).exists() else ROOT / "library" / "brands" / f"{a.brand}.json"
+        brand = json.loads(bp.read_text(encoding="utf-8"))
+        brand.setdefault("name", name)
+        handle = handle or brand.get("handle", "")
+        if not brand.get("logo") and res.get("logo"):
+            brand["logo"] = str(out / res["logo"])
+    else:
+        brand = dict(name=name, handle=handle, colors=b["colors"], style=b.get("style", {}), font_display=b["font_display"], font_body=b["font_body"], source=res["url"])
+        if res.get("logo"):
+            brand["logo"] = res["logo"]
     theme = a.theme or ("brand-dark" if b["dark"] else "brand-light")
+    alt = None
+    if theme in REG.themes:
+        for x, y in (("light", "dark"), ("dark", "light")):
+            if theme.endswith(x) and theme[: -len(x)] + y in REG.themes:
+                alt = theme[: -len(x)] + y
+                break
+    if a.brand and alt is None:
+        alt = None
+    tcol = (core.resolve_theme(theme, brand).get("bg") or b["colors"]["bg"])
+    if res.get("logo"):
+        try:
+            _logo.avatar(out / res["logo"], out / "logo-avatar.png", tcol, ink=b["colors"]["fg"])
+        except Exception as e:  # noqa
+            print(f"  ! avatar da logo não gerado ({type(e).__name__})")
+    (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
+    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=a.cenas, handle_at=handle, alt_theme=alt, name=name)
+    (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
+    (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description")),
+                                              ensure_ascii=False, indent=1), encoding="utf-8")
     c = b["colors"]
-    print(f"\n✓ marca «{name}»  fundo {c['bg']} · texto {c['fg']} · acento {c['accent']} · acento 2 {c['accent2']}")
+    print(f"\n✓ marca «{name}»  fundo {c['bg']} · título {c['fg']} · acento {c['accent']} · acento 2 {c['accent2']}  (tema {theme}{' + ' + alt if alt else ''})")
     print(f"  fontes do site: título {b['fonts_site']['display'] or '—'} · texto {b['fonts_site']['body'] or '—'}  →  usadas: {b['font_display']} / {b['font_body']}")
+    if a.brand:
+        print(f"  identidade: biblioteca «{a.brand}» (cores/fontes do design system, não as extraídas)")
     for k, v in b["fonts_substituted"].items():
         print(f"  ! «{k}» não está no catálogo: usei {v} (instale a fonte da marca para trocar)")
-    print(f"  {len(res['shots'])} telas · logo: {res.get('logo') or 'não achei'} · {len(scenes)} cenas: " + " → ".join(x["layout"] for x in scenes))
+    if site.glued(data.get("description") or ""):
+        print("  ! a descrição (meta description) do site tem palavras coladas; usei o subtítulo do hero. Vale corrigir no WordPress/SEO.")
+    print(f"  logo: {res.get('logo') or 'não achei'} · {len(scenes)} cenas: " + " → ".join(x["layout"] for x in scenes))
+    if not handle:
+        print("  ! sem @ do Instagram: passe --handle @usuario para assinar o final")
     print(f"  pasta: {out}")
-    if a.salvar_marca:
+    if a.salvar_marca and not a.brand:
         d = ROOT / "library" / "brands"
         d.mkdir(parents=True, exist_ok=True)
         assets = d / "assets"
@@ -277,13 +368,15 @@ def cmd_site(a):
             bb["logo"] = f"library/brands/assets/{slug(name)}-logo.png"
         (d / f"{slug(name)}.json").write_text(json.dumps(bb, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  marca salva: --brand {slug(name)}")
+    cmd = [sys.executable, str(ROOT / "studio.py"), "reel", "--content", str(out / "content.json"), "--brand", str(out / "brand.json"),
+           "--theme", theme, "--format", "reel", "--out", str(out / "reel.mp4")]
+    cmd += ["--preview"] if a.rascunho else []
+    cmd += ["--music", a.music or "corporate", "--sfx", "light", "--kenburns", "drift", "--count-up"]
     if a.render:
-        mp4 = out / "reel.mp4"
-        r = subprocess.run([sys.executable, str(ROOT / "studio.py"), "reel", "--content", str(out / "content.json"), "--brand", str(out / "brand.json"),
-                            "--theme", theme, "--format", "reel", "--out", str(mp4)] + (["--preview"] if a.rascunho else []) + (["--music", a.music] if a.music else []) + ["--kenburns", "drift", "--count-up"])
-        print(("✓ reel: " + str(mp4)) if r.returncode == 0 else "✗ o render falhou (veja acima)")
+        r = subprocess.run(cmd)
+        print(("✓ reel: " + str(out / "reel.mp4")) if r.returncode == 0 else "✗ o render falhou (veja acima)")
         return r.returncode
-    print(f"  próximo passo: python studio.py reel --content {out}/content.json --brand {out}/brand.json --theme {theme} --out {out}/reel.mp4")
+    print("  próximo passo: " + " ".join(cmd[1:]).replace(sys.executable, "python"))
     return 0
 
 
@@ -755,6 +848,25 @@ def cmd_qa(a):
     return 2 if worst else 0
 
 
+def _gate_spec(kind, spec, out, brand, theme, fmt, content, base, sample):
+    if kind == "static":
+        pages = [dict(name=spec["layout"], fmt=fmt, content=content, theme=theme,
+                      html=core.page_html(core.slide_canvas(spec["layout"], theme, fmt, content, brand, base_dir=base, sample=sample)))]
+        gate.run("static", out, pages, brand or {}, theme, [out / "peca.png"])
+    elif kind == "carousel":
+        cont = {**REG.carousels[spec["recipe"]].get("sample", {}), **content} if sample else content
+        plan = core.plan_carousel(spec["recipe"], cont)
+        pages = [dict(name=f"slide {i + 1} · {p['layout']}", fmt=fmt, content=p["content"], theme=theme,
+                      html=core.page_html(core.slide_canvas(p["layout"], theme, fmt, p["content"], brand, base_dir=base, sample=sample, pager=(i, len(plan)))))
+                 for i, p in enumerate(plan)]
+        gate.run("carousel", out, pages, brand or {}, theme, sorted((out / "slides").glob("*.png")))
+    elif kind == "reel":
+        pages = [dict(name=f"cena {i + 1} · {sc['layout']}", fmt="reel", content=sc.get("content", {}), theme=theme,
+                      html=core.page_html(core.slide_canvas(sc["layout"], theme, "reel", sc.get("content", {}), brand, base_dir=base, sample=sample)))
+                 for i, sc in enumerate(spec["scenes"])]
+        gate.run("reel", out, pages, brand or {}, theme, [out / "reel.mp4"], timeline=str(out / "reel.timeline.json"))
+
+
 COUNCIL_ROLES = ["project-planner", "brand-strategist", "social-media", "copywriter", "art-director", "graphic-designer", "color-specialist", "typographer",
                  "composition", "image-curator", "motion-designer", "sound-designer", "video-editor", "accessibility", "creative-director"]
 
@@ -809,6 +921,7 @@ def cmd_council(a):
         if kind == "reel":
             reps.append(qa.check_reel(str(out / "reel.timeline.json"), str(out / "reel.mp4")))
         (out / "qa.json").write_text(json.dumps(reps, ensure_ascii=False, indent=1), encoding="utf-8")
+        _gate_spec(kind, spec, out, brand, theme, fmt, content, base, sample)
         blockers = sum(r_["blockers"] for r_ in reps)
         warns = sum(r_["warnings"] for r_ in reps)
         score = round(sum(r_["score"] for r_ in reps) / max(1, len(reps)))
@@ -1023,12 +1136,22 @@ def main():
     p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
     p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
     p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
-    p.add_argument("--theme", help="brand-dark|brand-light|brand-vivid (padrão: pelo fundo do site)")
+    p.add_argument("--theme", help="brand-dark|brand-light|brand-vivid (padrão: pelo fundo do site) ou o tema do design system da marca")
+    p.add_argument("--brand", help="usa a identidade cadastrada em library/brands (ex.: criative) em vez das cores extraídas")
+    p.add_argument("--handle", help="@ do Instagram da marca para a assinatura final")
     p.add_argument("--salvar-marca", action="store_true", help="grava a marca em library/brands para usar com --brand")
     p.add_argument("--render", action="store_true", help="já renderiza o reel.mp4")
     p.add_argument("--rascunho", action="store_true", help="(com --render) render rápido de prévia")
     p.add_argument("--music", help="(com --render) estilo de trilha: lofi|house|pop|corporate|cinematic|hype|ambient")
     p.set_defaults(fn=cmd_site)
+
+    p = sub.add_parser("agentes", help="valida o parecer dos especialistas de uma peça (portão obrigatório)")
+    p.add_argument("saida", help="arquivo (png/mp4) ou pasta gerada")
+    p.set_defaults(fn=cmd_agentes)
+    p = sub.add_parser("entregar", help="entrega final: só libera peça aprovada pelos agentes")
+    p.add_argument("saida")
+    p.add_argument("--para")
+    p.set_defaults(fn=cmd_entregar)
 
     p = sub.add_parser("council", help="mesa de especialistas + diretor de criação (pasta de trabalho, build versionado, QA)")
     p.add_argument("action", choices=["init", "build", "status"])

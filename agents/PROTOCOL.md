@@ -2,6 +2,17 @@
 
 Os agentes são **papéis** executados por Claude (ou subagentes) seguindo este protocolo. O código (`studio.py council`, `qa`) faz as verificações determinísticas e o build; o julgamento criativo vem dos papéis. Não são processos autônomos.
 
+## PORTÃO OBRIGATÓRIO (v5.1) — vale para toda peça: arte, post, carrossel, story, reel, vídeo de site
+Nenhuma peça é entregue sem passar pelos agentes. O motor roda o **portão** sozinho em `render`, `carousel`, `reel` e `council build`:
+mede (contraste, corte, fontes, logo visível, paleta, texto duplicado/truncado, print usado como foto) e grava em `<peça>.agentes/`
+(`CHECKLIST.md`, `gate.json`, folhas de contato, `parecer.modelo.json`). A partir daí:
+1. Quem executa (Claude) **abre as folhas com Read**, responde as perguntas de cada especialista e preenche `parecer.json`
+   (`veredito` ok|refazer, `visto` com as folhas realmente abertas, `notas` P0/P1/P2; `diretor`: decisao `aprovar`, nota ≥ 8.0).
+2. Bloqueio medido ou P0 → corrigir e renderizar de novo (máx. 3 rodadas).
+3. `python studio.py agentes <saída>` valida (código de saída 2 = pendente); `python studio.py entregar <saída>` só copia a peça
+   se estiver aprovada e **sem alteração depois do parecer** (sha256). Entregar sem isso é falha de processo.
+`STUDIO_PORTAO=off` existe só para testes/galeria; nunca em trabalho de cliente.
+
 ## Regras duras (valem para todos)
 1. **Sem imagem gerada por IA** e sem "cara de template de IA" (degradê genérico, ícones decorativos aleatórios, texto cliché). Fotos reais de bancos gratuitos (`studio.py stock`) ou do cliente; licença em `library/stock/credits.json`.
 2. Placeholder de foto não passa em entrega final.

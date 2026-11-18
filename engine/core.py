@@ -165,6 +165,11 @@ def resolve_theme(theme_id: str, brand: dict | None = None) -> dict:
             t["font_display"] = brand["font_display"]
         if brand.get("font_body"):
             t["font_body"] = brand["font_body"]
+    st = brand.get("style") or {}
+    if t.get("brand") or brand.get("override_theme"):
+        for k in ("dw", "dcase", "dls", "dlh", "card_radius", "btn_radius", "ph_radius"):
+            if st.get(k) is not None:
+                t[k] = st[k]
     # segurança de legibilidade: o 2º tom do fundo nunca pode enfraquecer o texto principal
     try:
         if t.get("bg2") and t.get("fg", "").startswith("#"):
@@ -489,10 +494,16 @@ def decor_html(t: dict, enabled=True) -> tuple[str, str]:
     return "".join(under), "".join(over)
 
 
-def brandbar_html(brand: dict | None, base_dir) -> str:
+def brandbar_html(brand: dict | None, base_dir, bg: str | None = None, ink: str = "#111111") -> str:
     if not brand:
         return ""
     name, handle, logo = brand.get("name"), brand.get("handle"), resolve_media(brand.get("logo"), base_dir)
+    if logo and bg and str(bg).startswith("#") and len(str(bg)) == 7:
+        try:  # a logo sempre precisa aparecer: ajusta ao fundo onde ela fica
+            from . import logo as _logo
+            logo = Path(_logo.fit(logo, bg, ink if str(ink).startswith("#") and len(str(ink)) == 7 else "#111111")).as_uri()
+        except Exception:
+            pass
     if not (name or handle or logo):
         return ""
     left = (f'<img src="{logo}" alt="">' if logo else "") + (f"<span>{hesc(name)}</span>" if name and not logo else "")
@@ -542,7 +553,8 @@ def slide_canvas(layout_id: str, theme_id: str, fmt: str, content: dict, brand: 
         xc, xs = _motion.style_for(m, reel)
         classes += ["reel", f"m-{m['id']}"] + (["mw"] if m.get("words") else []) + (["mc"] if m.get("chars") else []) + xc
         style += xs
-    bar = brandbar_html(brand, base_dir) if show_brand else ""
+    over_photo = ("scrim" in inner) or ("bgph" in inner and "ondark" in inner)
+    bar = brandbar_html(brand, base_dir, "#101010" if over_photo else t.get("bg"), t.get("fg", "#111111")) if show_brand else ""
     pg = pager_html(*pager) if pager else ""
     return f'<div class="{" ".join(classes)}" style="{style}">{under}<div class="content">{inner}</div>{bar}{pg}{over}</div>'
 
@@ -899,7 +911,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
     try:
         for i, s in enumerate(scenes):
             seconds = durs[i] + (tdur if i < len(scenes) - 1 else 0.0)
-            html = page_html(slide_canvas(s["layout"], theme, fmt, s.get("content", {}), brand, base_dir=base_dir, sample=sample,
+            html = page_html(slide_canvas(s["layout"], s.get("theme") or theme, fmt, s.get("content", {}), brand, base_dir=base_dir, sample=sample,
                                           reel=dict(motion=s.get("motion", motion), scene_dur=durs[i] + tdur, extra_delay=(tdur if i > 0 else 0.0),
                                                     pace=pace, speed=speed, stagger_scale=stagger_scale, intensity=intensity, ease=ease,
                                                     kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm,

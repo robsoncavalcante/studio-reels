@@ -1231,5 +1231,118 @@
     }
    ]
   }
+ },
+ {
+  "id": "site-hero",
+  "name": "Site · abertura (título gigante)",
+  "kind": "site",
+  "photos": 0,
+  "desc": "Rótulo com bolinha, título gigante, subtítulo e botão; usa a cor de título e a caixa do design system.",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Quem somos",
+   "title": "Do planejamento à *execução*",
+   "subtitle": "Estratégia, criação e tecnologia trabalhando juntas.",
+   "cta": "Agende uma visita"
+  }
+ },
+ {
+  "id": "site-stats",
+  "name": "Site · números em cartões",
+  "kind": "site",
+  "photos": 0,
+  "desc": "Até 3 cartões grandes com número, rótulo e texto (acento, tinta, claro).",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Quem somos",
+   "title": "Do planejamento à *execução*",
+   "items": [
+    {
+     "number": "+20",
+     "title": "Anos",
+     "text": "De trajetória"
+    },
+    {
+     "number": "+300",
+     "title": "Projetos",
+     "text": "Entregues"
+    },
+    {
+     "number": "360°",
+     "title": "Agência",
+     "text": "Estratégia e criação"
+    }
+   ]
+  }
+ },
+ {
+  "id": "site-list",
+  "name": "Site · lista numerada",
+  "kind": "site",
+  "photos": 0,
+  "desc": "Título e até 6 linhas numeradas com seta, opcionalmente com uma linha de apoio.",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "O que fazemos",
+   "title": "Seis frentes. Uma *estratégia*.",
+   "items": [
+    {
+     "title": "Branding e identidade visual"
+    },
+    {
+     "title": "Gestão de redes sociais"
+    },
+    {
+     "title": "Tráfego pago"
+    }
+   ]
+  }
+ },
+ {
+  "id": "site-cta",
+  "name": "Site · chamada final",
+  "kind": "site",
+  "photos": 1,
+  "desc": "Título gigante, botão e assinatura com logo/@.",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ],
+  "sample": {
+   "kicker": "Próximo passo",
+   "title": "Vamos *conversar*?",
+   "subtitle": "Conte o que você imagina.",
+   "cta": "Agende uma visita",
+   "handle": "@marca"
+  }
  }
 ]
