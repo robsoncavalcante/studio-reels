@@ -678,6 +678,18 @@ def qa_spec(spec, outdir: Path, base: Path):
 def cmd_qa(a):
     from engine import qa
     reps = []
+    if a.action == "review":
+        from engine import review
+        if not a.target or not a.video:
+            raise SystemExit("uso: studio.py qa review reel.timeline.json --video reel.mp4 [--out pasta]")
+        tl = json.loads(Path(a.target).read_text(encoding="utf-8"))
+        out = Path(a.out or Path(a.video).parent / "revisao")
+        sh = review.sheets(a.video, tl, out)
+        rep = qa.check_reel(a.target, a.video)
+        print(qa.format_report(rep))
+        p_ = review.write_review(rep, out, sh)
+        print(f"\nRevisão: {p_}\nFolhas: " + ", ".join(Path(v).name for v in sh.values()))
+        return 2 if rep["blockers"] else 0
     if a.action == "reel":
         reps.append(qa.check_reel(a.target, a.video))
     else:
@@ -942,8 +954,8 @@ def main():
     p.set_defaults(fn=cmd_color)
 
     p = sub.add_parser("qa", help="verificação automática de qualidade (contraste, cortes, zonas seguras, hierarquia, reels)")
-    p.add_argument("action", choices=["static", "carousel", "reel"])
-    p.add_argument("target", nargs="?", help="(reel) caminho do .timeline.json")
+    p.add_argument("action", choices=["static", "carousel", "reel", "review"])
+    p.add_argument("target", nargs="?", help="(reel|review) caminho do .timeline.json")
     p.add_argument("--video")
     p.add_argument("--layout")
     p.add_argument("--recipe")

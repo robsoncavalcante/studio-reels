@@ -242,6 +242,8 @@ def check_reel(timeline_path: str, video_path: str | None = None) -> dict:
                 add("warn", "loudness", f"loudness {ld['lufs']:.1f} LUFS (alvo ≈ -14)", "normalizar")
             if ld["peak"] > -1.0:
                 add("warn", "peak", f"pico {ld['peak']:.1f} dBFS (> -1): risco de distorção após compressão da plataforma", "limitar o pico a -1.5 dBTP")
+    from . import review
+    issues += review.measure(tl, video_path)
     blockers = sum(i["level"] == "blocker" for i in issues)
     warns = sum(i["level"] == "warn" for i in issues)
     return dict(name=Path(timeline_path).stem, score=max(0, 100 - 18 * blockers - 5 * warns), blockers=blockers, warnings=warns, issues=issues)
@@ -252,6 +254,8 @@ def format_report(rep: dict) -> str:
     lines = [f"QA · {rep['name']} · nota {rep['score']}/100 · {rep['blockers']} bloqueio(s) · {rep['warnings']} aviso(s)"]
     for i in sorted(rep["issues"], key=lambda x: ["blocker", "warn", "info"].index(x["level"])):
         t = f" «{i['text']}»" if i.get("text") else ""
+        if i.get("t") is not None:
+            t = f" @{i['t']:.1f}s{t}"
         f = f"\n      → {i['fix']}" if i.get("fix") else ""
         lines.append(f"  {sym[i['level']]} [{i['code']}]{t} {i['msg']}{f}")
     return "\n".join(lines)

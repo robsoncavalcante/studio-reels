@@ -138,3 +138,12 @@ O ffmpeg padrão do Homebrew (2026) não traz o filtro `ass`. `studio.py doctor`
 Ideias vindas de luizflb/fluxo-de-edicao (MIT, a partir de LeiteZ/fluxo-de-edicao); nenhum código foi copiado.
 - `autocut --min-trecho 0.5` descarta fiapos (palavra solta no começo/fim). Legenda curta não pisca mais o destaque em palavra relâmpago (< 0,14 s).
 - O tamanho do quadro agora vem do ffmpeg (já com a rotação do iPhone), o que corrigiu `--camera` em MOV 4K vertical.
+
+
+## v4.9 — revisão e guardas
+
+- `python studio.py qa review reel.timeline.json --video reel.mp4 [--out pasta]`: gera `revisao/` com `sheet_cenas.png` (início + meio de cada cena), `sheet_cortes.png` (−0.2…+0.2 s em volta de cada emenda), `sheet_celular.png` (360 px) e `REVIEW.md` com notas **P0/P1/P2** (`P1 · t=4.2s · onde · problema → mudança · fica: …`).
+- `qa reel` agora mede: leitura mínima por cena (`line_unread`: 1–2 palavras = 0.4 s, depois 0.5 s + 0.3 s/palavra), última cena < 2 s, primeiro quadro preto e trecho parado > 3 s (`dead_stretch`). O `.timeline.json` passa a registrar `words` por cena.
+- Legendas: `captions.clean_words` descarta ♪/�/símbolos (falha se > 20% — tente `--model` maior ou `--script`), corta palavras que o Whisper inventa no silêncio final (−35 dB) e a legenda nunca nasce no 0 s exato. Fundo claro atrás da legenda (brilho da faixa > 150) liga automaticamente um scrim (caixa translúcida).
+- `engine/motion.py`: `role_ease`, `exit_duration`, `overlap_start`, `hold_for`, `beat_times` (grade por índice, sem deriva) e `TELLS` (checklist «cara de gerado»); regras em `agents/motion-designer.md`, formato de revisão em `agents/PROTOCOL.md`.
+- Ideias inspiradas no método de revisão do HyperFrames (Apache-2.0); implementação própria. Veja `references/hyperframes-analise.md`.

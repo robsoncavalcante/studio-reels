@@ -271,6 +271,58 @@ def _():
     assert ass.count("Dialogue") == 2, ass
 
 
+@case("legenda: guardas — lixo ♪/� acima de 20% falha; silêncio final não vira «Obrigado»; legenda não nasce no 0 s; scrim vira caixa")
+def _():
+    from engine import captions as c
+    ws = [dict(w="ola", t0=.2, t1=.5), dict(w="♪", t0=.5, t1=.7), dict(w="♪", t0=.7, t1=.9), dict(w="vamos", t0=.9, t1=1.2)]
+    try:
+        c.clean_words(ws)
+        raise AssertionError("deveria falhar com 50% de lixo")
+    except SystemExit:
+        pass
+    ok = [dict(w=f"p{i}", t0=i * .3, t1=i * .3 + .25) for i in range(9)] + [dict(w="�", t0=2.8, t1=2.9)]
+    assert len(c.clean_words(ok)) == 9
+    wav = TMP / "tail.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "sine=f=300:d=2", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono:d=2", "-filter_complex", "[0][1]concat=n=2:v=0:a=1", wav)
+    tw = [dict(w="fala", t0=.2, t1=1.0), dict(w="Obrigado", t0=2.6, t1=3.0)]
+    assert [w["w"] for w in c.clean_words(tw, str(wav))] == ["fala"]
+    a = c.build_ass([dict(w="Oi", t0=0.0, t1=.6)], TMP / "g0.ass", style="karaoke")[0].read_text()
+    assert "Dialogue: 0,0:00:00.10" in a, a
+    b = c.build_ass([dict(w="Oi", t0=0.5, t1=1.1)], TMP / "g1.ass", style="karaoke", scrim=True)[0].read_text()
+    assert ",0,0,0,100,100,0,0,3," in b and "&H99000000" in b, b
+
+
+@case("revisão: folhas de contato, REVIEW.md, leitura mínima e trecho parado")
+def _():
+    from engine import review
+    assert review.count_words({"title": "Oi *mundo* lindo", "photos": ["a b.jpg"], "items": [{"t": "um dois"}]}) == 5
+    assert review.need_seconds(2) == .4 and abs(review.need_seconds(10) - 3.5) < 1e-9
+    (TMP / "rv.json").write_text(json.dumps({"scenes": [{"layout": "typographic", "dur": 1.6, "content": {"title": "Uma frase com muitas palavras para ler rapido demais agora mesmo"}},
+                                                          {"layout": "typographic", "dur": 2.2, "content": {"title": "Fim"}}]}))
+    studio("reel", "--content", TMP / "rv.json", "--theme", "criative-dark", "--preview", "--out", TMP / "rv.mp4")
+    tl = json.loads((TMP / "rv.timeline.json").read_text())
+    assert all("words" in s for s in tl["scenes"]) and tl["scenes"][0]["words"] >= 10
+    out = studio("qa", "review", TMP / "rv.timeline.json", "--video", TMP / "rv.mp4", "--out", TMP / "revisao")
+    for f in ("sheet_cenas.png", "sheet_celular.png", "REVIEW.md"):
+        assert (TMP / "revisao" / f).exists(), f
+    assert "line_unread" in out and "P1" in (TMP / "revisao" / "REVIEW.md").read_text()
+    still = TMP / "still.mp4"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=0x336699:s=180x320:r=10:d=5", "-pix_fmt", "yuv420p", still)
+    m = review.measure(dict(total=5, scenes=[dict(i=0, start=0, dur=5)], transitions=[]), str(still))
+    assert any(i["code"] == "dead_stretch" for i in m), m
+
+
+@case("movimento: ease por papel, saída mais curta, grade de batida sem deriva")
+def _():
+    from engine import motion as m
+    assert m.role_ease("arrival") == "out-expo" and m.role_ease("exit") == "in-cubic"
+    assert m.exit_duration(.6) < .6 * .6 + 1e-9 and m.exit_duration(.1) == .13
+    b = m.beat_times(128, 33, 30)
+    assert b[32] == round(32 * 30 * 60 / 128) / 30 == 15.0, b[32]
+    assert m.hold_for(1) == .4 and m.hold_for(1, last_line=True) == 2.0 and abs(m.hold_for(6) - 2.3) < 1e-9
+    assert .3 <= (m.overlap_start(0, 1, .9) - 0) <= .5 and len(m.TELLS) >= 6
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)

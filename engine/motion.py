@@ -168,3 +168,57 @@ def ease_check(ease_name: str, dur_s: float) -> str | None:
     if dur_s < lo * .8 or dur_s > hi * 1.25:
         return f"easing '{ease_name}' funciona melhor entre {lo:.1f}s e {hi:.1f}s (atual {dur_s:.2f}s)"
     return None
+
+
+# ---------------------------------------------------------------- regras de ofício (medidas em filmes publicados; ver references/hyperframes-analise.md)
+ROLE_EASE = {
+    "arrival": "out-expo",       # chegada: cauda longa, pousa devagar
+    "arrival-soft": "out-quart",
+    "camera": "inout-cubic",     # câmera, inundação de cor, troca de posição: acelera e desacelera
+    "exit": "in-cubic",          # saída: acelera e sai limpa
+    "zoom-through": "in-quart",
+}
+EXIT_RATIO = (0.5, 0.6)          # saída dura 40–50% menos que a entrada
+OVERLAP = (0.3, 0.5)             # o próximo elemento começa com o anterior 30–50% feito
+SPRING_ZETA = {"never-bounce": 1.0, "premium": 0.8, "playful": 0.5, "cartoon": 0.25}
+BLUR_PX = {"text": (6, 12), "fullframe": (15, 20)}  # borrão de movimento no pico da velocidade
+STAGGER_S = {"letter": 1 / 30, "word": (0.06, 0.12)}
+TITLE_HEIGHT_PCT = (4, 9)        # corpo do título = 4–9% da altura do quadro; palavra-herói 60–90% da largura
+
+
+def role_ease(role: str) -> str:
+    """Ease por papel do movimento (chegada, câmera, saída, zoom)."""
+    return ROLE_EASE.get(role, "out-cubic")
+
+
+def exit_duration(enter_s: float) -> float:
+    """Saída 40–50% mais curta que a entrada (mínimo de 0.13 s)."""
+    return max(0.13, round(enter_s * 0.55, 3))
+
+
+def overlap_start(prev_start: float, prev_dur: float, frac: float = 0.4) -> float:
+    """Quando o próximo elemento começa: quando o anterior está `frac` (30–50%) feito."""
+    return round(prev_start + prev_dur * min(max(frac, OVERLAP[0]), OVERLAP[1]), 3)
+
+
+def hold_for(words: int, last_line: bool = False) -> float:
+    """Tempo que uma linha precisa ficar parada para ser lida (última linha do filme ≥ 2 s)."""
+    h = 0.4 if words <= 2 else 0.5 + 0.3 * words
+    return max(h, 2.0) if last_line else h
+
+
+def beat_times(bpm: float, n: int, fps: int = 30, start: float = 0.0) -> list[float]:
+    """Batidas calculadas pelo índice e arredondadas ao quadro — sem somar um passo arredondado (em 128 BPM/30 fps isso deriva 2 quadros em 32 batidas)."""
+    return [round((start * fps) + round(i * fps * 60.0 / bpm)) / fps for i in range(n)]
+
+
+TELLS = [  # «cara de gerado»: revisar antes de entregar
+    "respiração/flutuação/pulso em loop no lugar de movimento de verdade em título ou UI",
+    "título que continua deslizando ou crescendo depois de pousar",
+    "push lento e escala crescente em título no fim da cena",
+    "o mesmo fade + subida de baixo em todos os títulos (varie a entrada dentro da peça)",
+    "o mesmo whoosh em todos os cortes",
+    "tudo se mexendo ao mesmo tempo, na mesma curva",
+    "cena inteira revelada no primeiro quarto e depois congelada (parece slideshow)",
+    "mais de 1/3 das emendas em corte seco, ou mundos diferentes em fusão (crossfade)",
+]

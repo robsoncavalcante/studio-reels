@@ -34,3 +34,12 @@ Nota geral ≥ 8,0; nenhum critério < 6; QA sem bloqueios; sem placeholder; coe
 ## Integração com as skills existentes
 - `creative-department-ai`: diagnóstico colaborativo, direção criativa, memória por cliente, Creative Review.
 - `publicidade-legal-br`: compliance antes da aprovação final.
+
+
+## Formato de revisão (P0/P1/P2)
+Nenhuma nota de 0 a 10: uma nota que só dá número não aponta o que consertar. Cada problema vira uma linha:
+`P? · t=4.2s · onde · problema → mudança exata · fica: o que não muda`
+- **P0** quebra a leitura ou o contrato (ilegível, errado, quebrado, «cara de gerado» no plano principal) — sempre corrigir.
+- **P1** enfraquece (trecho parado, payoff mole, emenda que pula) — corrigir os que valem o tempo.
+- **P2** acabamento.
+Rodar `python studio.py qa review reel.timeline.json --video reel.mp4`: gera `revisao/` com as folhas de contato (cenas, cortes, celular 360 px) e o `REVIEW.md` com as medições (leitura mínima, trecho parado > 3 s, primeiro quadro preto, última cena curta). Depois da medição, o Diretor de Arte descreve cada quadro de beat como um estranho, uma frase por quadro; objeto que precisa de explicação é P0. Corrigir texto primeiro, depois tempo, depois detalhe; refazer a folha só do que mudou, uma vez.

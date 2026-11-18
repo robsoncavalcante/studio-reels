@@ -157,6 +157,39 @@ def _join(parts: list[str], brk: int) -> str:
 
 
 # ------------------------------------------------------------------ transcrição real e import (v4.3)
+# ------------------------------------------------------------------ guardas da transcrição
+_JUNK = re.compile(r"^[\W_♪♫]+$|�")
+
+
+def tail_silence_start(audio: str, noise_db=-35, min_dur=0.6) -> float | None:
+    """Início do silêncio que vai até o fim do áudio (onde o Whisper inventa «Obrigado.»), ou None."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(audio), "-af", f"silencedetect=noise={noise_db}dB:d={min_dur}", "-f", "null", "-"],
+                       capture_output=True, text=True)
+    dur = _dur(audio)
+    starts = [float(x) for x in re.findall(r"silence_start: (-?[\d.]+)", r.stderr)]
+    ends = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", r.stderr)]
+    if starts and (len(starts) > len(ends) or (dur and ends and ends[-1] >= dur - 0.05)):
+        return max(starts[-1], 0.0)
+    return None
+
+
+def clean_words(words: list[dict], audio: str | None = None, max_junk: float = 0.20) -> list[dict]:
+    """Remove lixo de transcrição. Falha (SystemExit) se mais de `max_junk` dos tokens for ♪/�/pontuação — a transcrição não serve.
+    Descarta palavras que começam dentro do silêncio final do áudio. Mantém a ordem e os tempos."""
+    if not words:
+        return words
+    junk = [w for w in words if _JUNK.search(w["w"])]
+    if len(junk) / len(words) > max_junk:
+        raise SystemExit(f"Transcrição inválida: {len(junk)}/{len(words)} tokens são ♪/�/símbolos. Tente um modelo maior (--model medium), "
+                         "áudio sem música alta, ou passe a letra/roteiro com --script / --words.")
+    out = [w for w in words if w not in junk]
+    if audio:
+        cut = tail_silence_start(audio)
+        if cut is not None:
+            out = [w for w in out if w["t0"] < cut]
+    return out
+
+
 def transcribe(audio, lang="pt", model="small", out=None, vocab=None) -> list[dict]:
     """Transcreve com tempos reais por palavra. Tenta, na ordem: faster-whisper, openai-whisper (módulo `whisper`) e o comando
     `whisper` do terminal. Precisa de internet só na 1ª vez (baixa o modelo). Alternativa: importe um SRT/JSON com --words."""
@@ -193,6 +226,7 @@ def transcribe(audio, lang="pt", model="small", out=None, vocab=None) -> list[di
     if not words:
         det = ("; ".join(erros)) if erros else "nenhum Whisper encontrado (pip install faster-whisper, ou openai-whisper)"
         raise SystemExit(f"Transcrição falhou: {det}. Importe um SRT/JSON com --words arquivo.")
+    words = clean_words(words, str(audio))
     if out:
         Path(out).write_text(json.dumps(words, ensure_ascii=False, indent=1), encoding="utf-8")
     return words
@@ -259,6 +293,17 @@ def from_file(path, offset: float = 0.0) -> list[dict]:
 
 
 # ------------------------------------------------------------------ fontes (woff2 -> ttf para o libass)
+def band_brightness(clips: list, starts: list, durs: list, pos_y: float = .64, band: float = .12) -> float:
+    """Brilho médio (0–255) da faixa onde a legenda aparece, medido no meio de cada clipe de cena."""
+    vals = []
+    for c, a, d in zip(clips, starts, durs):
+        r = subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-ss", f"{d / 2:.2f}", "-i", str(c), "-frames:v", "1",
+                            "-vf", f"crop=iw:ih*{band}:0:ih*{max(pos_y - band / 2, 0):.3f},scale=1:1,format=gray", "-f", "rawvideo", "-"], capture_output=True)
+        if r.stdout:
+            vals.append(r.stdout[0])
+    return sum(vals) / len(vals) if vals else 0.0
+
+
 def ttf_for(family_slug: str, weight: int = 700) -> tuple[Path, str]:
     """Converte a fonte da marca (woff2 do Fontsource) em TTF e devolve (pasta, nome da família)."""
     from fontTools.ttLib import TTFont
@@ -291,17 +336,19 @@ def _ts(t: float) -> str:
 
 
 def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, font_slug="space-grotesk", weight=700, accent="#FB2C36",
-              fg="#FFFFFF", pos_y=.64, size=None, upper=False, max_words=5) -> tuple[Path, Path]:
+              fg="#FFFFFF", pos_y=.64, size=None, upper=False, max_words=5, scrim=False) -> tuple[Path, Path]:
     fontsdir, fam = ttf_for(font_slug, weight)
     size = size or int(W * .078)
     fg_, ac_, dim_ = _c(fg), _c(accent), _c(fg, 0x90)
     box = style == "box"
     out = Path(out)
+    outline_c = _c('#000000', 0x99) if scrim and not box else (_c('#000000', 0x10) if not box else _c('#0C090C', 0x28))
+    bstyle = 3 if (box or scrim) else 1
     lines = ["[Script Info]", "ScriptType: v4.00+", f"PlayResX: {W}", f"PlayResY: {H}", "WrapStyle: 2", "ScaledBorderAndShadow: yes", "",
              "[V4+ Styles]",
              "Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding",
-             f"Style: Cap,{fam},{size},{fg_},{fg_},{_c('#000000', 0x10) if not box else _c('#0C090C', 0x28)},{_c('#000000', 0x80)},"
-             f"{-1 if weight >= 600 else 0},0,0,0,100,100,0,0,{3 if box else 1},{int(size * .22) if box else int(size * .12)},{0 if box else int(size * .05)},5,60,60,0,1",
+             f"Style: Cap,{fam},{size},{fg_},{fg_},{outline_c},{_c('#000000', 0x80)},"
+             f"{-1 if weight >= 600 else 0},0,0,0,100,100,0,0,{bstyle},{int(size * .22) if (box or scrim) else int(size * .12)},{0 if (box or scrim) else int(size * .05)},5,60,60,0,1",
              "", "[Events]", "Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text"]
     pos = f"{{\\an5\\pos({W // 2},{int(H * pos_y)})"
     ev = []
@@ -345,6 +392,7 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
                     parts.append(f"{{\\1c{dim_}}}{t_}")
             ev.append((a, b, pos + "}" + _join(parts, brk)))
     for a, b, t in ev:
+        a = max(a, 0.1) if b - 0.1 > 0.1 else a  # legenda no 0 s exato parece já existir: entra em 0.1 s
         lines.append(f"Dialogue: 0,{_ts(a)},{_ts(b)},Cap,,0,0,0,,{t}")
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     srt = out.with_suffix(".srt")

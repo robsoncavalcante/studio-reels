@@ -961,7 +961,8 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 words = _cap.align(script, voice, total, voice_start)
             assp, fdir = _cap.build_ass(words, tmpd / "legendas.ass", style=captions, W=W, H=H, font_slug=th.get("font_display", "Space Grotesk").lower().replace(" ", "-"),
                                         accent=cs.get("accent") or th.get("accent2", th.get("accent", "#FFFFFF")), fg=cs.get("fg", "#FFFFFF"), pos_y=cs.get("pos_y", .64),
-                                        upper=bool(cs.get("upper")), size=int(min(W, H) * cs["size_pct"] / 100) if cs.get("size_pct") else None)
+                                        upper=bool(cs.get("upper")), size=int(min(W, H) * cs["size_pct"] / 100) if cs.get("size_pct") else None,
+                                        scrim=_cap.band_brightness(clips, starts, durs, cs.get("pos_y", .64)) > 150 if captions != "box" else False)
             ass_arg = (assp, fdir)
             cap_files = {"legendas.ass": assp, "legendas.srt": assp.with_suffix(".srt"), "palavras.json": assp.with_suffix(".words.json")}
         join_scenes(clips, durs, tr_list, tdur, fps, out, audio, ass_arg, fast=preview)
@@ -982,9 +983,10 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
         if audio and str(audio).endswith(".mix.wav"):
             Path(audio).unlink(missing_ok=True)
         beat = 60.0 / float(bpm) if bpm else None
+        from . import review as _review
         tl = dict(total=round(total, 3), fps=fps, format=fmt, theme=theme, motion=motion, pace=pace or "standard", ease=ease,
                   bpm=bpm, beat=round(beat, 4) if beat else None, music=music, sfx=sfx, sync=bool(sync), voice=bool(voice),
-                  scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3)) for i, s in enumerate(scenes)],
+                  scenes=[dict(i=i, layout=s["layout"], start=round(starts[i], 3), dur=round(durs[i], 3), words=_review.count_words(s.get("content"))) for i, s in enumerate(scenes)],
                   transitions=[dict(at=round(starts[i], 3), dur=tdur, type=tr_list[i - 1]) for i in range(1, len(scenes))],
                   sfx_events=events,
                   beat_grid_first_bars=[round(b * beat, 3) for b in range(0, 33)] if beat else None)
