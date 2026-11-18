@@ -136,3 +136,5 @@ O ffmpeg padrão do Homebrew (2026) não traz o filtro `ass`. `studio.py doctor`
 - SFX: dois sons do mesmo tipo no mesmo instante viram um só (fica o mais forte) e no máximo 3 camadas por janela de 0,25 s.
 - Premiere: `sequencia.xml` com áudio estéreo, taxa real e sem stems silenciosos (validado no Premiere).
 Ideias vindas de luizflb/fluxo-de-edicao (MIT, a partir de LeiteZ/fluxo-de-edicao); nenhum código foi copiado.
+- `autocut --min-trecho 0.5` descarta fiapos (palavra solta no começo/fim). Legenda curta não pisca mais o destaque em palavra relâmpago (< 0,14 s).
+- O tamanho do quadro agora vem do ffmpeg (já com a rotação do iPhone), o que corrigiu `--camera` em MOV 4K vertical.

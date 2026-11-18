@@ -321,6 +321,9 @@ def build_ass(words: list[dict], out: Path, *, style="karaoke", W=1080, H=1920, 
                 a = w["t0"] if k else c0
                 b = ch[k + 1]["t0"] if k + 1 < len(ch) else c1
                 parts = [(f"{{\\1c{ac_}}}{t_}" if j == k else f"{{\\1c{fg_}}}{t_}") for j, t_ in enumerate(txt)]
+                if b - a < 0.14 and k > 0 and ev and ev[-1][1] == a:  # palavra relâmpago: o destaque anterior segura, sem piscar
+                    ev[-1] = (ev[-1][0], b, ev[-1][2])
+                    continue
                 ev.append((a, b, pos + ("\\fad(70,0)" if k == 0 else "") + "}" + " ".join(parts)))
             continue
         for k, w in enumerate(ch):

@@ -415,7 +415,7 @@ def cmd_autocut(a):
     elif a.transcribe:
         from engine import captions
         words = captions.transcribe(a.video, a.lang, a.model, vocab=a.vocab)
-    k = autocut.run(a.video, out, a.ritmo, a.jcut, words, camera=a.camera, zoom=a.zoom, push=a.push / 100, fast=a.rapido)
+    k = autocut.run(a.video, out, a.ritmo, a.jcut, words, camera=a.camera, zoom=a.zoom, push=a.push / 100, fast=a.rapido, min_len=a.min_trecho)
     print(f"✓ {out}  ({len(k)} trechos mantidos)")
     if words:
         from engine import captions
@@ -894,6 +894,7 @@ def main():
     p.add_argument("--maiusculas", action="store_true", help="legenda em MAIÚSCULAS")
     p.add_argument("--vocab", help='nomes/termos para o Whisper acertar, ex.: "Construvale, Petra Condomínios"')
     p.add_argument("--captions", choices=["karaoke", "pop", "box", "clean", "curta"], help="queima legendas por palavra no vídeo cortado (precisa de --words ou --transcribe); curta = até 3 palavras, 1 linha")
+    p.add_argument("--min-trecho", type=float, default=0.0, help="descarta trechos mantidos mais curtos que N segundos (ex.: 0.5 tira fiapos de palavra solta)")
     p.add_argument("--camera", action="store_true", help="câmera virtual: alterna plano aberto/fechado a cada corte e aproxima devagar (disfarça o jump cut)")
     p.add_argument("--zoom", type=float, default=1.25, help="escala do plano fechado com --camera (padrão 1.25)")
     p.add_argument("--push", type=float, default=4.0, help="aproximação lenta dentro de cada trecho, em %% (padrão 4)")

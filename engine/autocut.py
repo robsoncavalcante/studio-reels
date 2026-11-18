@@ -35,7 +35,7 @@ def word_cuts(words, fillers=True, repeats=True):
     return cuts
 
 
-def keep_segments(src, ritmo="ritmo", words=None, fillers=True, repeats=True):
+def keep_segments(src, ritmo="ritmo", words=None, fillers=True, repeats=True, min_len=0.0):
     c = RITMO[ritmo]; total = duration(src); rem = []
     for a, b in silences(src, c["min_sil"], c["db"]):
         a2, b2 = a + c["pad"], b - c["pad"]
@@ -51,6 +51,8 @@ def keep_segments(src, ritmo="ritmo", words=None, fillers=True, repeats=True):
         if a - cur > 0.15: keep.append((cur, a))
         cur = max(cur, b)
     if total - cur > 0.15: keep.append((cur, total))
+    if min_len > 0 and len(keep) > 1:  # descarta fiapos (ex.: sobra de uma palavra no começo ou no fim)
+        keep = [k for k in keep if k[1] - k[0] >= min_len] or keep
     return keep
 
 def camera_plan(keep, zoom=1.25, push=0.04):
@@ -63,11 +65,11 @@ def camera_plan(keep, zoom=1.25, push=0.04):
     return plan
 
 
-def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=True, camera=False, zoom=1.25, push=0.04, fast=False):
+def run(src, out, ritmo="ritmo", jcut=0.0, words=None, fillers=True, repeats=True, camera=False, zoom=1.25, push=0.04, fast=False, min_len=0.0):
     """jcut>0: o áudio de cada corte entra `jcut` s antes da imagem. camera: alterna plano aberto/fechado e aproxima devagar em cada trecho.
     fast: usa o codificador de hardware (rascunho)."""
     from . import ffsetup
-    keep = keep_segments(src, ritmo, words, fillers, repeats); n = len(keep)
+    keep = keep_segments(src, ritmo, words, fillers, repeats, min_len); n = len(keep)
     has_v = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=index", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout.strip()
     plan = camera_plan(keep, zoom, push) if camera else None
     W, H = size(src) if (camera and has_v) else (0, 0)

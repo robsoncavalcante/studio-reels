@@ -256,6 +256,21 @@ def _():
     assert (w, h) == ("360", "640"), (w, h)
 
 
+@case("autocut --min-trecho remove fiapos e legenda curta não pisca em palavra relâmpago")
+def _():
+    src = TMP / "mt.mp4"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=s=360x640:r=25:d=9",
+       "-f", "lavfi", "-i", "sine=f=300:d=9,volume='if(lt(mod(t,3),2)+between(t,5.3,5.6),1,0)':eval=frame", "-shortest", "-c:v", "libx264", "-c:a", "aac", src)
+    from engine import autocut as ac
+    a = ac.keep_segments(src, "suave", None, True, True, 0.0)
+    b = ac.keep_segments(src, "suave", None, True, True, 0.6)
+    assert len(b) < len(a) and all(y - x >= 0.6 for x, y in b), (a, b)
+    from engine import captions as c
+    ws = [dict(w="Procure", t0=0.0, t1=.46), dict(w="o", t0=.46, t1=.52), dict(w="nosso", t0=.52, t1=.9)]
+    ass = c.build_ass(ws, TMP / "fl.ass", style="curta", W=1080, H=1920)[0].read_text()
+    assert ass.count("Dialogue") == 2, ass
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
