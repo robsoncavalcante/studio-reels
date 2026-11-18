@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 out*/
 *.mp4
+library/history.json

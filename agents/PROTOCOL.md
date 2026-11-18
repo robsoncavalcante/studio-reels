@@ -72,3 +72,13 @@ Regra: **o storyboard é o site**. Quem decide a identidade é o que foi captura
 4. Mídia real primeiro: vídeo/foto do hero abre o reel; fotos dos cartões viram vitrine 3D; ícones do próprio site acendem/pingam; estatísticas do site viram números animados. Sem foto de banco quando o site tem a sua.
 5. Variar por marca, não por sorteio: clima (trilha, transições, ritmo), layouts e câmera saem do que o site é (cores, densidade de mídia, tom do texto). Dois sites diferentes não podem sair com a mesma sequência de layouts.
 6. O gate bloqueia automaticamente: captura sem título, aviso de captura sem mídia, reel que ignorou a mídia colhida. O parecer ainda precisa comparar visualmente com as telas.
+
+## v6 — Partido visual (cada marca com a sua cara)
+
+Regra: **o mesmo motor não pode entregar o mesmo vídeo com cores trocadas.** O Diretor de Arte decide como montar, em 3 níveis:
+
+1. **Marca** → consistência. A mesma marca repete a mesma *linguagem visual* (memória em `library/history.json`): cores, tipografia real do site (`fontes/`), pele (raios, caixa-alta, peso) e família de layouts.
+2. **Marcas diferentes** → linguagens diferentes. `studio.py site` escolhe entre `cards3d` (mídia em cartões 3D), `poster` (tipografia gigante), `editorial` (capa de revista, molduras) e `modular` (grade/passos) a partir de sinais do site (serifa, caixa-alta/peso, escuro/claro, quantidade de mídia, botões redondos/retos, nº de ofertas). Se as duas últimas peças de outras marcas já usaram a mesma, o motor sugere a segunda melhor.
+3. **Peças da mesma marca** → variação. `--variante N` troca o layout dentro da linguagem; o portão avisa `reel-repetido` se a sequência de layouts repete a de outra peça.
+
+Antes de montar/aprovar, o Diretor de Arte lê `partido.md` (por quê, pontuação, sequência, repetição), confirma ou troca (`--linguagem`, `--variante`) e escreve no `parecer.json` o campo **`partido_visual`** (1 linha: linguagem + por que serve a esta marca + o que a diferencia das outras). Sem essa linha a entrega não libera.

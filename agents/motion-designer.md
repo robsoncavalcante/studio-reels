@@ -50,3 +50,6 @@ Gancho · Legibilidade (360 px de largura) · Qualidade de movimento · Variedad
 - Abertura = o que o site abre (vídeo do hero → `site-video`; foto do hero → `site-cover` com benefícios e botão como na tela).
 - Seção de cartões com foto → `site-showcase` (3D); seção de ícones → `site-icons` (acende/pinga); números → `site-stats`; depoimento/vídeo de cliente → `site-video` + citação.
 - Se a captura não trouxe mídia, não disfarce com layout de texto: devolver ao Diretor com “captura inválida”.
+
+## v6 — Movimento por linguagem
+A linguagem escolhida define o conjunto de transições (`poster` → punch, `editorial` → editorial, `modular` → clean; `cards3d` segue o clima). Não sobrescrever à mão sem registrar o motivo no parecer.

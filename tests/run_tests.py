@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 os.environ.setdefault("STUDIO_PORTAO", "off")  # o portão tem testes próprios abaixo; nos demais cenários só atrasaria
 sys.path.insert(0, str(ROOT))
 TMP = Path(tempfile.mkdtemp(prefix="sr_test_"))
+os.environ["STUDIO_HISTORY"] = str(TMP / "history.json")  # os testes não sujam a memória real de marcas
 results = []
 
 
@@ -351,7 +352,7 @@ def _():
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     out = TMP / "site"
     try:
-        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Casa Verde")
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Casa Verde", "--linguagem", "cards3d")
     finally:
         srv.shutdown()
     b = json.loads((out / "brand.json").read_text())
@@ -369,6 +370,62 @@ def _():
     assert len(shots) >= 3 and Image.open(shots[0]).width == 1080
     assert (out / "logo.png").exists() and (out / "logo-avatar.png").exists() and (out / "site.json").exists()
 
+
+
+@case("v6 linguagens visuais: escolha pelo site, memória por marca, trava de repetição, variante e todos os layouts renderizam")
+def _():
+    from engine import visual, core
+    serif = dict(colors=dict(bg="#F7F2EA", fg="#1A1A1A", accent="#8A6D3B"), style=dict(dw=400))
+    d_serif = dict(fonts=dict(h1="Playfair Display, serif", body="Lato, sans-serif"), sections=[])
+    bold = dict(colors=dict(bg="#0B0B0B", fg="#FFFFFF", accent="#FF3B1D"), style=dict(dcase="uppercase", dw=800, btn_radius="0.5cqw"))
+    d_bold = dict(fonts=dict(h1="Anton, sans-serif", body="Inter, sans-serif"), sections=[])
+    rich = dict(colors=dict(bg="#FFFFFF", fg="#111111", accent="#2D6BFF"), style=dict(btn_radius="999px"))
+    media = [dict(kind="image")] * 5 + [dict(kind="video")]
+    h = []
+    a = visual.choose("a-com", serif, d_serif, [], history=h)
+    b = visual.choose("b-com", bold, d_bold, [], history=h)
+    c = visual.choose("c-com", rich, dict(fonts=dict(h1="Inter, sans-serif"), sections=[]), media, history=h)
+    assert a["linguagem"] == "editorial" and b["linguagem"] == "poster" and c["linguagem"] == "cards3d", (a["linguagem"], b["linguagem"], c["linguagem"])
+    h2 = [dict(marca="a-com", linguagem="editorial", variante=0, layouts=["x"])]
+    assert visual.choose("a-com", bold, d_bold, [], history=h2)["linguagem"] == "editorial"  # memória da marca vence os sinais
+    assert visual.choose("a-com", bold, d_bold, [], forced="modular", history=h2)["linguagem"] == "modular"
+    sc = [dict(layout="site-hero", title="T *x*", subtitle="s", cta="Ir", dur=4), dict(layout="site-list", title="L", items=[dict(title="a", text="b")] * 3, dur=4),
+          dict(layout="site-stats", title="N", items=[dict(number="+10", title="anos", text="t"), dict(number="3", title="x", text="")], dur=4),
+          dict(layout="site-showcase", title="F", subtitle="z", photos=["a.png"], photo_meta=[dict(ar=1.5)], dur=4), dict(layout="site-cta", title="Vamos", subtitle="s", cta="Ir", dur=4)]
+    seqs = {}
+    for lang in ("poster", "editorial", "modular", "cards3d"):
+        for v in (0, 1):
+            out = visual.apply(sc, lang, v, name="Marca")
+            seqs[(lang, v)] = [x["layout"] for x in out]
+            for x in out:
+                pth = ROOT / "tests/fixtures/pixel.png"
+                html = core.page_html(core.slide_canvas(x["layout"], "clean-white", "reel", {**x, **({"photos": [str(pth)] * (2 if x["layout"] in ("collage-2", "site-duo") else 1)} if x.get("photos") else {})}, dict(name="Marca", colors=dict(bg="#fff", fg="#111", accent="#08f")), sample=False, reel=dict(motion="fade-up")), reel=True)
+                assert "canvas" in html, x["layout"]
+    assert seqs[("poster", 0)] != seqs[("editorial", 0)] != seqs[("cards3d", 0)]
+    assert seqs[("poster", 0)] != seqs[("poster", 1)] or seqs[("editorial", 0)] != seqs[("editorial", 1)] or seqs[("modular", 0)] != seqs[("modular", 1)], "variante não muda nada"
+    rep = visual.repetition(seqs[("poster", 0)], "outra", "poster", history=[dict(marca="x", linguagem="poster", layouts=seqs[("poster", 0)])])
+    assert rep, "repetição entre marcas não detectada"
+
+
+@case("v6 portão: exige partido_visual no parecer e avisa repetição")
+def _():
+    from engine import gate
+    d = TMP / "pv"
+    ad = d / "agentes"
+    ad.mkdir(parents=True, exist_ok=True)
+    f = d / "a.txt"
+    f.write_text("x")
+    (d / "partido.json").write_text(json.dumps(dict(repeticao=["sequência de layouts idêntica à última peça de «x»"], layouts=["a"] * 6)))
+    (d / "site.json").write_text(json.dumps(dict(h1="T", media=[])))
+    fi = gate.site_fidelity(d, [dict(content=dict(layout="a"))] * 6, ad)
+    codes = {i["code"] for i in fi["issues"]}
+    assert "reel-repetido" in codes and "pouca-variedade" in codes, codes
+    (ad / "gate.json").write_text(json.dumps(dict(files={"a.txt": gate.sha256(f)}, blockers=0, roles=["art-director"])))
+    (ad / "parecer.json").write_text(json.dumps(dict(roles={"art-director": dict(veredito="ok", visto=["a.txt"], notas=[])}, diretor=dict(nota=9, decisao="aprovar"))))
+    v = gate.validate(d)
+    assert not v["ok"] and any("partido_visual" in p for p in v["pend"]), v["pend"]
+    (ad / "parecer.json").write_text(json.dumps(dict(partido_visual="Editorial: serifa e respiro combinam com a marca; foge do pôster da outra", roles={"art-director": dict(veredito="ok", visto=["a.txt"], notas=[])}, diretor=dict(nota=9, decisao="aprovar"))))
+    assert gate.validate(d)["ok"], gate.validate(d)["pend"]
 
 
 @case("site com @font-face próprio → baixa a fonte real e usa no vídeo (sem trocar)")
@@ -403,7 +460,7 @@ def _():
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     out = TMP / "site-media"
     try:
-        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo")
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo", "--linguagem", "cards3d")
     finally:
         srv.shutdown()
     sc = json.loads((out / "content.json").read_text())["scenes"]
@@ -430,7 +487,7 @@ def _():
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     out = TMP / "site-blocked"
     try:
-        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo")
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo", "--linguagem", "cards3d")
     finally:
         srv.shutdown()
     assert "desktop bloqueado" in o, o[-500:]

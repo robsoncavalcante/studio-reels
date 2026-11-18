@@ -273,7 +273,7 @@ def run(kind: str, output, pages: list[dict], brand: dict, theme: str, files: li
     (ad / "gate.json").write_text(json.dumps(gate, ensure_ascii=False, indent=1), encoding="utf-8")
     (ad / "CHECKLIST.md").write_text(_checklist(gate, pages), encoding="utf-8")
     tpl = ad / "parecer.modelo.json"
-    tpl.write_text(json.dumps(dict(rodada=1, roles={r_: dict(veredito="", visto=[], notas=[]) for r_ in roles}, diretor=dict(nota=None, decisao="")), ensure_ascii=False, indent=1), encoding="utf-8")
+    tpl.write_text(json.dumps(dict(rodada=1, partido_visual="", roles={r_: dict(veredito="", visto=[], notas=[]) for r_ in roles}, diretor=dict(nota=None, decisao="")), ensure_ascii=False, indent=1), encoding="utf-8")
     if verbose:
         print(banner(gate, ad, output))
     return gate
@@ -305,6 +305,16 @@ def site_fidelity(folder: Path, pages: list[dict], ad: Path) -> dict:
     lays = [(pg_.get("content") or {}).get("layout") or pg_.get("name") for pg_ in pages]
     if len(lays) >= 3 and set(lays) <= {"site-hero", "site-list", "site-cta", "site-stats"} and d.get("media"):
         iss.append(_issue("warn", "reel-generico", "só layouts de texto (hero/lista/cta) apesar de o site ter mídia: o reel fica igual a qualquer outro", "trazer a mídia real e variar o layout por seção"))
+    pj = Path(folder) / "partido.json"
+    if pj.exists():
+        try:
+            pv = json.loads(pj.read_text(encoding="utf-8"))
+            for w in pv.get("repeticao", []):
+                iss.append(_issue("warn", "reel-repetido", w, "trocar `--variante`/`--linguagem` ou justificar no parecer (partido_visual) por que repetir"))
+            if len(set(lays)) <= 3 and len(lays) >= 5:
+                iss.append(_issue("warn", "pouca-variedade", f"só {len(set(lays))} layouts diferentes em {len(lays)} cenas", "variar layout por papel da cena"))
+        except Exception:  # noqa
+            pass
     tel = sorted(Path(folder).glob("tela-*.png"))
     if tel:
         try:
@@ -339,6 +349,8 @@ def _checklist(g: dict, pages: list[dict]) -> str:
     if "telas_do_site" in g["sheets"]:
         L += ["", "## FIDELIDADE AO SITE (obrigatório)", "Abra `sheet_telas_do_site.png` (o site real) e compare com as folhas do reel: mesma identidade (cores, fontes, fotos, vídeo, ícones), mesma ordem das seções.",
               "Se o reel parecer outro template com as cores trocadas, o veredito é `refazer`. Cada cena deve citar a tela/seção de origem no parecer.", ""]
+    if "partido.md" in g.get("sheets", {}) or True:
+        L += ["", "## PARTIDO VISUAL (Diretor de Arte)", "Se existir `partido.md` na pasta da peça: leia, confirme ou troque a linguagem (`--linguagem`, `--variante`) ANTES de aprovar, e escreva `partido_visual` no parecer.json (1 linha). Marca diferente não pode sair com a cara de outra."]
     L += ["", "## Perguntas por especialista (o parecer responde cada uma)", ""]
     for r_ in g["roles"]:
         L.append(f"- **{r_}** — {QUESTIONS.get(r_, '')}")
@@ -401,6 +413,10 @@ def validate(output) -> dict:
         for n in e.get("notas", []) or []:
             if str(n).strip().upper().startswith("P0"):
                 pend.append(f"{r_}: P0 aberto → {str(n)[:90]}")
+    if (base / "partido.json").exists():
+        pvz = str(par.get("partido_visual") or "").strip()
+        if len(pvz) < 25:
+            pend.append("Diretor de Arte: falta `partido_visual` no parecer (1 linha: linguagem + por que serve a esta marca + o que a diferencia das outras)")
     d = par.get("diretor", {})
     if d.get("decisao") != "aprovar":
         pend.append("Diretor de Criação: decisão diferente de 'aprovar'")
