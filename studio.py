@@ -238,6 +238,55 @@ def cmd_brand(a):
     return 0
 
 
+def cmd_site(a):
+    from engine import site
+    from urllib.parse import urlparse
+    host = (urlparse(a.url if "://" in a.url else "https://" + a.url).hostname or "site").replace("www.", "")
+    out = Path(a.out or ROOT / "samples" / f"site-{slug(host)}")
+    print(f"Abrindo {a.url} … (rola a página, extrai textos, cores, fontes e tira as telas do celular)")
+    res = site.capture(a.url, out, shots=a.telas)
+    data = res["data"]
+    cat = json.loads((ROOT / "fonts" / "manifest.json").read_text())
+    b = site.pick_brand(data, cat)
+    name = a.name or data.get("siteName") or (data.get("title") or host).split("|")[0].split(" - ")[0].strip() or host
+    brand = dict(name=name, handle=("@" + re.sub(r"[^a-z0-9]", "", name.lower()) if site.is_local(host.split(":")[0]) else "@" + host.split(":")[0].split(".")[0]), colors=b["colors"], font_display=b["font_display"], font_body=b["font_body"], source=res["url"])
+    if res.get("logo"):
+        brand["logo"] = res["logo"]
+    (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
+    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=a.cenas, hero_bg=res.get("hero_bg"))
+    (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
+    (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"]),
+                                              ensure_ascii=False, indent=1), encoding="utf-8")
+    theme = a.theme or ("brand-dark" if b["dark"] else "brand-light")
+    c = b["colors"]
+    print(f"\n✓ marca «{name}»  fundo {c['bg']} · texto {c['fg']} · acento {c['accent']} · acento 2 {c['accent2']}")
+    print(f"  fontes do site: título {b['fonts_site']['display'] or '—'} · texto {b['fonts_site']['body'] or '—'}  →  usadas: {b['font_display']} / {b['font_body']}")
+    for k, v in b["fonts_substituted"].items():
+        print(f"  ! «{k}» não está no catálogo: usei {v} (instale a fonte da marca para trocar)")
+    print(f"  {len(res['shots'])} telas · logo: {res.get('logo') or 'não achei'} · {len(scenes)} cenas: " + " → ".join(x["layout"] for x in scenes))
+    print(f"  pasta: {out}")
+    if a.salvar_marca:
+        d = ROOT / "library" / "brands"
+        d.mkdir(parents=True, exist_ok=True)
+        assets = d / "assets"
+        assets.mkdir(exist_ok=True)
+        bb = dict(brand)
+        if res.get("logo"):
+            import shutil as _sh
+            _sh.copy(out / res["logo"], assets / f"{slug(name)}-logo.png")
+            bb["logo"] = f"library/brands/assets/{slug(name)}-logo.png"
+        (d / f"{slug(name)}.json").write_text(json.dumps(bb, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"  marca salva: --brand {slug(name)}")
+    if a.render:
+        mp4 = out / "reel.mp4"
+        r = subprocess.run([sys.executable, str(ROOT / "studio.py"), "reel", "--content", str(out / "content.json"), "--brand", str(out / "brand.json"),
+                            "--theme", theme, "--format", "reel", "--out", str(mp4)] + (["--preview"] if a.rascunho else []) + (["--music", a.music] if a.music else []) + ["--kenburns", "drift", "--count-up"])
+        print(("✓ reel: " + str(mp4)) if r.returncode == 0 else "✗ o render falhou (veja acima)")
+        return r.returncode
+    print(f"  próximo passo: python studio.py reel --content {out}/content.json --brand {out}/brand.json --theme {theme} --out {out}/reel.mp4")
+    return 0
+
+
 # ----------------------------------------------------------------------------- catálogo + galeria
 def build_catalog():
     L, T = REG.layouts, REG.themes
@@ -967,6 +1016,19 @@ def main():
     p.add_argument("--sample", action="store_true")
     p.add_argument("--out")
     p.set_defaults(fn=cmd_qa)
+
+    p = sub.add_parser("site", help="site → marca (cores, fontes, logo) + telas do celular + reel pronto")
+    p.add_argument("url")
+    p.add_argument("--name", help="nome da marca (padrão: nome do site)")
+    p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
+    p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
+    p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
+    p.add_argument("--theme", help="brand-dark|brand-light|brand-vivid (padrão: pelo fundo do site)")
+    p.add_argument("--salvar-marca", action="store_true", help="grava a marca em library/brands para usar com --brand")
+    p.add_argument("--render", action="store_true", help="já renderiza o reel.mp4")
+    p.add_argument("--rascunho", action="store_true", help="(com --render) render rápido de prévia")
+    p.add_argument("--music", help="(com --render) estilo de trilha: lofi|house|pop|corporate|cinematic|hype|ambient")
+    p.set_defaults(fn=cmd_site)
 
     p = sub.add_parser("council", help="mesa de especialistas + diretor de criação (pasta de trabalho, build versionado, QA)")
     p.add_argument("action", choices=["init", "build", "status"])

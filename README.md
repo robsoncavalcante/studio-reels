@@ -147,3 +147,14 @@ Ideias vindas de luizflb/fluxo-de-edicao (MIT, a partir de LeiteZ/fluxo-de-edica
 - Legendas: `captions.clean_words` descarta ♪/�/símbolos (falha se > 20% — tente `--model` maior ou `--script`), corta palavras que o Whisper inventa no silêncio final (−35 dB) e a legenda nunca nasce no 0 s exato. Fundo claro atrás da legenda (brilho da faixa > 150) liga automaticamente um scrim (caixa translúcida).
 - `engine/motion.py`: `role_ease`, `exit_duration`, `overlap_start`, `hold_for`, `beat_times` (grade por índice, sem deriva) e `TELLS` (checklist «cara de gerado»); regras em `agents/motion-designer.md`, formato de revisão em `agents/PROTOCOL.md`.
 - Ideias inspiradas no método de revisão do HyperFrames (Apache-2.0); implementação própria. Veja `references/hyperframes-analise.md`.
+
+## v5.0 — site → vídeo
+
+`python studio.py site <url> [--name "Marca"] [--render] [--rascunho] [--music faixa] [--salvar-marca]`
+
+Abre o site (desktop 1440×900 para ler; celular 390 px para as telas 9:16), rola a página para disparar animações e contadores, esconde cookies/headers fixos e extrai:
+- **marca**: acento = cor saturada que mais se repete entre papéis (botão pesa 1,5×; azul padrão de link e alertas são ignorados), fontes (fonte fora do catálogo é substituída e o aviso é impresso), logo;
+- **conteúdo**: hero, serviços, números, depoimento, CTA → `content.json` com cenas planas (≤ 20 palavras por cena, duração pelo tempo de leitura);
+- **telas** `tela-NN.png` + `fundo-01.png` (hero sem texto) + `logo.png`/`logo-avatar.png`.
+
+Saída em `samples/site-<host>/` (`brand.json`, `content.json`, `site.json`). Com `--render` gera `reel.mp4` e roda o QA. Sem depender de empresa: qualquer URL.

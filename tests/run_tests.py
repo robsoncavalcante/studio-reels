@@ -323,6 +323,33 @@ def _():
     assert .3 <= (m.overlap_start(0, 1, .9) - 0) <= .5 and len(m.TELLS) >= 6
 
 
+@case("site → marca + cenas (fixture local)")
+def _():
+    import http.server, socketserver, threading, functools
+    H = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(ROOT / "tests/fixtures/site-demo"))
+    class Q(H.func):
+        def log_message(self, *a): pass
+    srv = socketserver.TCPServer(("127.0.0.1", 0), functools.partial(Q, directory=str(ROOT / "tests/fixtures/site-demo")))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    out = TMP / "site"
+    try:
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Casa Verde")
+    finally:
+        srv.shutdown()
+    b = json.loads((out / "brand.json").read_text())
+    c = b["colors"]["accent"].lstrip("#")
+    r, g, bl = (int(c[i:i + 2], 16) for i in (0, 2, 4))
+    assert abs(r - 0x0E) < 24 and abs(g - 0x7C) < 24 and abs(bl - 0x66) < 24, b["colors"]
+    assert b["handle"] == "@casaverde", b["handle"]
+    assert "Zorblax" in o and "Space Grotesk" in o, o[-400:]
+    sc = json.loads((out / "content.json").read_text())["scenes"]
+    assert len(sc) >= 4 and sc[-1]["layout"] == "cta-follow", [s["layout"] for s in sc]
+    from PIL import Image
+    shots = sorted(out.glob("tela-*.png"))
+    assert len(shots) >= 3 and Image.open(shots[0]).width == 1080
+    assert (out / "logo.png").exists() and (out / "logo-avatar.png").exists() and (out / "site.json").exists()
+
+
 print(f"\n{sum(1 for _, ok, _ in results if ok)}/{len(results)} cenários OK")
 shutil.rmtree(TMP, ignore_errors=True)
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
