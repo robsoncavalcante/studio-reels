@@ -15,6 +15,6 @@
     <div class="t fit">{{ rich(c.title) }}</div>
   </div>
   <div class="steps fit">
-    {% for it in c['items'][:5] %}<div class="st item"><div class="rail"><div class="num-circle">{{ loop.index }}</div><i></i></div><div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div></div>{% endfor %}
+    {% for it in c['items'][:5] %}<div class="st item"><div class="rail"><div class="num-circle">{% if it.icon %}<img src="{{ it.icon }}" alt="" style="width:62%;height:62%;object-fit:contain;filter:brightness(0) invert(1)">{% else %}{{ loop.index }}{% endif %}</div><i></i></div><div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div></div>{% endfor %}
   </div>
 </div>

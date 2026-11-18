@@ -235,9 +235,9 @@ def _adapt(sc: dict, new: str, name: str) -> dict:
     if new == "collage-2":
         return dict(layout=new, **base, **ph)
     if new in ("tips-list", "checklist", "service-grid", "step-process"):
-        rows = [dict(title=i.get("title", ""), text=i.get("text", "")) for i in its[:5 if new != "service-grid" else 4]]
+        rows = [dict(title=i.get("title", ""), text=i.get("text", ""), icon=i.get("icon", "")) for i in its[:5 if new != "service-grid" else 4]]
         if new == "checklist":
-            rows = [dict(title=r["title"]) for r in rows]
+            rows = [dict(title=r["title"], icon=r.get("icon", "")) for r in rows]
         return dict(layout=new, **base, items=rows)
     if new == "big-number":
         first = its[0] if its else {}

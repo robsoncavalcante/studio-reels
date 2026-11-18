@@ -27,7 +27,7 @@ from PIL import Image
 from . import core, qa
 
 ROLES_BASE = ["creative-director", "art-director", "brand-strategist", "typographer", "color-specialist", "composition", "accessibility", "copywriter"]
-ROLES_EXTRA = {"static": ["social-media"], "carousel": ["social-media"], "reel": ["social-media", "motion-designer", "sound-designer", "video-editor"]}
+ROLES_EXTRA = {"static": ["social-media"], "carousel": ["social-media"], "reel": ["social-media", "motion-designer", "sound-designer", "video-editor", "screenwriter"]}
 
 QUESTIONS = {
     "creative-director": "A peça cumpre o brief e parece feita para ESTA marca (não um template)? Storyboard × resultado: cada cena mostra o que o título diz?",

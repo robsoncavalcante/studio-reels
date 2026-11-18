@@ -91,3 +91,6 @@ Antes de montar/aprovar, o Diretor de Arte lê `partido.md` (por quê, pontuaç�
 
 ### v6.2 — Arquétipo de movimento
 Além do partido visual, o parecer precisa de `movimento` (1 linha): arquétipo + 3 camadas + o que o diferencia das outras marcas. O gate bloqueia sem ele quando existe `partido.json` com arquétipo.
+
+### v6.4 — Roteirista (Screenwriter) obrigatório no reel de site
+Toda sessão de reel-de-site passa pelo Roteirista ANTES de Motion/Editor/Sound/Design. Ele escreve `roteiro.md` com uma linha por cena indicando papel narrativo, mídia real, motion e corte. Veta: duas cenas seguidas de texto puro sem mídia, ou qualquer bolinha de ícone saindo como número (sem imagem real do site). Inclua `screenwriter` em `roles` quando criar `agentes/gate.json`.

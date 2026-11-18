@@ -13,7 +13,7 @@
     <div class="t fit">{{ rich(c.title) }}</div>
   </div>
   <div class="list fit">
-    {% for it in c['items'][:6] %}<div class="it item"><div class="bx {{ 'off' if it.done is defined and not it.done else '' }}">✓</div><div><b>{{ it.title }}</b>{% if it.text %}<small>{{ it.text }}</small>{% endif %}</div></div>{% endfor %}
+    {% for it in c['items'][:6] %}<div class="it item"><div class="bx {{ 'off' if it.done is defined and not it.done else '' }}">{% if it.icon %}<img src="{{ it.icon }}" alt="" style="width:62%;height:62%;object-fit:contain;filter:brightness(0) invert(1)">{% else %}✓{% endif %}</div><div><b>{{ it.title }}</b>{% if it.text %}<small>{{ it.text }}</small>{% endif %}</div></div>{% endfor %}
   </div>
   {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
 </div>

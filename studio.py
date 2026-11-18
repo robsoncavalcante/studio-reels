@@ -363,6 +363,8 @@ def cmd_site(a):
     from engine import visual
     bkey = slug(a.brand or site._host(res["url"]) or host)
     pv = visual.choose(bkey, brand, data, data.get("media"), forced=getattr(a, "linguagem", None))
+    if getattr(a, "video_lang", None) == "pt":
+        scenes = [site.translate_scene(x) for x in scenes]
     scenes = visual.apply(scenes, pv["linguagem"], getattr(a, "variante", 0) or 0, name=name)
     pv["arquetipo"] = visual.arquetipo(pv["sinais"], bkey, forced=getattr(a, "arquetipo", None))
     if not a.brand:  # identidade cadastrada manda; sem ela, a pele da linguagem completa o que o site não definiu
@@ -1202,6 +1204,7 @@ def main():
     p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
     p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
     p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
+    p.add_argument("--video-lang", choices=["en", "pt"], default=None, help="traduz os títulos do site para pt-BR (glossário Apple/produto) antes de aplicar a linguagem visual")
     p.add_argument("--arquetipo", choices=["premium", "playful", "corporate", "energetic"], help="força a personalidade de movimento (padrão: decidida pelo site; a marca repete a mesma)")
     p.add_argument("--linguagem", choices=["cards3d", "poster", "editorial", "modular"], help="força a linguagem visual (padrão: o motor escolhe pelo site; a marca repete a mesma)")
     p.add_argument("--variante", type=int, default=0, help="peça diferente da mesma marca: troca os layouts dentro da linguagem (0, 1, 2…)")

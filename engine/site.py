@@ -482,6 +482,7 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     for i in top:
         scenes.append({k: v for k, v in body[i].items() if k != "_p"})
     scenes = spread_media(scenes, media, used)
+    scenes = attach_icons(scenes, media, used)
     short = hero_sub if len(hero_sub) <= 70 else (re.split(r"(?<=[.!?])\s", hero_sub)[0] if re.split(r"(?<=[.!?])\s", hero_sub)[0] else hero_sub)
     scenes.append(dict(layout="site-cta", kicker="Próximo passo", title=hl(sentence(cta)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
                        subtitle=short or sub, cta=sentence(cta), **({"theme": "brand-accent"} if cta_bg else tone)))
@@ -493,6 +494,38 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
             sc["dur"] = max(3.6, min(sc["dur"], 5.0))
         elif k == len(scenes) - 1:
             sc["dur"] = min(sc["dur"], 4.6)
+    return scenes
+
+
+def icons_pool(media: list, used: set) -> list:
+    """Todos os ícones/SVGs do site e as imagens muito pequenas (até 180px): bons para figurar na frente de um item de lista."""
+    pool = []
+    for m in media:
+        if m["file"] in used:
+            continue
+        if m["kind"] in ("icon", "svg"):
+            pool.append(m)
+        elif m["kind"] == "image" and m.get("w", 0) and m.get("w", 999) <= 180 and m.get("h", 999) <= 180:
+            pool.append(m)
+    return sorted(pool, key=lambda m: m.get("top", 0))
+
+
+def attach_icons(scenes: list, media: list, used: set) -> list:
+    """Nunca deixa 'bolinha vazia': ícones e miniaturas reais do site rodam pelas listas em ordem de aparição."""
+    pool = icons_pool(media, used)
+    if not pool:
+        return scenes
+    pi = 0
+    for sc in scenes:
+        if sc["layout"] not in ("site-list", "site-icons", "service-grid", "checklist", "step-process", "tips-list"):
+            continue
+        for it in (sc.get("items") or []):
+            if it.get("icon"):
+                continue
+            m = pool[pi % len(pool)]
+            it["icon"] = m["file"]
+            used.add(m["file"])
+            pi += 1
     return scenes
 
 
@@ -519,6 +552,55 @@ def spread_media(scenes: list, media: list, used: set, max_new: int = 4) -> list
             turn += 1
         out.append(sc)
     return out
+
+
+PT_GLOSS = [
+    (r"\bGet the highlights\b", "Veja os destaques"),
+    (r"\bTake a closer look\b", "Dê uma olhada de perto"),
+    (r"\bMade to be seen, heard,? and enjoyed\b", "Feito para ser visto, ouvido e curtido"),
+    (r"\bEverything connected and under one roof\b", "Tudo conectado sob o mesmo teto"),
+    (r"\bYour data is private property\b", "Seus dados são propriedade privada"),
+    (r"\bExplore more Apple Home products\b", "Explore mais produtos Apple Home"),
+    (r"\bWhy Apple is the best place to shop Apple Home\b", "Por que a Apple é o melhor lugar para comprar Apple Home"),
+    (r"\bQuestions\?\s*Answers\.?", "Perguntas? Respostas."),
+    (r"\bApple apps\b", "Apps da Apple"),
+    (r"\bAdditional apps\b", "Mais apps"),
+    (r"\bAstounding sound\b", "Som impressionante"),
+    (r"\bSpatial Audio\b", "Áudio Espacial"),
+    (r"\bIntegrated with the Home app\b", "Integrado ao app Casa"),
+    (r"\bSee it all at a glance\b", "Veja tudo de relance"),
+    (r"\bEnjoy peace of mind\b", "Tenha tranquilidade"),
+    (r"\bStay caught up\b", "Fique sempre por dentro"),
+    (r"\bMultiple users\b", "Vários usuários"),
+    (r"\bSecure Exclaves\b", "Enclaves seguros"),
+    (r"\bPersonal content\b", "Conteúdo pessoal"),
+    (r"\bGuided Shopping\b", "Compra guiada"),
+    (r"\bPersonal Setup\b", "Configuração pessoal"),
+    (r"\bApple Card\b", "Apple Card"),
+    (r"\bBuy\b", "Comprar"),
+    (r"\bNext step\b", "Próximo passo"),
+    (r"\bLearn more\b", "Saiba mais"),
+    (r"\bWelcome,?\s*", "Boas-vindas, "),
+]
+
+
+def translate_pt(s: str) -> str:
+    if not s:
+        return s
+    out = s
+    for pat, rep in PT_GLOSS:
+        out = re.sub(pat, rep, out, flags=re.I)
+    return out
+
+
+def translate_scene(sc: dict) -> dict:
+    sc = dict(sc)
+    for k in ("title", "subtitle", "kicker", "cta", "quote", "author", "role", "label"):
+        if sc.get(k):
+            sc[k] = translate_pt(sc[k])
+    if sc.get("items"):
+        sc["items"] = [dict(it, **{k: translate_pt(it.get(k, "")) for k in ("title", "text", "label") if it.get(k)}) for it in sc["items"]]
+    return sc
 
 
 def _square(src: Path, dst: Path, pad: float = 0.18):
