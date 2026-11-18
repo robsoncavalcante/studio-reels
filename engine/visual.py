@@ -22,7 +22,7 @@ def _hist_path() -> Path:
 LINGUAGENS = {
     "cards3d": dict(
         nome="Cartões 3D", desc="telas e mídia do site em cartões 3D com câmera; texto enxuto — para sites ricos em imagem/vídeo e produto",
-        roles={}, style={}, transition=None),
+        roles=dict(list=["site-list", "service-grid", "step-process"]), style={}, transition=None),
     "poster": dict(
         nome="Pôster tipográfico", desc="tipografia gigante, foto de sangria e poucos elementos — para marcas diretas, escuras ou de impacto",
         roles=dict(hero=["typographic"], cover=["full-bleed-bottom", "split-vertical"], showcase=["full-bleed-bottom", "split-vertical"],
@@ -77,7 +77,7 @@ def signals(brand: dict, data: dict, media: list | None, scenes: list | None = N
     return dict(
         dark=_lum(c.get("bg", "#FFFFFF")) < 0.3,
         sat=bool(_saturated(c.get("accent", "#888888"))),
-        serif=bool(SERIF.search(fonts)) and not SANS_HINT.search((data or {}).get("fonts", {}).get("h1", "") or ""),
+        serif=bool(SERIF.search(re.sub(r"sans-serif|-apple-system|system-ui", " ", fonts, flags=re.I))) and not SANS_HINT.search((data or {}).get("fonts", {}).get("h1", "") or ""),
         upper=st.get("dcase") == "uppercase",
         heavy=(st.get("dw") or 0) >= 700,
         round_btn=st.get("btn_radius") == "999px",
@@ -137,8 +137,6 @@ def choose(brand_key: str, brand: dict, data: dict, media: list | None, forced: 
 def apply(scenes: list, lang: str, variante: int = 0, name: str = "") -> list:
     """Reescreve o layout das cenas conforme a linguagem. Vídeo do site e cenas sem equivalente ficam como estão."""
     L = LINGUAGENS[lang]["roles"]
-    if not L:
-        return scenes
     out, seen = [], {}
     for sc in scenes:
         sc = dict(sc)
@@ -150,7 +148,20 @@ def apply(scenes: list, lang: str, variante: int = 0, name: str = "") -> list:
             new = alts[(variante + i) % len(alts)]
             sc = _adapt(sc, new, name)
         out.append(sc)
-    return out
+    return _no_repeat(out, L)
+
+
+def _no_repeat(scenes: list, L: dict) -> list:
+    """Nunca dois layouts iguais em sequência nas cenas de texto: troca o repetido por outra alternativa do papel."""
+    alt_pool = {"list": ["site-list", "service-grid", "step-process", "tips-list", "checklist"]}
+    for i in range(1, len(scenes)):
+        a, b = scenes[i - 1]["layout"], scenes[i]["layout"]
+        if a == b and ROLE_OF.get(b, "") == "list" or (a == b and b in alt_pool["list"]):
+            for cand in alt_pool["list"]:
+                if cand != a and (i + 1 >= len(scenes) or cand != scenes[i + 1]["layout"]):
+                    scenes[i] = _adapt(dict(scenes[i], layout=b), cand, "")
+                    break
+    return scenes
 
 
 def _adapt(sc: dict, new: str, name: str) -> dict:

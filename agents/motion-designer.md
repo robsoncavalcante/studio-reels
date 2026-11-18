@@ -53,3 +53,6 @@ Gancho · Legibilidade (360 px de largura) · Qualidade de movimento · Variedad
 
 ## v6 — Movimento por linguagem
 A linguagem escolhida define o conjunto de transições (`poster` → punch, `editorial` → editorial, `modular` → clean; `cards3d` segue o clima). Não sobrescrever à mão sem registrar o motivo no parecer.
+
+## v6.1 — Personalidade de movimento (inspirado em LottieFiles/motion-design-skill, MIT)
+Antes de escolher clima/ritmo, declarar: emoção-alvo e arquétipo — **Playful, Premium, Corporate ou Energetic** — e mapear: Premium → `cinematic`/`calm`, ritmo lento, entradas longas e sem sobra; Corporate → `clean`/`standard`; Energetic → `energetic`/`snappy`; Playful → `punch`/`hype` com sobra (overshoot) curta. Regras de coreografia a respeitar: o stagger total de uma cena fica **abaixo de 500 ms**; hierarquia (título → apoio → ação) e direção única de leitura; movimento que cruza mais de 1/3 da tela precisa de quadro intermediário (câmera/blur) para não "teleportar"; animar uma propriedade principal por elemento (posição, escala, rotação ou opacidade). No parecer, justificar o arquétipo em 1 linha.

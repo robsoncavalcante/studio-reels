@@ -419,6 +419,8 @@ def cmd_site(a):
     print(f"  partido visual: {visual.LINGUAGENS[pv['linguagem']]['nome']} (variante {pv['variante']}) — {'; '.join(pv['motivos'][:2])}")
     for w in pv["repeticao"]:
         print(f"  ⚠ repetição: {w}")
+    print("  » PARTIDO NÃO CONFIRMADO: o Diretor de Arte precisa ler partido.md, comparar com 2 alternativas (--linguagem/--variante) e registrar `partido_visual` no parecer. "
+          "Em sessão de agentes rode `site` SEM --render, decida o partido e só então renderize.")
     if a.clima:
         cl = {**cl, **dict(zip(("music", "transition", "pace", "sfx"), site.CLIMAS[a.clima])), "clima": a.clima}
     print(f"  clima (Diretor de Movimento): {cl['clima']} · trilha {a.music or cl['music']} em {cl['key']} · transições {cl['transition']} · ritmo {cl['pace']}")

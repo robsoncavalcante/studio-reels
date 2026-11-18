@@ -82,3 +82,9 @@ Regra: **o mesmo motor não pode entregar o mesmo vídeo com cores trocadas.** O
 3. **Peças da mesma marca** → variação. `--variante N` troca o layout dentro da linguagem; o portão avisa `reel-repetido` se a sequência de layouts repete a de outra peça.
 
 Antes de montar/aprovar, o Diretor de Arte lê `partido.md` (por quê, pontuação, sequência, repetição), confirma ou troca (`--linguagem`, `--variante`) e escreve no `parecer.json` o campo **`partido_visual`** (1 linha: linguagem + por que serve a esta marca + o que a diferencia das outras). Sem essa linha a entrega não libera.
+
+### v6.1 — Ordem obrigatória em sessão de agentes (reel de site)
+1. `studio.py site <url>` **sem `--render`** (captura + partido + storyboard).
+2. Diretor de Arte: abrir `sheet_telas_do_site.png`, ler `partido.md`; escrever 3 linhas no `thread.md`: partido escolhido, **duas alternativas descartadas e por quê**, o que diferencia esta peça das últimas (ver `library/history.json`).
+3. Se trocar: rodar de novo com `--linguagem` e/ou `--variante`. Só então `--render`.
+4. Depois do render: folhas → parecer.json (inclui `partido_visual`). Sem parecer o gate bloqueia; **render sem passo 2 é falha do agente, não do motor**.

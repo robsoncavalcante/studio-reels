@@ -435,7 +435,7 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
         head = sentence(s.get("heading", ""))
         if not head or head == h1:
             continue
-        stats = [x for x in s.get("stats", []) if re.search(r"\d", x.get("number", ""))]
+        stats = [x for x in s.get("stats", []) if re.search(r"\d", x.get("number", "")) and (len(re.sub(r"\D", "", x.get("number", ""))) >= 2 or re.search(r"[+%×x]|mil|mi|k\b|º", x.get("number", ""), re.I)) and len(x.get("label", "")) >= 3]
         its = _items(s, 6)
         imgs, vids, icos = mine(head, ("image",)), mine(head, ("video",)), mine(head, ("icon", "svg"))
         if len(imgs) >= 2 and len(its) >= 2:
