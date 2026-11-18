@@ -273,7 +273,7 @@ def run(kind: str, output, pages: list[dict], brand: dict, theme: str, files: li
     (ad / "gate.json").write_text(json.dumps(gate, ensure_ascii=False, indent=1), encoding="utf-8")
     (ad / "CHECKLIST.md").write_text(_checklist(gate, pages), encoding="utf-8")
     tpl = ad / "parecer.modelo.json"
-    tpl.write_text(json.dumps(dict(rodada=1, partido_visual="", roles={r_: dict(veredito="", visto=[], notas=[]) for r_ in roles}, diretor=dict(nota=None, decisao="")), ensure_ascii=False, indent=1), encoding="utf-8")
+    tpl.write_text(json.dumps(dict(rodada=1, partido_visual="", movimento="", roles={r_: dict(veredito="", visto=[], notas=[]) for r_ in roles}, diretor=dict(nota=None, decisao="")), ensure_ascii=False, indent=1), encoding="utf-8")
     if verbose:
         print(banner(gate, ad, output))
     return gate
@@ -351,6 +351,11 @@ def _checklist(g: dict, pages: list[dict]) -> str:
               "Se o reel parecer outro template com as cores trocadas, o veredito é `refazer`. Cada cena deve citar a tela/seção de origem no parecer.", ""]
     if "partido.md" in g.get("sheets", {}) or True:
         L += ["", "## PARTIDO VISUAL (Diretor de Arte)", "Se existir `partido.md` na pasta da peça: leia, confirme ou troque a linguagem (`--linguagem`, `--variante`) ANTES de aprovar, e escreva `partido_visual` no parecer.json (1 linha). Marca diferente não pode sair com a cara de outra."]
+    L += ["", "## MOVIMENTO (Diretor de Movimento) — severidade CRÍTICO > ALTO > MÉDIO",
+          "- CRÍTICO: nada em movimento no 1º segundo; elementos entrando todos juntos; movimento que contradiz o arquétipo (ex.: quique em marca Premium).",
+          "- ALTO: sem 3 camadas (primária entrada / secundária stagger / ambiente contínuo); stagger total > 40% da duração da cena; mais de 1/3 da cena parada sem vida; easing igual em tudo.",
+          "- MÉDIO: sem contramovimento (elementos vizinhos indo na mesma direção); ambiente forte demais; saída sem ritmo.",
+          "Leia `partido.md` (Arquétipo de movimento) e registre `movimento` no parecer.json (1 linha: arquétipo + as 3 camadas + o que diferencia das outras marcas)."]
     L += ["", "## Perguntas por especialista (o parecer responde cada uma)", ""]
     for r_ in g["roles"]:
         L.append(f"- **{r_}** — {QUESTIONS.get(r_, '')}")
@@ -417,6 +422,12 @@ def validate(output) -> dict:
         pvz = str(par.get("partido_visual") or "").strip()
         if len(pvz) < 25:
             pend.append("Diretor de Arte: falta `partido_visual` no parecer (1 linha: linguagem + por que serve a esta marca + o que a diferencia das outras)")
+        try:
+            _pj = json.loads((base / "partido.json").read_text(encoding="utf-8"))
+        except Exception:  # noqa
+            _pj = {}
+        if _pj.get("arquetipo") and len(str(par.get("movimento") or "").strip()) < 25:
+            pend.append("Diretor de Movimento: falta `movimento` no parecer (arquétipo, 3 camadas primária/secundária/ambiente, orçamento de stagger e regra do 1/3 conferidos)")
     d = par.get("diretor", {})
     if d.get("decisao") != "aprovar":
         pend.append("Diretor de Criação: decisão diferente de 'aprovar'")

@@ -428,6 +428,37 @@ def _():
     assert gate.validate(d)["ok"], gate.validate(d)["pend"]
 
 
+@case("v6.2 arquétipo de movimento: marcas diferentes se movem diferente; marca repete; portão exige `movimento`")
+def _():
+    from engine import visual, gate
+    base = dict(dark=False, sat=False, serif=False, upper=False, heavy=False, round_btn=True, square_btn=False, media=8, videos=1, offers=0)
+    ml = dict(base, sat=True)
+    apple = dict(base)
+    energ = dict(base, upper=True, heavy=True, dark=True, sat=True, round_btn=False, videos=3)
+    a1 = visual.arquetipo(apple, "apple", history=[])
+    a2 = visual.arquetipo(ml, "ml", history=[])
+    a3 = visual.arquetipo(energ, "gym", history=[])
+    assert a1["id"] == "premium" and a2["id"] == "playful" and a3["id"] == "energetic", (a1["id"], a2["id"], a3["id"])
+    assert len({a1["ease"], a2["ease"], a3["ease"]}) == 3
+    mem = visual.arquetipo(energ, "apple", history=[dict(marca="apple", arquetipo="premium")])
+    assert mem["id"] == "premium"
+    assert visual.arquetipo(apple, "x", forced="corporate", history=[])["id"] == "corporate"
+    d = TMP / "arq"
+    ad = d / "agentes"
+    ad.mkdir(parents=True, exist_ok=True)
+    f = d / "a.txt"
+    f.write_text("x")
+    (d / "partido.json").write_text(json.dumps(dict(repeticao=[], layouts=["a", "b", "c", "d", "e", "f"], arquetipo=dict(id="premium"))))
+    (ad / "gate.json").write_text(json.dumps(dict(files={"a.txt": gate.sha256(f)}, blockers=0, roles=["art-director"])))
+    par = dict(partido_visual="Editorial: serifa e respiro combinam com a marca; foge do pôster", roles={"art-director": dict(veredito="ok", visto=["a.txt"], notas=[])}, diretor=dict(nota=9, decisao="aprovar"))
+    (ad / "parecer.json").write_text(json.dumps(par))
+    v = gate.validate(d)
+    assert not v["ok"] and any("movimento" in p for p in v["pend"]), v["pend"]
+    par["movimento"] = "Premium: out-expo lento, 3 camadas, stagger 1.4x; calmo vs. a marca divertida"
+    (ad / "parecer.json").write_text(json.dumps(par))
+    assert gate.validate(d)["ok"], gate.validate(d)["pend"]
+
+
 @case("site com @font-face próprio → baixa a fonte real e usa no vídeo (sem trocar)")
 def _():
     import http.server, socketserver, threading, functools

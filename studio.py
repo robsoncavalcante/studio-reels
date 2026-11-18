@@ -364,13 +364,14 @@ def cmd_site(a):
     bkey = slug(a.brand or site._host(res["url"]) or host)
     pv = visual.choose(bkey, brand, data, data.get("media"), forced=getattr(a, "linguagem", None))
     scenes = visual.apply(scenes, pv["linguagem"], getattr(a, "variante", 0) or 0, name=name)
+    pv["arquetipo"] = visual.arquetipo(pv["sinais"], bkey, forced=getattr(a, "arquetipo", None))
     if not a.brand:  # identidade cadastrada manda; sem ela, a pele da linguagem completa o que o site não definiu
         brand["style"] = visual.skin(brand, pv["linguagem"])
     pv.update(variante=getattr(a, "variante", 0) or 0, layouts=[x["layout"] for x in scenes], marca=bkey)
     pv["repeticao"] = visual.repetition(pv["layouts"], bkey, pv["linguagem"])
     (out / "partido.json").write_text(json.dumps(pv, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "partido.md").write_text(visual.partido_md(pv), encoding="utf-8")
-    visual.record(bkey, pv["linguagem"], pv["variante"], pv["layouts"])
+    visual.record(bkey, pv["linguagem"], pv["variante"], pv["layouts"], arq=pv["arquetipo"]["id"])
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
     (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description"), warnings=res.get("warnings", []), media=[{k: v for k, v in m.items() if k in ("kind", "file", "head", "top", "w", "h")} for m in data.get("media", [])]),
@@ -423,9 +424,14 @@ def cmd_site(a):
           "Em sessão de agentes rode `site` SEM --render, decida o partido e só então renderize.")
     if a.clima:
         cl = {**cl, **dict(zip(("music", "transition", "pace", "sfx"), site.CLIMAS[a.clima])), "clima": a.clima}
+    aq = pv["arquetipo"]
+    print(f"  arquétipo de movimento: {aq['nome']} — {aq['desc']} ({aq['motivo'][:70]})")
+    if not a.clima:
+        cl["pace"] = aq["pace"]
     print(f"  clima (Diretor de Movimento): {cl['clima']} · trilha {a.music or cl['music']} em {cl['key']} · transições {cl['transition']} · ritmo {cl['pace']}")
     cmd += ["--music", a.music or cl["music"], "--key", cl["key"], "--sfx", cl["sfx"], "--transition", cl["transition"], "--pace", cl["pace"],
-            "--kenburns", "drift", "--count-up"]
+            "--kenburns", aq["kenburns"], "--count-up",
+            "--ease", aq["ease"], "--intensity", str(aq["intensity"]), "--motion", aq["motion"]]
     if a.render:
         r = subprocess.run(cmd)
         print(("✓ reel: " + str(out / "reel.mp4")) if r.returncode == 0 else "✗ o render falhou (veja acima)")
@@ -1192,6 +1198,7 @@ def main():
     p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
     p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
     p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
+    p.add_argument("--arquetipo", choices=["premium", "playful", "corporate", "energetic"], help="força a personalidade de movimento (padrão: decidida pelo site; a marca repete a mesma)")
     p.add_argument("--linguagem", choices=["cards3d", "poster", "editorial", "modular"], help="força a linguagem visual (padrão: o motor escolhe pelo site; a marca repete a mesma)")
     p.add_argument("--variante", type=int, default=0, help="peça diferente da mesma marca: troca os layouts dentro da linguagem (0, 1, 2…)")
     p.add_argument("--clima", choices=["clean", "energetic", "punch", "cinematic", "editorial"], help="força o clima (trilha/transições/ritmo); padrão: decidido pela marca e pelo material")

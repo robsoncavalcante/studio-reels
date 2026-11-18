@@ -151,6 +151,50 @@ def apply(scenes: list, lang: str, variante: int = 0, name: str = "") -> list:
     return _no_repeat(out, L)
 
 
+# ------------------------------------------------------------------ arquétipo de movimento (v6.2, inspirado em motion-personality)
+ARQUETIPOS = {
+    "premium": dict(nome="Premium", desc="lento, elegante, sem quique: poucos elementos, respiro longo",
+                    pace="calm", ease="out-expo", intensity=0.8, motion="drift", kenburns="drift", stagger=1.4, entrada="deslize curto 12–20px, escala inicial 96–98%, blur leve",
+                    ambiente="respiração 1.00→1.02 em 6–8s; parallax 0.3/0.6/1.0", transicao="fade/dissolve longo"),
+    "playful": dict(nome="Divertido", desc="saltitante e caloroso: overshoot controlado, stagger curto",
+                    pace="snappy", ease="out-back", intensity=1.15, motion="overshoot", kenburns="drift", stagger=0.8, entrada="sobe 30–50px com overshoot, escala inicial 80–90%",
+                    ambiente="flutuação em camadas 3–6px, 3–5s", transicao="wipe/pop"),
+    "corporate": dict(nome="Corporativo", desc="firme e previsível: linear-clean, sem exagero",
+                      pace="standard", ease="out-cubic", intensity=0.9, motion="fade-up", kenburns="drift", stagger=1.0, entrada="sobe 20–30px, escala inicial 95%",
+                      ambiente="brilho/shimmer discreto na linha de destaque", transicao="clean/slide"),
+    "energetic": dict(nome="Enérgico", desc="rápido e marcado: entradas fortes, cortes no beat",
+                      pace="hype", ease="out-quint", intensity=1.2, motion="stamp", kenburns="push", stagger=0.6, entrada="whip/stamp, 60–100px, escala inicial 60–80%",
+                      ambiente="pulso de escala 1.00→1.04 no beat", transicao="punch/whip"),
+}
+
+
+def arquetipo(sig: dict, brand_key: str = "", forced: str | None = None, history: list | None = None) -> dict:
+    """Personalidade de movimento: Premium / Divertido / Corporativo / Enérgico (decidida pelos sinais do site)."""
+    history = load_history() if history is None else history
+    s = dict(premium=0.0, playful=0.0, corporate=0.0, energetic=0.0)
+    s["premium"] += 2 if (sig["dark"] and not sig["sat"]) else 0
+    s["premium"] += 2 if sig["serif"] else 0
+    s["premium"] += 1.5 if (not sig["sat"] and not sig["heavy"] and not sig["upper"]) else 0
+    s["premium"] += 1 if sig["media"] >= 5 else 0
+    s["playful"] += 2.5 if (sig["sat"] and sig["round_btn"] and not sig["dark"]) else 0
+    s["playful"] += 1 if sig["round_btn"] else 0
+    s["energetic"] += 2 if (sig["upper"] or sig["heavy"]) else 0
+    s["energetic"] += 1.5 if (sig["sat"] and sig["dark"]) else 0
+    s["energetic"] += 1 if sig["videos"] >= 2 else 0
+    s["corporate"] += 2 if sig["square_btn"] else 0
+    s["corporate"] += 1.5 if sig["offers"] >= 3 else 0
+    s["corporate"] += 1 if (not sig["sat"] and not sig["serif"]) else 0
+    mem = next((h for h in reversed(history) if h.get("marca") == brand_key and h.get("arquetipo") in ARQUETIPOS), None)
+    ranked = sorted(s, key=lambda k: -(s[k] + (_h(brand_key + k) % 100) / 1000))
+    if forced:
+        pick, why = forced, f"arquétipo pedido ({forced})"
+    elif mem:
+        pick, why = mem["arquetipo"], "memória da marca (identidade de movimento constante entre peças)"
+    else:
+        pick, why = ranked[0], "sinais: " + ", ".join(f"{k} {v:.1f}" for k, v in sorted(s.items(), key=lambda kv: -kv[1]))
+    return dict(id=pick, motivo=why, pontuacao={k: round(v, 1) for k, v in s.items()}, **ARQUETIPOS[pick])
+
+
 def _no_repeat(scenes: list, L: dict) -> list:
     """Nunca dois layouts iguais em sequência nas cenas de texto: troca o repetido por outra alternativa do papel."""
     alt_pool = {"list": ["site-list", "service-grid", "step-process", "tips-list", "checklist"]}
@@ -225,9 +269,9 @@ def repetition(layouts: list, brand_key: str, lang: str, history: list | None = 
     return out
 
 
-def record(brand_key: str, lang: str, variante: int, layouts: list, history: list | None = None) -> None:
+def record(brand_key: str, lang: str, variante: int, layouts: list, history: list | None = None, arq: str | None = None) -> None:
     history = load_history() if history is None else history
-    history.append(dict(marca=brand_key, linguagem=lang, variante=variante, layouts=layouts, quando=time.strftime("%Y-%m-%d %H:%M")))
+    history.append(dict(marca=brand_key, linguagem=lang, variante=variante, arquetipo=arq, layouts=layouts, quando=time.strftime("%Y-%m-%d %H:%M")))
     save_history(history)
 
 

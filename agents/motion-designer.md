@@ -56,3 +56,11 @@ A linguagem escolhida define o conjunto de transições (`poster` → punch, `ed
 
 ## v6.1 — Personalidade de movimento (inspirado em LottieFiles/motion-design-skill, MIT)
 Antes de escolher clima/ritmo, declarar: emoção-alvo e arquétipo — **Playful, Premium, Corporate ou Energetic** — e mapear: Premium → `cinematic`/`calm`, ritmo lento, entradas longas e sem sobra; Corporate → `clean`/`standard`; Energetic → `energetic`/`snappy`; Playful → `punch`/`hype` com sobra (overshoot) curta. Regras de coreografia a respeitar: o stagger total de uma cena fica **abaixo de 500 ms**; hierarquia (título → apoio → ação) e direção única de leitura; movimento que cruza mais de 1/3 da tela precisa de quadro intermediário (câmera/blur) para não "teleportar"; animar uma propriedade principal por elemento (posição, escala, rotação ou opacidade). No parecer, justificar o arquétipo em 1 linha.
+
+## v6.2 — Arquétipo de movimento (automático) e 3 camadas
+O motor grava `arquetipo` no `partido.json` (Premium / Divertido / Corporativo / Enérgico) a partir dos sinais do site e o aplica ao render
+(`--ease --intensity --pace --motion --kenburns`). A marca repete o mesmo arquétipo (identidade de movimento); marcas diferentes se movem diferente.
+- Troque com `--arquetipo X` só com justificativa no parecer (`movimento`).
+- Toda cena tem 3 camadas: **primária** (entrada do elemento principal), **secundária** (stagger dos demais, orçamento ≤ 40% da duração da cena) e **ambiente** (respiração/flutuação/parallax/shimmer do arquétipo). Mais de 1/3 da cena parada = reprovar.
+- Contramovimento: elementos vizinhos entram em direções opostas; nunca todos do mesmo lado.
+- Severidade: CRÍTICO (nada se move no 1º s; tudo junto; quique em marca Premium) > ALTO (sem 3 camadas, easing único) > MÉDIO (sem contramovimento).

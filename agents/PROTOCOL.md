@@ -88,3 +88,6 @@ Antes de montar/aprovar, o Diretor de Arte lê `partido.md` (por quê, pontuaç�
 2. Diretor de Arte: abrir `sheet_telas_do_site.png`, ler `partido.md`; escrever 3 linhas no `thread.md`: partido escolhido, **duas alternativas descartadas e por quê**, o que diferencia esta peça das últimas (ver `library/history.json`).
 3. Se trocar: rodar de novo com `--linguagem` e/ou `--variante`. Só então `--render`.
 4. Depois do render: folhas → parecer.json (inclui `partido_visual`). Sem parecer o gate bloqueia; **render sem passo 2 é falha do agente, não do motor**.
+
+### v6.2 — Arquétipo de movimento
+Além do partido visual, o parecer precisa de `movimento` (1 linha): arquétipo + 3 camadas + o que o diferencia das outras marcas. O gate bloqueia sem ele quando existe `partido.json` com arquétipo.
