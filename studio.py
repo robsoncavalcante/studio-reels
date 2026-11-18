@@ -320,7 +320,7 @@ def cmd_site(a):
         sys.exit(3)
     data = res["data"]
     cat = json.loads((ROOT / "fonts" / "manifest.json").read_text())
-    b = site.pick_brand(data, cat)
+    b = site.pick_brand(data, cat, res.get("font_files"))
     name = a.name or data.get("siteName") or (data.get("title") or host).split("|")[0].split(" - ")[0].strip() or host
     handle = a.handle or ""
     if handle and not handle.startswith("@"):
@@ -336,6 +336,8 @@ def cmd_site(a):
             brand["logo"] = str(out / res["logo"])
     else:
         brand = dict(name=name, handle=handle, colors=b["colors"], style=b.get("style", {}), font_display=b["font_display"], font_body=b["font_body"], source=res["url"])
+        if b.get("font_files"):
+            brand["font_files"] = b["font_files"]
         if res.get("logo"):
             brand["logo"] = res["logo"]
     cb = _cta_bg(data, b)

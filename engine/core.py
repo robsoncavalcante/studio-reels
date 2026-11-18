@@ -577,6 +577,22 @@ def head_html(reel=False) -> str:
     return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' + "".join(css)
 
 
+def brand_fonts_css(brand: dict | None, base_dir: Path | None) -> str:
+    """@font-face das fontes reais do site (brand['font_files']), para usar a tipografia original da marca."""
+    ff = (brand or {}).get("font_files") or []
+    rules = []
+    for f in ff:
+        pth = Path(f.get("file", ""))
+        if not pth.is_absolute():
+            pth = (base_dir or Path.cwd()) / pth
+        if not pth.exists():
+            continue
+        fmt = {".woff2": "woff2", ".woff": "woff", ".ttf": "truetype", ".otf": "opentype"}.get(pth.suffix.lower(), "woff2")
+        rules.append(f"@font-face{{font-family:'{f['family']}';font-weight:{f.get('weight', '400')};font-style:{f.get('style', 'normal')};"
+                     f"font-display:block;src:url('{pth.resolve().as_uri()}') format('{fmt}')}}")
+    return f"<style>{''.join(rules)}</style>" if rules else ""
+
+
 def slide_canvas(layout_id: str, theme_id: str, fmt: str, content: dict, brand: dict | None = None, *,
                  base_dir: Path | None = None, reel: dict | None = None, pager: tuple | None = None,
                  decor=True, transparent=False, sample=False, show_brand=True) -> str:
@@ -590,6 +606,7 @@ def slide_canvas(layout_id: str, theme_id: str, fmt: str, content: dict, brand: 
     ctx = dict(c=c, fmt=fmt, brand=brand or {}, theme=t, **make_helpers(c))
     inner = _env.get_template(f"{layout_id}.html.j2").render(**ctx)
     under, over = decor_html(t, decor)
+    under = brand_fonts_css(brand, base_dir) + under
     classes = ["canvas", f"fmt-{fmt}", f"fx-{t.get('title_fx', 'plain')}", f"L-{layout_id}"]
     style = f"--W:{F['w']}px;--H:{F['h']}px;" + theme_css_vars(t)
     if transparent:

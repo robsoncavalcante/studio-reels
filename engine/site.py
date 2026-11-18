@@ -172,6 +172,29 @@ def _saturated(h: str) -> bool:
     return s >= 0.25 and 0.12 <= l <= 0.88 and h.upper() not in DEFAULT_LINKS
 
 
+JS_FONTFACES = r"""async () => {
+  const out = [];
+  const abs = (u, base) => { try { return new URL(u, base || location.href).href; } catch (e) { return ''; } };
+  const walk = (rules, base) => { for (const r of rules) {
+    if (r.type === 5) {
+      const st = r.style, fam = (st.getPropertyValue('font-family') || '').replace(/["']/g, '').trim();
+      const src = st.getPropertyValue('src') || '';
+      const urls = [...src.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)].map(m => abs(m[1], base));
+      out.push({family: fam, weight: st.getPropertyValue('font-weight') || '400', style: st.getPropertyValue('font-style') || 'normal', urls});
+    } else if (r.cssRules) { try { walk(r.cssRules, base); } catch (e) {} }
+  } };
+  for (const sh of document.styleSheets) {
+    let rules = null; try { rules = sh.cssRules; } catch (e) { rules = null; }
+    if (rules) { walk(rules, sh.href || location.href); continue; }
+    if (sh.href) { try { const t = await (await fetch(sh.href)).text(); const re = /@font-face\s*{([^}]*)}/g; let m;
+      while ((m = re.exec(t))) { const b = m[1], g = k => { const x = new RegExp(k + '\\s*:\\s*([^;]+)').exec(b); return x ? x[1].trim() : ''; };
+        out.push({family: g('font-family').replace(/["']/g, ''), weight: g('font-weight') || '400', style: g('font-style') || 'normal',
+          urls: [...g('src').matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)].map(x => abs(x[1], sh.href))}); } } catch (e) {} }
+  }
+  return out;
+}"""
+
+
 def _family(css: str) -> str:
     for part in (css or "").split(","):
         f = part.strip().strip("\"'").strip()
@@ -180,7 +203,53 @@ def _family(css: str) -> str:
     return ""
 
 
-def pick_brand(data: dict, fonts_catalog=None) -> dict:
+FONT_EXT = {"woff2": ".woff2", "woff": ".woff", "ttf": ".ttf", "otf": ".otf", "truetype": ".ttf", "opentype": ".otf"}
+
+
+def _site_families(data: dict) -> list:
+    f = data.get("fonts", {})
+    return [x for x in dict.fromkeys(_family(f.get(k)) for k in ("h1", "h2", "p", "body")) if x]
+
+
+def save_site_fonts(pg, bodies: dict, families: list, out: Path, log=print) -> list:
+    """Salva em out/fontes/ os arquivos das famílias que o site usa (display/corpo). Retorna lista de dicts
+    {family, weight, style, file} (file relativo a `out`). Só entra o que foi realmente baixado pelo navegador."""
+    try:
+        faces = pg.evaluate(JS_FONTFACES)
+    except Exception:  # noqa
+        return []
+    want = {f.lower() for f in families if f}
+    res, seen = [], set()
+    for fc in faces:
+        fam = (fc.get("family") or "").strip()
+        if fam.lower() not in want:
+            continue
+        for u in fc.get("urls", []):
+            body = bodies.get(u)
+            if not body or len(body) < 800:
+                continue
+            ext = Path(u.split("?")[0]).suffix.lower()
+            if ext not in (".woff2", ".woff", ".ttf", ".otf"):
+                continue
+            w = str(fc.get("weight") or "400").split()[0]
+            w = {"normal": "400", "bold": "700"}.get(w, w)
+            sty = "italic" if "italic" in (fc.get("style") or "") else "normal"
+            key = (fam, w, sty)
+            if key in seen:
+                break
+            seen.add(key)
+            d = out / "fontes"
+            d.mkdir(exist_ok=True)
+            fn_ = f"{re.sub(r'[^a-z0-9]+', '-', fam.lower()).strip('-')}-{w}-{sty}{ext}"
+            (d / fn_).write_bytes(body)
+            res.append(dict(family=fam, weight=w, style=sty, file=f"fontes/{fn_}"))
+            break
+    if res:
+        log(f"  fontes reais do site: {', '.join(sorted({r['family'] for r in res}))} ({len(res)} arquivo(s))")
+    return res
+
+
+def pick_brand(data: dict, fonts_catalog=None, font_files=None) -> dict:
     """Marca a partir dos dados extraídos: bg, bg2, fg, accent, accent2 e fontes."""
     t = data["tally"]
     bg = data.get("pageBg") or "#FFFFFF"
@@ -245,7 +314,15 @@ def pick_brand(data: dict, fonts_catalog=None) -> dict:
         if body and body not in cat:
             subs[body] = "DM Sans"
             out_b = "DM Sans"
-    return dict(colors=dict(bg=bg, bg2=bg2, fg=ink, muted=muted, accent=accent, accent2=accent2), style=style, font_display=out_d or "Space Grotesk",
+    have = {x["family"] for x in (font_files or [])}
+    for fam in list(subs):  # fonte do site baixada de verdade: usa ela, sem troca
+        if fam in have:
+            subs.pop(fam)
+            if fam == disp:
+                out_d = disp
+            if fam == body:
+                out_b = body
+    return dict(font_files=list(font_files or []), colors=dict(bg=bg, bg2=bg2, fg=ink, muted=muted, accent=accent, accent2=accent2), style=style, font_display=out_d or "Space Grotesk",
                 font_body=out_b or "DM Sans", dark=_lum(bg) < 0.35, fonts_site=dict(display=disp, body=body), fonts_substituted=subs)
 
 
@@ -638,8 +715,18 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
     br = pw.chromium.launch(**kw)
     common = dict(locale="pt-BR", timezone_id="America/Fortaleza", extra_http_headers={"Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8"})
 
+    font_bodies: dict = {}
+
+    def _on_resp(r):
+        try:
+            if r.request.resource_type == "font" and r.ok:
+                font_bodies[r.url] = r.body()
+        except Exception:  # noqa
+            pass
+
     def open_page(ctx):
         ctx.add_init_script(STEALTH)
+        ctx.on("response", _on_resp)
         pg = ctx.new_page()
         pg.goto(url, wait_until="load", timeout=60000)
         try:
@@ -668,7 +755,7 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         pg = open_page(ctx)
         data = pg.evaluate(JS_EXTRACT)
         why = blocked_reason(data)
-        media, logo = [], None
+        media, logo, font_files = [], None, []
         if why:
             log(f"! desktop bloqueado/erro ({why}) → uso a versão celular do site para textos, cores, fontes e mídia")
             warnings.append(f"desktop bloqueado: {why}")
@@ -682,6 +769,7 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
             media = harvest_media(ctx, pg, out, log, seen=seen)
             assign_heads(media, data["sections"])
             logo = _logo(ctx, pg, data, out, log)
+            font_files = save_site_fonts(pg, font_bodies, _site_families(data), out, log)
             try:
                 pg.screenshot(path=str(out / "site-desktop.png"), full_page=True)
             except Exception:  # noqa
@@ -698,6 +786,7 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         if data is None:
             data = mdata
             logo = _logo(ctx, pm, mdata, out, log)
+            font_files = save_site_fonts(pm, font_bodies, _site_families(mdata), out, log)
         if mwhy:
             warnings.append(f"celular bloqueado: {mwhy}")
         mm = harvest_media(ctx, pm, out, log, tag="-m", seen=seen) if not mwhy else []
@@ -755,5 +844,5 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
     if not any(m["kind"] in ("video", "image") for m in media):
         warnings.append("nenhuma foto/vídeo do site foi colhida (cenas ficarão só de texto)")
     data["warnings"] = warnings
-    res.update(data=data, shots=names, logo=logo, hero_bg=hero_bg, warnings=warnings)
+    res.update(data=data, shots=names, logo=logo, hero_bg=hero_bg, warnings=warnings, font_files=font_files)
     return res

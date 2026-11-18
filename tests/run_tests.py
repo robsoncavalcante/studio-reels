@@ -371,6 +371,28 @@ def _():
 
 
 
+@case("site com @font-face próprio → baixa a fonte real e usa no vídeo (sem trocar)")
+def _():
+    import http.server, socketserver, threading, functools
+    class Q(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *a): pass
+    srv = socketserver.TCPServer(("127.0.0.1", 0), functools.partial(Q, directory=str(ROOT / "tests/fixtures/site-font")))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    out = TMP / "site-font"
+    try:
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Casa Verde")
+    finally:
+        srv.shutdown()
+    b = json.loads((out / "brand.json").read_text())
+    assert b["font_display"] == "Zorblax Display", b["font_display"]
+    ff = b.get("font_files") or []
+    assert ff and (out / ff[0]["file"]).exists() and ff[0]["family"] == "Zorblax Display", ff
+
+    from engine import core
+    css = core.brand_fonts_css(b, out)
+    assert "Zorblax Display" in css and "file://" in css, css
+
+
 @case("site com mídia → vídeo/imagens/ícones reais viram cenas 3D e clima decide trilha")
 def _():
     import http.server, socketserver, threading, functools
