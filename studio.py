@@ -439,8 +439,32 @@ def cmd_site(a):
             "--kenburns", aq["kenburns"], "--count-up",
             "--ease", aq["ease"], "--intensity", str(aq["intensity"]), "--motion", aq["motion"]]
     if a.render:
+        import shutil as _sh, time as _t
+        ver = out / "versoes"
+        ver.mkdir(exist_ok=True)
+        prev = out / "reel.mp4"
+        if prev.exists():
+            stamp = _t.strftime("%Y%m%d-%H%M%S", _t.localtime(prev.stat().st_mtime))
+            dest = ver / f"reel-{stamp}.mp4"
+            if not dest.exists():
+                _sh.move(str(prev), str(dest))
+                for sib in ("reel.timeline.json", "partido.md", "partido.json", "content.json", "storyboard.md"):
+                    sp = out / sib
+                    if sp.exists():
+                        _sh.copy(str(sp), str(ver / f"{sp.stem}-{stamp}{sp.suffix}"))
+                print(f"  versão anterior arquivada em {ver.name}/{dest.name} (com timeline, partido, content e storyboard)")
         r = subprocess.run(cmd)
-        print(("✓ reel: " + str(out / "reel.mp4")) if r.returncode == 0 else "✗ o render falhou (veja acima)")
+        if r.returncode == 0 and (out / "reel.mp4").exists():
+            new_stamp = _t.strftime("%Y%m%d-%H%M%S")
+            copy_dest = ver / f"reel-{new_stamp}.mp4"
+            _sh.copy(str(out / "reel.mp4"), str(copy_dest))
+            for sib in ("reel.timeline.json", "partido.md", "partido.json", "content.json", "storyboard.md"):
+                sp = out / sib
+                if sp.exists():
+                    _sh.copy(str(sp), str(ver / f"{sp.stem}-{new_stamp}{sp.suffix}"))
+            print(f"✓ reel: {out / 'reel.mp4'}  (cópia em {ver.name}/{copy_dest.name})")
+        elif r.returncode != 0:
+            print("✗ o render falhou (veja acima)")
         return r.returncode
     print("  próximo passo: " + " ".join(cmd[1:]).replace(sys.executable, "python"))
     return 0
