@@ -302,7 +302,11 @@ def cmd_site(a):
     host = (urlparse(a.url if "://" in a.url else "https://" + a.url).hostname or "site").replace("www.", "")
     out = Path(a.out or ROOT / "samples" / f"site-{slug(host)}")
     print(f"Abrindo {a.url} … (rola a página, extrai textos, cores, fontes e tira as telas do celular)")
-    res = site.capture(a.url, out, shots=a.telas)
+    try:
+        res = site.capture(a.url, out, shots=a.telas)
+    except RuntimeError as e:
+        print(f"\n✗ {e}")
+        sys.exit(3)
     data = res["data"]
     cat = json.loads((ROOT / "fonts" / "manifest.json").read_text())
     b = site.pick_brand(data, cat)
@@ -341,8 +345,16 @@ def cmd_site(a):
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
     scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"))
     (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
-    (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description")),
+    (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description"), warnings=res.get("warnings", []), media=[{k: v for k, v in m.items() if k in ("kind", "file", "head", "top", "w", "h")} for m in data.get("media", [])]),
                                               ensure_ascii=False, indent=1), encoding="utf-8")
+    sb = ["# Storyboard da captura (a fonte da verdade do reel)", "", f"Site: {res['url']}", "", "## Telas capturadas (celular)"]
+    sb += [f"- `{n}`" for n in res["shots"]]
+    sb += ["", "## Cenas do reel ↔ origem no site", "| # | layout | título | mídia real usada |", "|---|---|---|---|"]
+    for i, sc in enumerate(scenes, 1):
+        sb.append(f"| {i} | {sc['layout']} | {str(sc.get('title', '')).replace('|', '/')[:70]} | {', '.join(sc.get('photos') or [i.get('icon') for i in sc.get('items', []) if isinstance(i, dict) and i.get('icon')]) or '—'} |")
+    sb += ["", "## Avisos da captura"] + ([f"- {w}" for w in res.get("warnings", [])] or ["- nenhum"])
+    sb += ["", "Regra dos agentes: cada cena precisa corresponder a uma tela/seção acima; cor, fonte e mídia vêm do site. Se não, refazer."]
+    (out / "storyboard.md").write_text("\n".join(sb), encoding="utf-8")
     c = b["colors"]
     print(f"\n✓ marca «{name}»  fundo {c['bg']} · título {c['fg']} · acento {c['accent']} · acento 2 {c['accent2']}  (tema {theme}{' + ' + alt if alt else ''})")
     print(f"  fontes do site: título {b['fonts_site']['display'] or '—'} · texto {b['fonts_site']['body'] or '—'}  →  usadas: {b['font_display']} / {b['font_body']}")
@@ -352,6 +364,8 @@ def cmd_site(a):
         print(f"  ! «{k}» não está no catálogo: usei {v} (instale a fonte da marca para trocar)")
     if site.glued(data.get("description") or ""):
         print("  ! a descrição (meta description) do site tem palavras coladas; usei o subtítulo do hero. Vale corrigir no WordPress/SEO.")
+    for w in res.get("warnings", []):
+        print(f"  ⚠ {w}")
     print(f"  logo: {res.get('logo') or 'não achei'} · {len(scenes)} cenas: " + " → ".join(x["layout"] for x in scenes))
     if not handle:
         print("  ! sem @ do Instagram: passe --handle @usuario para assinar o final")

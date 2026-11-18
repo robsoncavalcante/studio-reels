@@ -43,3 +43,10 @@ Inspirado em motion-director (abdullatif06), motion-effects (charlie947) e open-
 
 ### Placar de crítica (nota 1–10; só entrega com 8+ em todos, mínimo 3 rodadas)
 Gancho · Legibilidade (360 px de largura) · Qualidade de movimento · Variedade · Composição · Verdade (material real) · Sincronia de som · Marca. Liste os **3 piores problemas** com tempo e *resultado desejado*, corrija só esses, refaça, registre a rodada. Termine a entrega com **"O que eu ainda mudaria"** (inclua: "ouça a mixagem; as ferramentas não ouvem").
+
+## v5.4 — Reel de site: seguir as telas
+
+- A shot list nasce de `storyboard.md` + `tela-NN.png`: uma cena por seção relevante, na ordem do site. Não existe cena “de enfeite”.
+- Abertura = o que o site abre (vídeo do hero → `site-video`; foto do hero → `site-cover` com benefícios e botão como na tela).
+- Seção de cartões com foto → `site-showcase` (3D); seção de ícones → `site-icons` (acende/pinga); números → `site-stats`; depoimento/vídeo de cliente → `site-video` + citação.
+- Se a captura não trouxe mídia, não disfarce com layout de texto: devolver ao Diretor com “captura inválida”.

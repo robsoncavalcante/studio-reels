@@ -256,6 +256,12 @@ def run(kind: str, output, pages: list[dict], brand: dict, theme: str, files: li
         imgs = [f for f in fl if f.suffix.lower() in (".png", ".jpg", ".jpeg")]
         if imgs:
             sheets["pecas"] = str(_sheet_images(imgs, ad / "sheet_pecas.png", cols=4 if len(imgs) > 1 else 1, w=360 if len(imgs) > 1 else 540))
+    if kind == "reel":
+        fi = site_fidelity(Path(output) if Path(output).is_dir() else Path(output).parent, pages, ad)
+        if fi["issues"]:
+            reps.append(dict(name="fidelidade-ao-site", score=max(0, 100 - 25 * sum(i["level"] == "blocker" for i in fi["issues"])),
+                             blockers=sum(i["level"] == "blocker" for i in fi["issues"]), warnings=sum(i["level"] == "warn" for i in fi["issues"]), issues=fi["issues"]))
+        sheets.update(fi["sheets"])
     blockers = sum(x["blockers"] for x in reps)
     warns = sum(x["warnings"] for x in reps)
     roles = ROLES_BASE + ROLES_EXTRA.get(kind, [])
@@ -271,6 +277,41 @@ def run(kind: str, output, pages: list[dict], brand: dict, theme: str, files: li
     if verbose:
         print(banner(gate, ad, output))
     return gate
+
+
+def site_fidelity(folder: Path, pages: list[dict], ad: Path) -> dict:
+    """Reel feito a partir de um site (existe site.json ao lado): confere se o vídeo segue o que foi capturado.
+    Bloqueia captura vazia/erro, ausência de mídia real e reel que ignorou as telas; gera a folha das telas para os agentes compararem."""
+    res = dict(issues=[], sheets={})
+    sj = Path(folder) / "site.json"
+    if not sj.exists():
+        return res
+    try:
+        d = json.loads(sj.read_text(encoding="utf-8"))
+    except Exception:  # noqa
+        return res
+    iss = res["issues"]
+    if not (d.get("h1") or d.get("title")):
+        iss.append(_issue("blocker", "captura-sem-titulo", "a captura não trouxe título nem h1 (página de erro ou bloqueio)", "refazer `studio.py site` (outra rede/Chrome) antes de produzir"))
+    for w in d.get("warnings", []):
+        lvl = "warn" if "desktop bloqueado" in w else "blocker"
+        if "nenhuma foto" in w:
+            lvl = "blocker"
+        iss.append(_issue(lvl, "captura-aviso", w, "cores, fontes e mídia precisam vir do site real; refazer a captura ou fornecer a mídia" if lvl == "blocker" else "conferir cores/fontes: vieram da versão celular"))
+    used = [str(p_) for pg_ in pages for p_ in ((pg_.get("content") or {}).get("photos") or [])]
+    icons = [i for pg_ in pages for i in ((pg_.get("content") or {}).get("items") or []) if isinstance(i, dict) and i.get("icon")]
+    if d.get("media") and not used and not icons:
+        iss.append(_issue("blocker", "reel-ignorou-midia", f"o site tem {len(d['media'])} mídia(s) colhida(s) e nenhuma entrou no reel", "usar foto/vídeo/ícones do site nas cenas (layouts site-cover/video/showcase/icons)"))
+    lays = [(pg_.get("content") or {}).get("layout") or pg_.get("name") for pg_ in pages]
+    if len(lays) >= 3 and set(lays) <= {"site-hero", "site-list", "site-cta", "site-stats"} and d.get("media"):
+        iss.append(_issue("warn", "reel-generico", "só layouts de texto (hero/lista/cta) apesar de o site ter mídia: o reel fica igual a qualquer outro", "trazer a mídia real e variar o layout por seção"))
+    tel = sorted(Path(folder).glob("tela-*.png"))
+    if tel:
+        try:
+            res["sheets"]["telas_do_site"] = str(_sheet_images(tel[:8], ad / "sheet_telas_do_site.png", cols=4, w=300))
+        except Exception:  # noqa
+            pass
+    return res
 
 
 def _checklist(g: dict, pages: list[dict]) -> str:
@@ -295,6 +336,9 @@ def _checklist(g: dict, pages: list[dict]) -> str:
                 L.append(f"- [{it['level']}] {rep.get('name')} · {it['code']}: {it['msg']}" + (f" → {it['fix']}" if it.get("fix") else ""))
     if not n:
         L.append("- nenhum")
+    if "telas_do_site" in g["sheets"]:
+        L += ["", "## FIDELIDADE AO SITE (obrigatório)", "Abra `sheet_telas_do_site.png` (o site real) e compare com as folhas do reel: mesma identidade (cores, fontes, fotos, vídeo, ícones), mesma ordem das seções.",
+              "Se o reel parecer outro template com as cores trocadas, o veredito é `refazer`. Cada cena deve citar a tela/seção de origem no parecer.", ""]
     L += ["", "## Perguntas por especialista (o parecer responde cada uma)", ""]
     for r_ in g["roles"]:
         L.append(f"- **{r_}** — {QUESTIONS.get(r_, '')}")

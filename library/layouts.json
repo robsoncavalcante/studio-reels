@@ -1420,5 +1420,34 @@
    "cover",
    "body"
   ]
+ },
+ {
+  "id": "site-cover",
+  "name": "Site · capa com foto do hero",
+  "photos": 1,
+  "desc": "Foto (ou vídeo) real do hero do site em tela cheia, título, lista de benefícios e botão.",
+  "sample": {
+   "kicker": "",
+   "title": "Venda para *milhões* de pessoas",
+   "subtitle": "Crie sua loja e comece hoje.",
+   "items": [
+    {
+     "title": "Sem mensalidade"
+    },
+    {
+     "title": "Envios rápidos"
+    }
+   ],
+   "cta": "Começar a vender"
+  },
+  "kind": "site",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover"
+  ]
  }
 ]

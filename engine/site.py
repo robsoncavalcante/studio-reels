@@ -84,12 +84,13 @@ JS_EXTRACT = r"""() => {
     const items = []; const seen = new Set();
     for (const x of subs) { const t = txt(x); if (seen.has(t)) continue; seen.add(t); items.push({title: t, text: descOf(x).slice(0, 260)}); if (items.length >= 6) break; }
     const quotes = Array.from(s.querySelectorAll('blockquote, [class*=testimonial] p, [class*=depoimento] p')).map(txt).filter(t => t.length > 40).slice(0, 3);
-    const numEls = Array.from(s.querySelectorAll('*')).filter(e => e.children.length === 0 && /^[+\-]?\s*[\d.,]+\s*[%°kKmM+]*$/.test(txt(e)) && txt(e).length <= 9);
+    const NUM = /^(n\.?\s?[ºo°]\s*)?[+\-]?\s*[\d.,]+\s*([%°kKmM+]|\s?(milh[ãõ][oe]s?|mil|bilh[ãõ][oe]s?|mi|bi))*$/i;
+    const numEls = Array.from(s.querySelectorAll('*')).filter(e => e.children.length === 0 && NUM.test(txt(e)) && txt(e).length <= 18);
     const nums = numEls.map(txt);
     const stats = numEls.slice(0, 4).map(e => { let c = e.parentElement, label = '', text = '';
       for (let i = 0; i < 4 && c && c !== s; i++, c = c.parentElement) {
         const parts = Array.from(c.querySelectorAll('*')).filter(x => x.children.length === 0 && x !== e && vis(x) && txt(x)).map(txt)
-          .filter(t => !/^[+\-]?\s*[\d.,]+\s*[%°kKmM+]*$/.test(t));
+          .filter(t => !NUM.test(t));
         if (parts.length) { label = parts[0]; text = parts.slice(1).join(' ').slice(0, 90); break; } }
       return {number: txt(e), label: label.slice(0, 40), text}; });
     const sub = Array.from(s.querySelectorAll('p, .elementor-widget-text-editor')).find(p => vis(p) && txt(p).length > 25);
@@ -111,7 +112,8 @@ JS_EXTRACT = r"""() => {
   const style = {hCase: hs ? hs.textTransform : '', hSpacing: hs ? hs.letterSpacing : '', hWeight: hs ? hs.fontWeight : '', hSize: hs ? parseFloat(hs.fontSize) : 0,
                  btnRadius: bs ? parseFloat(bs.borderRadius) || 0 : 0, btnH: bs ? parseFloat(bs.height) : 0, hColor: hs ? hex(rgba(hs.color) || {r:0,g:0,b:0,a:1}) : ''};
   const logoImg = logo && logo.tagName === 'IMG' ? (logo.currentSrc || logo.src) : '';
-  return {pageBgSet, title: document.title, description: m('description') || m('og:description'), ogImage: m('og:image'), siteName: m('og:site_name'), lang: document.documentElement.lang,
+  const bodyText = (document.body.innerText || '').replace(/\s+/g, ' ').trim();
+  return {bodyText: bodyText.slice(0, 1500), textLen: bodyText.length, pageBgSet, title: document.title, description: m('description') || m('og:description'), ogImage: m('og:image'), siteName: m('og:site_name'), lang: document.documentElement.lang,
           h1: h1 ? txt(h1) : '', pageBg, fonts, tally, sections, buttons, navBtn, hasLogo: !!logo, logoSrc: logoImg, style, height: document.documentElement.scrollHeight,
           loadedFonts: Array.from(document.fonts).filter(f => f.status === 'loaded').map(f => f.family.replace(/["']/g, ''))};
 }"""
@@ -323,12 +325,17 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     tone = {"theme": alt_theme} if alt_theme else {}
     media = media or []
     hv = next((m for m in media if m["kind"] == "video" and m.get("top", 0) < 1400 and m.get("w", 0) >= 320), None)
+    hi = None if hv else next((m for m in sorted(media, key=lambda x: x.get("top", 0)) if m["kind"] == "image" and m.get("top", 0) < 1100 and m.get("w", 0) >= 700), None)
+    s0 = secs[0] if secs else {}
+    ck = [dict(title=sentence(i["title"], names=True)) for i in s0.get("items", []) if i.get("title") and len(i["title"]) <= 44][:3]
     if hv:  # o vídeo do hero do próprio site abre o reel
         scenes = [dict(layout="site-video", kicker="", title=hl(h1), subtitle=sub, photos=[hv["file"]], photo_meta=[dict(loop=True)])]
+    elif hi:  # a foto real do hero, com benefícios e botão como na tela do site
+        scenes = [dict(layout="site-cover", title=hl(h1), subtitle=sub, items=ck, cta=sentence(cta), photos=[hi["file"]])]
     else:
         scenes = [dict(layout="site-hero", kicker="", title=hl(h1), subtitle=sub, cta=sentence(cta), **tone)]
     body = []
-    used = {hv["file"]} if hv else set()
+    used = {m["file"] for m in (hv, hi) if m}
 
     def mine(head, kinds):
         h = (head or "")[:50].lower()
@@ -347,6 +354,12 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
                 used.add(im["file"])
                 body.append(dict(layout="site-showcase", kicker=sentence(head)[:26] if len(head) <= 26 else "", title=hl(sentence(it["title"], names=True)),
                                  subtitle=sentence(it.get("text", "")), photos=[im["file"]], _p=4))
+            continue
+        if len(imgs) >= 2 and len(its) < 2 and not s.get("quotes"):  # galeria sem textos: uma vitrine por imagem, com o título da seção
+            for im in imgs[:2]:
+                used.add(im["file"])
+                body.append(dict(layout="site-showcase", kicker="", title=hl(head), subtitle=sentence(im.get("alt", "")) if len(im.get("alt", "")) > 8 else "",
+                                 photos=[im["file"]], _p=3))
             continue
         if vids and not s.get("quotes"):
             for v in vids[:2]:
@@ -422,7 +435,7 @@ def pick_clima(brand: dict, media: list | None, url: str = "") -> dict:
     return dict(clima=clima, music=music, transition=trans, pace=pace, sfx=sfx, key=key)
 
 
-def harvest_media(ctx, pg, out: Path, log=print) -> list:
+def harvest_media(ctx, pg, out: Path, log=print, tag: str = "", seen: set | None = None) -> list:
     """Baixa vídeos, imagens e ícones do próprio site (pasta `midia/`). Tudo é material real da marca."""
     import io
     from urllib.parse import urlparse
@@ -433,7 +446,8 @@ def harvest_media(ctx, pg, out: Path, log=print) -> list:
     except Exception as e:  # noqa
         log(f"! mídia do site não lida ({type(e).__name__})")
         return []
-    res, seen = [], set()
+    res = []
+    seen = set() if seen is None else seen
     lim = {"video": 6, "image": 14, "icon": 10, "svg": 10}
     cnt = {k: 0 for k in lim}
     for m in sorted(raw, key=lambda x: x["top"]):
@@ -443,7 +457,7 @@ def harvest_media(ctx, pg, out: Path, log=print) -> list:
         try:
             if k == "svg":
                 el = pg.query_selector(f'[data-sr-ico="{m["idx"]}"]')
-                name = f"icone-{cnt[k] + 1:02d}.png"
+                name = f"icone{tag}-{cnt[k] + 1:02d}.png"
                 el.screenshot(path=str(d / name), omit_background=True)
             else:
                 src = m["src"]
@@ -469,13 +483,13 @@ def harvest_media(ctx, pg, out: Path, log=print) -> list:
                             continue
                     except Exception:  # noqa
                         continue
-                name = f"{ {'video': 'video', 'image': 'img', 'icon': 'icone-img'}[k] }-{cnt[k] + 1:02d}{ext}"
+                name = f"{ {'video': 'video', 'image': 'img', 'icon': 'icone-img'}[k] }{tag}-{cnt[k] + 1:02d}{ext}"
                 (d / name).write_bytes(body)
                 if k == "video" and m.get("poster"):
                     try:
                         pr = ctx.request.get(m["poster"], timeout=20000)
                         if pr.ok:
-                            pn = f"video-{cnt[k] + 1:02d}-poster.png"
+                            pn = f"video{tag}-{cnt[k] + 1:02d}-poster.png"
                             (d / pn).write_bytes(pr.body())
                             m["poster_file"] = f"midia/{pn}"
                     except Exception:  # noqa
@@ -488,21 +502,87 @@ def harvest_media(ctx, pg, out: Path, log=print) -> list:
     return res
 
 
+UA_DESK = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+UA_MOB = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+STEALTH = ("Object.defineProperty(navigator,'webdriver',{get:()=>undefined});window.chrome=window.chrome||{runtime:{}};"
+           "Object.defineProperty(navigator,'languages',{get:()=>['pt-BR','pt','en-US','en']});")
+BLOCK_RE = re.compile(r"hubo un error|ocorreu um erro|erro ao (acessar|carregar)|error accediendo|access denied|acesso negado|forbidden|captcha|"
+                      r"are you (a )?(robot|human)|verificando se voc|unusual traffic|just a moment|attention required|pardon our interruption|"
+                      r"request (was )?blocked|something went wrong|p[aá]gina n[aã]o encontrada|page not found|service unavailable|\b40[134]\b|\b50[023]\b", re.I)
+
+
+def blocked_reason(d: dict | None) -> str:
+    """Vazio se a página parece real; senão, o motivo (página de erro/bloqueio, sem título, sem seções)."""
+    if not d:
+        return "sem dados"
+    head = f"{d.get('title', '')} {d.get('h1', '')}"
+    body = d.get("bodyText", "") or ""
+    if BLOCK_RE.search(head):
+        return f"título/h1 de erro: «{head.strip()[:80]}»"
+    if len(body) < 1200 and BLOCK_RE.search(body):
+        return f"texto de erro na página: «{body[:90]}»"
+    if not (d.get("title") or d.get("h1")):
+        return "sem título nem h1"
+    if not [x for x in d.get("sections", []) if x.get("heading") or x.get("items")]:
+        return "nenhuma seção com título"
+    return ""
+
+
+def assign_heads(media: list, sections: list):
+    """Cada mídia herda o título da seção em que está (pela posição na MESMA página em que foi colhida)."""
+    for m in media:
+        t = m.get("top", 0)
+        for s in sections:
+            if s.get("heading") and s["top"] - 4 <= t < s["top"] + s["height"]:
+                m["head"] = s["heading"][:90]
+                m["sec"] = int(s["top"])
+                break
+
+
+def _logo(ctx, pg, data, out: Path, log) -> str | None:
+    if not data.get("hasLogo"):
+        return None
+    got = False
+    src = data.get("logoSrc") or ""
+    if src and not src.startswith("data:") and not src.lower().split("?")[0].endswith(".svg"):
+        try:  # arquivo original (PNG/JPG/WebP com transparência), não um print do cabeçalho
+            rsp = ctx.request.get(src, timeout=20000)
+            if rsp.ok:
+                from PIL import Image
+                import io
+                Image.open(io.BytesIO(rsp.body())).convert("RGBA").save(out / "logo.png")
+                got = True
+        except Exception as e:  # noqa
+            log(f"! logo original não baixou ({type(e).__name__}); uso a captura")
+    if not got:
+        try:
+            el = pg.query_selector("[data-sr-logo]")
+            el.screenshot(path=str(out / "logo.png"), omit_background=True)
+            got = True
+        except Exception as e:  # noqa
+            log(f"! logo não capturado: {type(e).__name__}")
+    return "logo.png" if got else None
+
+
 def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
-    """Abre o site, extrai os dados e grava telas/logo em `out`. Retorna dict com data, brand, shots, logo."""
+    """Abre o site, extrai os dados e grava telas/logo em `out`. Retorna dict com data, brand, shots, logo.
+    Se a página desktop vier bloqueada/erro (ex.: Chrome headless barrado), usa a versão celular para TUDO
+    (textos, cores, fontes, mídia). Se as duas vierem bloqueadas, para com erro claro: nada de reel genérico."""
     from playwright.sync_api import sync_playwright
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     if not re.match(r"^https?://", url):
         url = "https://" + url
     pw = sync_playwright().start()
-    kw = dict(args=["--no-sandbox", "--force-color-profile=srgb"])
+    kw = dict(args=["--no-sandbox", "--force-color-profile=srgb", "--disable-blink-features=AutomationControlled"])
     cp = core._chrome_path()
     if cp:
         kw["executable_path"] = cp
     br = pw.chromium.launch(**kw)
+    common = dict(locale="pt-BR", timezone_id="America/Fortaleza", extra_http_headers={"Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8"})
 
     def open_page(ctx):
+        ctx.add_init_script(STEALTH)
         pg = ctx.new_page()
         pg.goto(url, wait_until="load", timeout=60000)
         try:
@@ -523,46 +603,53 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         return pg
 
     res: dict = {"url": url}
+    warnings: list[str] = []
+    seen: set = set()
     try:
-        ctx = br.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=1)
+        # ---- desktop (UA de Chrome de verdade; o padrão do headless diz "HeadlessChrome" e muitos sites barram)
+        ctx = br.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=1, user_agent=UA_DESK, **common)
         pg = open_page(ctx)
         data = pg.evaluate(JS_EXTRACT)
-        data["media"] = harvest_media(ctx, pg, out, log)
-        logo = None
-        if data.get("hasLogo"):
-            got = False
-            src = data.get("logoSrc") or ""
-            if src and not src.startswith("data:") and not src.lower().split("?")[0].endswith(".svg"):
-                try:  # arquivo original (PNG/JPG/WebP com transparência), não um print do cabeçalho
-                    rsp = ctx.request.get(src, timeout=20000)
-                    if rsp.ok:
-                        from PIL import Image
-                        import io
-                        Image.open(io.BytesIO(rsp.body())).convert("RGBA").save(out / "logo.png")
-                        got = True
-                except Exception as e:  # noqa
-                    log(f"! logo original não baixou ({type(e).__name__}); uso a captura")
-            if not got:
-                try:
-                    el = pg.query_selector("[data-sr-logo]")
-                    el.screenshot(path=str(out / "logo.png"), omit_background=True)
-                    got = True
-                except Exception as e:  # noqa
-                    log(f"! logo não capturado: {type(e).__name__}")
-            if got:
-                logo = "logo.png"
-        try:
-            pg.screenshot(path=str(out / "site-desktop.png"), full_page=True)
-        except Exception:  # noqa
-            pg.screenshot(path=str(out / "site-desktop.png"))
-        ctx.close()
-        # celular: telas 9:16 do site, 1080 px de largura
-        ctx = br.new_context(viewport={"width": 390, "height": 693}, device_scale_factor=1080 / 390, is_mobile=True, has_touch=True,
-                             user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1")
+        why = blocked_reason(data)
+        media, logo = [], None
+        if why:
+            log(f"! desktop bloqueado/erro ({why}) → uso a versão celular do site para textos, cores, fontes e mídia")
+            warnings.append(f"desktop bloqueado: {why}")
+            try:
+                pg.screenshot(path=str(out / "site-desktop-BLOQUEADO.png"))
+            except Exception:  # noqa
+                pass
+            ctx.close()
+            data = None
+        else:
+            media = harvest_media(ctx, pg, out, log, seen=seen)
+            assign_heads(media, data["sections"])
+            logo = _logo(ctx, pg, data, out, log)
+            try:
+                pg.screenshot(path=str(out / "site-desktop.png"), full_page=True)
+            except Exception:  # noqa
+                pg.screenshot(path=str(out / "site-desktop.png"))
+            ctx.close()
+        # ---- celular: telas 9:16 do site, 1080 px de largura
+        ctx = br.new_context(viewport={"width": 390, "height": 693}, device_scale_factor=1080 / 390, is_mobile=True, has_touch=True, user_agent=UA_MOB, **common)
         pm = open_page(ctx)
         mdata = pm.evaluate(JS_EXTRACT)
+        mwhy = blocked_reason(mdata)
+        if data is None and mwhy:
+            raise RuntimeError(f"o site bloqueou a captura nas duas versões (desktop: {warnings[0][17:]}; celular: {mwhy}). "
+                               f"Abra no seu Chrome, salve a página, ou rode em outra rede. Nada foi gerado para não entregar reel genérico.")
+        if data is None:
+            data = mdata
+            logo = _logo(ctx, pm, mdata, out, log)
+        if mwhy:
+            warnings.append(f"celular bloqueado: {mwhy}")
+        mm = harvest_media(ctx, pm, out, log, tag="-m", seen=seen) if not mwhy else []
+        if mm:
+            assign_heads(mm, mdata["sections"])
+            have = {k: sum(1 for m in media if m["kind"] == k) for k in ("video", "image")}
+            media += [m for m in mm if m["kind"] in ("icon", "svg") or have.get(m["kind"], 0) < 3 or not media]
         total = mdata["height"]
-        ys = [0] + [int(s["top"]) for s in mdata["sections"] if s.get("heading") or s.get("items")]
+        ys = [0] + [int(x["top"]) for x in mdata["sections"] if x.get("heading") or x.get("items")]
         ys = [min(y, max(0, total - 693)) for y in ys]
         picked, last = [], -9999
         for y in ys:
@@ -576,15 +663,31 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
             n = f"tela-{i:02d}.png"
             pm.screenshot(path=str(out / n))
             names.append(n)
-        # fundo do hero sem textos (o reel põe o título por cima)
-        pm.evaluate("window.scrollTo(0,0)")
-        pm.add_style_tag(content="h1,h2,h3,h4,h5,h6,p,a,button,header,nav,span,li,blockquote,label,input{visibility:hidden!important}")
-        pm.wait_for_timeout(500)
-        pm.screenshot(path=str(out / "fundo-01.png"))
+        # fundo do hero: a imagem real do hero, se houver; senão a tela do hero sem textos
+        hero_bg = None
+        himg = next((m for m in sorted(media, key=lambda x: x.get("top", 0)) if m["kind"] == "image" and m.get("top", 0) < 1100 and m.get("w", 0) >= 700), None)
+        if himg:
+            try:
+                from PIL import Image
+                Image.open(out / himg["file"]).convert("RGB").save(out / "fundo-01.png")
+                hero_bg = "fundo-01.png"
+            except Exception:  # noqa
+                hero_bg = None
+        if not hero_bg:
+            pm.evaluate("window.scrollTo(0,0)")
+            pm.add_style_tag(content="h1,h2,h3,h4,h5,h6,p,a,button,header,nav,span,li,blockquote,label,input{visibility:hidden!important}")
+            pm.wait_for_timeout(500)
+            pm.screenshot(path=str(out / "fundo-01.png"))
+            hero_bg = "fundo-01.png"
         ctx.close()
     finally:
         br.close()
         pw.stop()
-    data["sections"] = mdata["sections"] if len(mdata["sections"]) >= len(data["sections"]) else data["sections"]
-    res.update(data=data, shots=names, logo=logo, hero_bg="fundo-01.png")
+    if len(mdata["sections"]) >= len(data["sections"]):
+        data["sections"] = mdata["sections"]
+    data["media"] = media
+    if not any(m["kind"] in ("video", "image") for m in media):
+        warnings.append("nenhuma foto/vídeo do site foi colhida (cenas ficarão só de texto)")
+    data["warnings"] = warnings
+    res.update(data=data, shots=names, logo=logo, hero_bg=hero_bg, warnings=warnings)
     return res

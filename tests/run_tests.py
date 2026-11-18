@@ -393,6 +393,53 @@ def _():
     assert "clima (Diretor de Movimento)" in o and "set:energetic" in o, o[-500:]
 
 
+@case("site que barra o desktop (página de erro) → usa o celular: textos, mídia e cenas reais, sem reel genérico")
+def _():
+    import http.server, socketserver, threading, functools
+    d = str(ROOT / "tests/fixtures/site-media")
+    ERR = b"<!doctype html><html><head><title>Mercado</title></head><body><h2>Hubo un error accediendo a esta pagina</h2><p>Intenta nuevamente.</p></body></html>"
+    class Q(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *a): pass
+        def do_GET(self):
+            if self.path in ("/", "/index.html") and "iPhone" not in self.headers.get("User-Agent", ""):
+                self.send_response(200); self.send_header("Content-Type", "text/html"); self.end_headers(); self.wfile.write(ERR); return
+            super().do_GET()
+    srv = socketserver.TCPServer(("127.0.0.1", 0), functools.partial(Q, directory=d))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    out = TMP / "site-blocked"
+    try:
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo")
+    finally:
+        srv.shutdown()
+    assert "desktop bloqueado" in o, o[-500:]
+    sj = json.loads((out / "site.json").read_text())
+    assert "milhões" in sj["h1"] and sj["sections"], sj["h1"]
+    sc = json.loads((out / "content.json").read_text())["scenes"]
+    lay = [x["layout"] for x in sc]
+    assert lay[0] in ("site-video", "site-cover") and "site-showcase" in lay and lay[-1] == "site-cta", lay
+    assert (out / "storyboard.md").exists() and "Avisos da captura" in (out / "storyboard.md").read_text()
+    assert len(list((out / "midia").glob("*"))) >= 4
+
+
+@case("site bloqueado nas duas versões → para com erro claro (nada de reel genérico)")
+def _():
+    import http.server, socketserver, threading, functools
+    ERR = b"<!doctype html><html><head><title>Error</title></head><body><h2>Access denied</h2></body></html>"
+    class Q(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a): pass
+        def do_GET(self):
+            self.send_response(200); self.send_header("Content-Type", "text/html"); self.end_headers(); self.wfile.write(ERR)
+    srv = socketserver.TCPServer(("127.0.0.1", 0), Q)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    out = TMP / "site-blocked2"
+    try:
+        r = sh(sys.executable, "studio.py", "site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out)
+    finally:
+        srv.shutdown()
+    assert r.returncode == 3 and "bloqueou a captura" in (r.stdout + r.stderr), (r.stdout + r.stderr)[-400:]
+    assert not (out / "content.json").exists()
+
+
 @case("portão dos agentes: bloqueia sem parecer, libera com parecer completo")
 def _():
     out = TMP / "gate" / "peca.png"

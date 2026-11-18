@@ -61,3 +61,14 @@ Rodar `python studio.py qa review reel.timeline.json --video reel.mp4`: gera `re
 - O **clima** (trilha, tom, transições, ritmo) é decidido por `site.pick_clima` a partir da marca e do material; `--clima` força outro.
 - Câmera 3D por cena (`--camera`), foco sequencial dos itens e ícones animados são determinísticos (`__seek(t)`).
 - O motion-designer escreve a lista de planos e passa o placar de crítica (8 critérios, 3 rodadas) antes do parecer.
+
+## v5.4 — Fidelidade ao site (reel feito a partir de URL)
+
+Regra: **o storyboard é o site**. Quem decide a identidade é o que foi capturado (`tela-NN.png`, `site.json`, `midia/`), nunca o modelo da casa.
+
+1. Antes de qualquer parecer, abrir `sheet_telas_do_site.png` e as folhas do reel lado a lado. Se o reel parece o mesmo template de outra marca com as cores trocadas → `refazer`.
+2. Checar a captura: `storyboard.md` → “Avisos da captura”. Título/h1 vazio, texto de erro (“Hubo un error…”), cor de erro como acento ou zero fotos/vídeos = **captura inválida**: refazer `studio.py site` (outra rede, ou fornecer a mídia), não produzir em cima.
+3. Cada cena do reel cita a seção/tela de origem. Cena sem origem no site (texto ou mídia inventada) é cortada.
+4. Mídia real primeiro: vídeo/foto do hero abre o reel; fotos dos cartões viram vitrine 3D; ícones do próprio site acendem/pingam; estatísticas do site viram números animados. Sem foto de banco quando o site tem a sua.
+5. Variar por marca, não por sorteio: clima (trilha, transições, ritmo), layouts e câmera saem do que o site é (cores, densidade de mídia, tom do texto). Dois sites diferentes não podem sair com a mesma sequência de layouts.
+6. O gate bloqueia automaticamente: captura sem título, aviso de captura sem mídia, reel que ignorou a mídia colhida. O parecer ainda precisa comparar visualmente com as telas.
