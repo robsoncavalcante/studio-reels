@@ -117,6 +117,21 @@ JS_EXTRACT = r"""() => {
 }"""
 
 
+JS_MEDIA = r"""() => {
+  const vis = e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && cs.display !== 'none'; };
+  const head = e => { const s = e.closest('section, [class*=section]'); const h = s && s.querySelector('h1,h2,h3'); return h ? (h.innerText || '').trim().slice(0, 90) : ''; };
+  const out = []; let n = 0;
+  document.querySelectorAll('video').forEach(v => { const src = v.currentSrc || v.src || ((v.querySelector('source') || {}).src); if (!src) return;
+    const r = v.getBoundingClientRect(); out.push({kind: 'video', src, poster: v.poster || '', w: r.width, h: r.height, top: r.top + scrollY, head: head(v)}); });
+  document.querySelectorAll('img').forEach(i => { const src = i.currentSrc || i.src; if (!src || src.startsWith('data:') || !i.naturalWidth || i.closest('header, footer, nav')) return;
+    const r = i.getBoundingClientRect(); const big = i.naturalWidth >= 420 && i.naturalHeight >= 200;
+    out.push({kind: big ? 'image' : 'icon', src, w: i.naturalWidth, h: i.naturalHeight, top: r.top + scrollY, alt: i.alt || '', head: head(i)}); });
+  document.querySelectorAll('svg').forEach(v => { if (!vis(v) || v.closest('header, footer, nav, button, a[class*=btn]')) return; const r = v.getBoundingClientRect();
+    if (r.width < 22 || r.width > 130 || r.height < 22 || r.height > 130) return; v.setAttribute('data-sr-ico', String(n)); out.push({kind: 'svg', idx: n, w: r.width, h: r.height, top: r.top + scrollY, head: head(v)}); n++; });
+  return out;
+}"""
+
+
 # ------------------------------------------------------------------ cores
 def _rgb(h: str):
     h = h.lstrip("#")
@@ -295,7 +310,7 @@ def _items(s: dict, n: int) -> list:
 
 
 def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_scenes: int = 7, hero_bg: str | None = None, *,
-                 handle_at: str = "", alt_theme: str | None = None, name: str = "", author: str = "") -> list:
+                 handle_at: str = "", alt_theme: str | None = None, name: str = "", author: str = "", media: list | None = None) -> list:
     """Cenas fiéis ao site: títulos e textos completos (nada cortado com «…»), números com rótulo, sem prints como foto.
     Texto longo ganha mais tempo de tela, nunca é cortado. Hero e CTA podem usar o tema alternativo (ex.: versão escura)."""
     from . import review
@@ -306,14 +321,45 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     desc = sentence(data.get("description") or "")
     sub = hero_sub or ("" if glued(data.get("description") or "") else desc)
     tone = {"theme": alt_theme} if alt_theme else {}
-    scenes = [dict(layout="site-hero", kicker="", title=hl(h1), subtitle=sub, cta=sentence(cta), **tone)]
+    media = media or []
+    hv = next((m for m in media if m["kind"] == "video" and m.get("top", 0) < 1400 and m.get("w", 0) >= 320), None)
+    if hv:  # o vídeo do hero do próprio site abre o reel
+        scenes = [dict(layout="site-video", kicker="", title=hl(h1), subtitle=sub, photos=[hv["file"]], photo_meta=[dict(loop=True)])]
+    else:
+        scenes = [dict(layout="site-hero", kicker="", title=hl(h1), subtitle=sub, cta=sentence(cta), **tone)]
     body = []
+    used = {hv["file"]} if hv else set()
+
+    def mine(head, kinds):
+        h = (head or "")[:50].lower()
+        return [m for m in media if m["kind"] in kinds and m["file"] not in used and (m.get("head") or "")
+                and ((m["head"].lower().startswith(h) and h) or (h.startswith(m["head"][:50].lower()) and m["head"]))]
+
     for s in secs:
         head = sentence(s.get("heading", ""))
         if not head or head == h1:
             continue
         stats = [x for x in s.get("stats", []) if re.search(r"\d", x.get("number", ""))]
         its = _items(s, 6)
+        imgs, vids, icos = mine(head, ("image",)), mine(head, ("video",)), mine(head, ("icon", "svg"))
+        if len(imgs) >= 2 and len(its) >= 2:
+            for im, it in list(zip(imgs, its))[:3]:
+                used.add(im["file"])
+                body.append(dict(layout="site-showcase", kicker=sentence(head)[:26] if len(head) <= 26 else "", title=hl(sentence(it["title"], names=True)),
+                                 subtitle=sentence(it.get("text", "")), photos=[im["file"]], _p=4))
+            continue
+        if vids and not s.get("quotes"):
+            for v in vids[:2]:
+                used.add(v["file"])
+                body.append(dict(layout="site-video", kicker="Na prática", title=hl(sentence(head)), subtitle="", photos=[v["file"]], photo_meta=[dict(loop=True)], _p=3))
+            continue
+        if len(its) >= 3 and len(icos) >= 3:
+            rows = []
+            for it, ic in zip(its[:4], icos):
+                used.add(ic["file"])
+                rows.append(dict(title=it["title"], text=_first(it.get("text", ""), 70), icon=ic["file"]))
+            body.append(dict(layout="site-icons", kicker="", title=hl(head), items=rows, _p=3))
+            continue
         if s.get("quotes"):
             body.append(dict(layout="testimonial", kicker="Clientes", quote=s["quotes"][0], author=author or "Cliente", role=name, rating=5, photos=[], _p=3))
         elif len(stats) >= 2 and not any(b["layout"] == "site-stats" for b in body):
@@ -332,7 +378,8 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     scenes.append(dict(layout="site-cta", kicker="Próximo passo", title=hl(sentence(cta)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
                        subtitle=short or sub, cta=sentence(cta), **tone))
     for k, sc in enumerate(scenes):
-        words = review.count_words({a: b for a, b in sc.items() if a not in ("layout", "photos", "dur", "theme")})
+        words = review.count_words({a: ([{x: y for x, y in i.items() if x != "icon"} for i in b] if a == "items" else b)
+                                    for a, b in sc.items() if a not in ("layout", "photos", "photo_meta", "dur", "theme")})
         sc["dur"] = round(min(6.5, max(3.0, review.need_seconds(words) + 0.4)), 1)
         if k == 0:
             sc["dur"] = max(3.6, min(sc["dur"], 5.0))
@@ -352,6 +399,95 @@ def _square(src: Path, dst: Path, pad: float = 0.18):
 
 
 # ------------------------------------------------------------------ captura
+CLIMAS = {  # clima → (trilha, conjunto de transições, ritmo, sfx)
+    "clean": ("corporate", "set:clean", "standard", "light"),
+    "energetic": ("pop", "set:energetic", "snappy", "full"),
+    "punch": ("hype", "set:punch", "hype", "full"),
+    "cinematic": ("cinematic", "set:cinematic", "calm", "light"),
+    "editorial": ("lofi", "set:editorial", "standard", "light"),
+}
+
+
+def pick_clima(brand: dict, media: list | None, url: str = "") -> dict:
+    """Decisão do Diretor de Movimento: clima, trilha, tonalidade e ritmo vêm da marca e do material, não de um padrão fixo."""
+    c = brand.get("colors", {})
+    acc = c.get("accent", "#888888")
+    sat = _saturated(acc)
+    has_v = any(m["kind"] == "video" for m in (media or []))
+    dark = _lum(c.get("bg", "#FFFFFF")) < .25
+    clima = "cinematic" if dark and not sat else ("energetic" if (sat or has_v) else "clean")
+    music, trans, pace, sfx = CLIMAS[clima]
+    keys = ["C", "D", "E", "F", "G", "A", "B"]
+    key = keys[sum(map(ord, _host(url) or "x")) % len(keys)]  # tom diferente por site: a trilha não repete sempre a mesma
+    return dict(clima=clima, music=music, transition=trans, pace=pace, sfx=sfx, key=key)
+
+
+def harvest_media(ctx, pg, out: Path, log=print) -> list:
+    """Baixa vídeos, imagens e ícones do próprio site (pasta `midia/`). Tudo é material real da marca."""
+    import io
+    from urllib.parse import urlparse
+    d = out / "midia"
+    d.mkdir(exist_ok=True)
+    try:
+        raw = pg.evaluate(JS_MEDIA)
+    except Exception as e:  # noqa
+        log(f"! mídia do site não lida ({type(e).__name__})")
+        return []
+    res, seen = [], set()
+    lim = {"video": 6, "image": 14, "icon": 10, "svg": 10}
+    cnt = {k: 0 for k in lim}
+    for m in sorted(raw, key=lambda x: x["top"]):
+        k = m["kind"]
+        if cnt[k] >= lim[k]:
+            continue
+        try:
+            if k == "svg":
+                el = pg.query_selector(f'[data-sr-ico="{m["idx"]}"]')
+                name = f"icone-{cnt[k] + 1:02d}.png"
+                el.screenshot(path=str(d / name), omit_background=True)
+            else:
+                src = m["src"]
+                if src in seen:
+                    continue
+                seen.add(src)
+                ext = Path(urlparse(src).path).suffix.lower() or (".mp4" if k == "video" else ".png")
+                if ext not in (".mp4", ".webm", ".mov", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"):
+                    ext = ".png"
+                if ext == ".svg":
+                    continue
+                rsp = ctx.request.get(src, timeout=45000)
+                if not rsp.ok:
+                    continue
+                body = rsp.body()
+                if k == "video" and len(body) > 45_000_000:
+                    continue
+                if k != "video":
+                    try:
+                        from PIL import Image
+                        im = Image.open(io.BytesIO(body))
+                        if im.format == "GIF" and getattr(im, "n_frames", 1) > 1:
+                            continue
+                    except Exception:  # noqa
+                        continue
+                name = f"{ {'video': 'video', 'image': 'img', 'icon': 'icone-img'}[k] }-{cnt[k] + 1:02d}{ext}"
+                (d / name).write_bytes(body)
+                if k == "video" and m.get("poster"):
+                    try:
+                        pr = ctx.request.get(m["poster"], timeout=20000)
+                        if pr.ok:
+                            pn = f"video-{cnt[k] + 1:02d}-poster.png"
+                            (d / pn).write_bytes(pr.body())
+                            m["poster_file"] = f"midia/{pn}"
+                    except Exception:  # noqa
+                        pass
+            cnt[k] += 1
+            res.append({**{a: b for a, b in m.items() if a not in ("src", "poster")}, "file": f"midia/{name}", "src": m.get("src", "")})
+        except Exception as e:  # noqa
+            log(f"! mídia ignorada ({k}): {type(e).__name__}")
+    log(f"  mídia do site: {cnt['video']} vídeo(s) · {cnt['image']} imagem(ns) · {cnt['icon'] + cnt['svg']} ícone(s)")
+    return res
+
+
 def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
     """Abre o site, extrai os dados e grava telas/logo em `out`. Retorna dict com data, brand, shots, logo."""
     from playwright.sync_api import sync_playwright
@@ -391,6 +527,7 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         ctx = br.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=1)
         pg = open_page(ctx)
         data = pg.evaluate(JS_EXTRACT)
+        data["media"] = harvest_media(ctx, pg, out, log)
         logo = None
         if data.get("hasLogo"):
             got = False

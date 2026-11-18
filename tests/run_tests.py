@@ -371,6 +371,28 @@ def _():
 
 
 
+@case("site com mídia → vídeo/imagens/ícones reais viram cenas 3D e clima decide trilha")
+def _():
+    import http.server, socketserver, threading, functools
+    d = str(ROOT / "tests/fixtures/site-media")
+    class Q(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *a): pass
+    srv = socketserver.TCPServer(("127.0.0.1", 0), functools.partial(Q, directory=d))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    out = TMP / "site-media"
+    try:
+        o = studio("site", f"http://127.0.0.1:{srv.server_address[1]}/", "--out", out, "--name", "Loja Demo")
+    finally:
+        srv.shutdown()
+    sc = json.loads((out / "content.json").read_text())["scenes"]
+    lay = [x["layout"] for x in sc]
+    assert lay[0] == "site-video" and "site-showcase" in lay and "site-icons" in lay and lay[-1] == "site-cta", lay
+    assert (out / "midia" / "video-01.mp4").exists() and len(list((out / "midia").glob("img-*.png"))) == 3
+    ic = next(x for x in sc if x["layout"] == "site-icons")
+    assert all(i.get("icon") and (out / i["icon"]).exists() for i in ic["items"]), ic
+    assert "clima (Diretor de Movimento)" in o and "set:energetic" in o, o[-500:]
+
+
 @case("portão dos agentes: bloqueia sem parecer, libera com parecer completo")
 def _():
     out = TMP / "gate" / "peca.png"

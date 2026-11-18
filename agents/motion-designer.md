@@ -29,3 +29,17 @@ Riscos: …
 - **Grade de batida** calculada pelo índice (`motion.beat_times`), nunca somando passo arredondado. Corte na batida; muda o layout na frase.
 - **Ritmo por contraste**: montagem corta a cada 0.13–0.8 s; demonstração segura um enquadramento 7–10 s; planos médios de 1.8–3 s com movimento dentro; segure 0.3–0.75 s antes do payoff.
 - **Cara de gerado** (revisar antes de entregar): ver `engine.motion.TELLS`.
+
+## Diretor de Movimento (v5.2) — o que decidir ANTES de renderizar
+Inspirado em motion-director (abdullatif06), motion-effects (charlie947) e open-design. Escreva no `thread.md` uma **lista de planos** (uma linha por cena): `tempo → o que o espectador entende → objeto em foco → transformação → áudio → saída`.
+1. **Material real primeiro.** Vídeo, imagem e ícone do próprio site entram antes de qualquer print chapado (`midia/`). Print só quando não há mídia. Nunca redesenhar UI, nunca inventar número.
+2. **Um objeto muda de forma**, em vez de elementos que aparecem: ícone vira cartão, cartão vira lista. Deixe o *fantasma* do estado inicial atrás (cartões-fantasma do `site-showcase`).
+3. **Câmera = uma transformação por cena** (`--camera push|orbit|drift|dolly`). Hero entra em push, listas em órbita, CTA em dolly. Câmera segue o item em foco; nada de zoom que corta texto.
+4. **Foco um a um** (`data-focus`): em listas/ícones/estatísticas, cada item recebe o foco no tempo da cena (inclina, avança, brilha; os outros escurecem). Ícones pulsam (anel de ping) e "pingam" ao entrar.
+5. **Gancho em 2 s com palavras**; algo novo a cada 2–4 s; nenhuma retenção maior que 1,5 batida sem movimento vivo.
+6. **Transições são objetos** (conjuntos `set:energetic|punch|clean|…`), escolhidas pelo clima da marca (`site.pick_clima`): nunca o mesmo conjunto/trilha/tom em todo vídeo.
+7. **Som tem causa**: todo SFX cai num evento visível (entrada do vídeo, foco do item, transição). Trilha escolhida pelo clima; tom varia por site.
+8. **Proibido (cara de IA):** título centralizado em degradê, tudo em fade-in, brilho neon em interface, partículas genéricas, 3D só por enfeite, borda de moldura/rótulos de canto, "01 · PASSO", bipes sintéticos.
+
+### Placar de crítica (nota 1–10; só entrega com 8+ em todos, mínimo 3 rodadas)
+Gancho · Legibilidade (360 px de largura) · Qualidade de movimento · Variedade · Composição · Verdade (material real) · Sincronia de som · Marca. Liste os **3 piores problemas** com tempo e *resultado desejado*, corrija só esses, refaça, registre a rodada. Termine a entrega com **"O que eu ainda mudaria"** (inclua: "ouça a mixagem; as ferramentas não ouvem").

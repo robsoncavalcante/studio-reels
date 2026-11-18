@@ -339,7 +339,7 @@ def cmd_site(a):
         except Exception as e:  # noqa
             print(f"  ! avatar da logo não gerado ({type(e).__name__})")
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
-    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=a.cenas, handle_at=handle, alt_theme=alt, name=name)
+    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"))
     (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description")),
                                               ensure_ascii=False, indent=1), encoding="utf-8")
@@ -371,7 +371,12 @@ def cmd_site(a):
     cmd = [sys.executable, str(ROOT / "studio.py"), "reel", "--content", str(out / "content.json"), "--brand", str(out / "brand.json"),
            "--theme", theme, "--format", "reel", "--out", str(out / "reel.mp4")]
     cmd += ["--preview"] if a.rascunho else []
-    cmd += ["--music", a.music or "corporate", "--sfx", "light", "--kenburns", "drift", "--count-up"]
+    cl = site.pick_clima(b, data.get("media"), res["url"])
+    if a.clima:
+        cl = {**cl, **dict(zip(("music", "transition", "pace", "sfx"), site.CLIMAS[a.clima])), "clima": a.clima}
+    print(f"  clima (Diretor de Movimento): {cl['clima']} · trilha {a.music or cl['music']} em {cl['key']} · transições {cl['transition']} · ritmo {cl['pace']}")
+    cmd += ["--music", a.music or cl["music"], "--key", cl["key"], "--sfx", cl["sfx"], "--transition", cl["transition"], "--pace", cl["pace"],
+            "--kenburns", "drift", "--count-up"]
     if a.render:
         r = subprocess.run(cmd)
         print(("✓ reel: " + str(out / "reel.mp4")) if r.returncode == 0 else "✗ o render falhou (veja acima)")
@@ -1137,6 +1142,7 @@ def main():
     p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
     p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
     p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
+    p.add_argument("--clima", choices=["clean", "energetic", "punch", "cinematic", "editorial"], help="força o clima (trilha/transições/ritmo); padrão: decidido pela marca e pelo material")
     p.add_argument("--theme", help="brand-dark|brand-light|brand-vivid (padrão: pelo fundo do site) ou o tema do design system da marca")
     p.add_argument("--brand", help="usa a identidade cadastrada em library/brands (ex.: criative) em vez das cores extraídas")
     p.add_argument("--handle", help="@ do Instagram da marca para a assinatura final")

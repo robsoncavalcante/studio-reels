@@ -10,3 +10,13 @@
   transform:translateX(calc((var(--sw) - .5) * 190%));opacity:calc(var(--fo) * .9)}
 .reel .cards[data-focus]>.item{box-shadow:inset 0 0 0 calc(.35cqw * var(--fo)) color-mix(in srgb,var(--accent) calc(var(--fo) * 100%),transparent)}
 .reel .dc.under,.reel .bgph{will-change:translate}
+/* ícones: anéis de pulso e brilho (CSS infinito; __seek posiciona no tempo certo) */
+@keyframes icon-ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes kf-icon-pop{0%{opacity:0;transform:scale(.2) rotate(-25deg)}55%{opacity:1;transform:scale(1.18) rotate(6deg)}78%{transform:scale(.94) rotate(-2deg)}100%{opacity:1;transform:none}}
+.reel .L-site-icons .bub{animation:kf-icon-pop .7s var(--ez-out-back,cubic-bezier(.34,1.56,.64,1)) both;animation-delay:calc(var(--bd,.15s) + var(--i,0) * var(--stg,.14s) + .12s)}
+.reel [data-focus]>.item.ic .bub{box-shadow:0 0 calc(5cqw * var(--fo)) calc(.8cqw * var(--fo)) color-mix(in srgb,var(--accent) 70%,transparent)}
+.reel .L-site-showcase .card.main{animation:kf-card3d .9s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--bd,.15s) + .2s)}
+.reel .L-site-showcase .g1{animation:kf-ghost 1s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--bd,.15s) + .05s)}
+.reel .L-site-showcase .g2{animation:kf-ghost 1s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--bd,.15s))}
+@keyframes kf-card3d{from{opacity:0;transform:translateY(14cqw) scale(.9)}to{opacity:1;transform:none}}
+@keyframes kf-ghost{from{opacity:0;transform:translateX(-10cqw)}to{opacity:var(--go,1);transform:none}}

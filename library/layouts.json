@@ -1344,5 +1344,81 @@
    "cta": "Agende uma visita",
    "handle": "@marca"
   }
+ },
+ {
+  "id": "site-video",
+  "name": "Site · vídeo/foto em tela cheia",
+  "photos": 1,
+  "desc": "Vídeo (ou foto) do próprio site em tela cheia com título na base.",
+  "sample": {
+   "kicker": "Do site",
+   "title": "Venda para *milhões*",
+   "subtitle": "Mídia real do site."
+  },
+  "kind": "site",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ]
+ },
+ {
+  "id": "site-showcase",
+  "name": "Site · vitrine 3D",
+  "photos": 1,
+  "desc": "Imagem/vídeo do site em cartão 3D inclinado com cartões-fantasma atrás.",
+  "sample": {
+   "kicker": "Vantagem",
+   "title": "Loja *grátis* por 3 meses",
+   "subtitle": "Mídia real do site."
+  },
+  "kind": "site",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ]
+ },
+ {
+  "id": "site-icons",
+  "name": "Site · ícones com pulso",
+  "photos": 0,
+  "desc": "Lista de benefícios com ícones do site que pulsam; o foco passa um a um.",
+  "sample": {
+   "kicker": "Benefícios",
+   "title": "Tudo para *vender*",
+   "items": [
+    {
+     "title": "Anuncie grátis",
+     "text": "Do zero"
+    },
+    {
+     "title": "Envios",
+     "text": "Mais rápidos"
+    },
+    {
+     "title": "Pagamentos",
+     "text": "Seguros"
+    }
+   ]
+  },
+  "kind": "site",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "cover",
+   "body"
+  ]
  }
 ]

@@ -54,3 +54,10 @@ Nenhuma nota de 0 a 10: uma nota que só dá número não aponta o que consertar
 - **P1** enfraquece (trecho parado, payoff mole, emenda que pula) — corrigir os que valem o tempo.
 - **P2** acabamento.
 Rodar `python studio.py qa review reel.timeline.json --video reel.mp4`: gera `revisao/` com as folhas de contato (cenas, cortes, celular 360 px) e o `REVIEW.md` com as medições (leitura mínima, trecho parado > 3 s, primeiro quadro preto, última cena curta). Depois da medição, o Diretor de Arte descreve cada quadro de beat como um estranho, uma frase por quadro; objeto que precisa de explicação é P0. Corrigir texto primeiro, depois tempo, depois detalhe; refazer a folha só do que mudou, uma vez.
+
+
+## v5.2 — Diretor de Movimento e material real do site
+- `studio.py site <url>` agora baixa **vídeos, imagens e ícones** do site (`midia/`) e monta cenas `site-video`, `site-showcase` (vitrine 3D) e `site-icons` (ícones que pulsam, foco um a um).
+- O **clima** (trilha, tom, transições, ritmo) é decidido por `site.pick_clima` a partir da marca e do material; `--clima` força outro.
+- Câmera 3D por cena (`--camera`), foco sequencial dos itens e ícones animados são determinísticos (`__seek(t)`).
+- O motion-designer escreve a lista de planos e passa o placar de crítica (8 critérios, 3 rodadas) antes do parecer.

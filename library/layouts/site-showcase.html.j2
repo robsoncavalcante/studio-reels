@@ -1,0 +1,23 @@
+<style>
+.L-site-showcase *{hyphens:manual!important;-webkit-hyphens:manual!important;overflow-wrap:normal!important;word-break:normal!important}
+.L-site-showcase .pad{justify-content:center;gap:5cqw}
+.canvas.fmt-reel.L-site-showcase .pad,.canvas.fmt-story.L-site-showcase .pad{padding-top:24cqw;padding-bottom:28cqw}
+.L-site-showcase .chip{align-self:flex-start;display:inline-flex;align-items:center;gap:2cqw;font-family:var(--font-body),Inter;font-size:3cqw;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.L-site-showcase .chip i{width:2.3cqw;height:2.3cqw;border-radius:50%;background:var(--accent);display:block;box-shadow:0 0 0 1.1cqw color-mix(in srgb,var(--accent) 24%,transparent)}
+.L-site-showcase .stage{position:relative;flex:1 1 0;min-height:0;perspective:120cqw;perspective-origin:50% 40%}
+.L-site-showcase .card{position:absolute;inset:0;border-radius:var(--card-radius);overflow:hidden;background:var(--surface);box-shadow:0 3cqw 7cqw rgba(0,0,0,.22),0 0 0 .25cqw var(--line)}
+.L-site-showcase .card .photo{position:absolute!important;inset:0;border-radius:0;border:0;box-shadow:none}
+.L-site-showcase .card img,.L-site-showcase .card video{width:100%;height:100%;object-fit:cover}
+.L-site-showcase .g1,.L-site-showcase .g2{background:var(--accent);opacity:.18;box-shadow:none}
+.L-site-showcase .g1{translate:4cqw 3.4cqw -6cqw;rotate:0 1 0 -9deg}
+.L-site-showcase .g2{translate:8cqw 6.8cqw -12cqw;rotate:0 1 0 -9deg;opacity:.1}
+.L-site-showcase .main{rotate:0 1 0 -9deg;translate:0 0 2cqw}
+.L-site-showcase .t{font-size:8.4cqw;line-height:1;flex:0 1 auto;max-height:22cqh;min-height:0}
+.L-site-showcase .s{font-size:3.8cqw;line-height:1.36;color:var(--muted)}
+</style>
+<div class="pad col">
+  {% if c.kicker %}<div class="chip"><i></i>{{ c.kicker }}</div>{% endif %}
+  <div class="stage"><div class="card g2 item"></div><div class="card g1 item"></div><div class="card main item">{{ photo(0,'flat') }}</div></div>
+  <div class="t fit">{{ rich(c.title) }}</div>
+  {% if c.subtitle %}<div class="s">{{ c.subtitle }}</div>{% endif %}
+</div>
