@@ -165,6 +165,13 @@ def resolve_theme(theme_id: str, brand: dict | None = None) -> dict:
             t["font_display"] = brand["font_display"]
         if brand.get("font_body"):
             t["font_body"] = brand["font_body"]
+    if theme_id == "brand-accent":  # fundo na cor forte do próprio site (ex.: amarelo do rodapé); texto escuro/claro conforme o contraste
+        from .color import contrast as _ct, hex_rgb as _hx, rgb_hex as _rh
+        _mx = lambda a, b, k: _rh(*[round(x + (y - x) * k) for x, y in zip(_hx(a), _hx(b))])
+        bgc = colors.get("cta_bg") or colors.get("accent2") or colors.get("accent") or t["bg"]
+        ink = "#111111" if _ct(bgc, "#111111") >= _ct(bgc, "#FFFFFF") else "#FFFFFF"
+        ac = colors.get("accent") or ink
+        t.update(bg=bgc, bg2=bgc, fg=ink, muted=_mx(bgc, ink, 0.62), accent=ac if _ct(ac, bgc) >= 3 else ink, accent2=ink)
     st = brand.get("style") or {}
     if t.get("brand") or brand.get("override_theme"):
         for k in ("dw", "dcase", "dls", "dlh", "card_radius", "btn_radius", "ph_radius"):
@@ -295,12 +302,13 @@ def normalize_content(content: dict, base_dir: Path | None) -> dict:
         c["body"] = c["text"]
     metas = []
     plist = []
-    for p in (c.get("photos") or []):
+    given = [m if isinstance(m, dict) else {} for m in (c.get("photo_meta") or [])]
+    for n_, p in enumerate(c.get("photos") or []):
         if isinstance(p, dict):  # clipe: {"src","start","dur","speed","volume","loop"}
             metas.append({k: v for k, v in p.items() if k != "src"})
             plist.append(resolve_media(p.get("src"), base_dir))
         else:
-            metas.append({})
+            metas.append(dict(given[n_]) if n_ < len(given) else {})
             plist.append(resolve_media(p, base_dir))
     c["photos"] = plist
     c["photo_meta"] = metas
@@ -803,15 +811,20 @@ def _ffmpeg():
     return p
 
 
-def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: int, out: Path, fast: bool = False):
+def capture_scene(r: Renderer, html: str, w: int, h: int, seconds: float, fps: int, out: Path, fast: bool = False, blur: int = 1):
+    """blur>1: motion blur real — captura `blur` subquadros por quadro e o ffmpeg mistura (obturador de 360°). Só o que se move borra."""
     pg = r.load(html, w, h)
     n = max(1, int(round(seconds * fps)))
-    cmd = [_ffmpeg(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(fps), "-c:v", "mjpeg", "-i", "-",
+    k = max(1, min(6, int(blur or 1)))
+    vf = []
+    if k > 1:
+        vf = ["-vf", f"tmix=frames={k}:weights='{' '.join(['1'] * k)}',select='eq(mod(n+1\\,{k})\\,0)',setpts=N/({fps}*TB)"]
+    cmd = [_ffmpeg(), "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(fps * k), "-c:v", "mjpeg", "-i", "-", *vf,
            *ffsetup.vcodec(fast, 17), "-r", str(fps), str(out)]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     try:
-        for i in range(n):
-            pg.evaluate("async t=>{await __seek(t);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}", i * 1000.0 / fps)
+        for i in range(n * k):
+            pg.evaluate("async t=>{await __seek(t);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}", i * 1000.0 / (fps * k))
             proc.stdin.write(pg.screenshot(type="jpeg", quality=94, clip={"x": 0, "y": 0, "width": w, "height": h}))
     finally:
         proc.stdin.close()
@@ -892,7 +905,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
                 sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
-                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False, cap_style=None, vocab=None, camera=None):
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False, cap_style=None, vocab=None, camera=None, blur=1):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -969,7 +982,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
             clip = tmpd / f"s{i}.mp4"
             if verbose:
                 print(f"  cena {i + 1}/{len(scenes)} · {s['layout']} · {seconds:.1f}s")
-            capture_scene(r, html, W, H, seconds, fps, clip, fast=preview)
+            capture_scene(r, html, W, H, seconds, fps, clip, fast=preview, blur=1 if preview else blur)
             clips.append(clip)
         total = sum(durs)
         starts = [sum(durs[:i]) for i in range(len(durs))]

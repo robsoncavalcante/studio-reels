@@ -1449,5 +1449,25 @@
   "roles": [
    "cover"
   ]
+ },
+ {
+  "id": "site-duo",
+  "name": "Site · duas fotos em 3D",
+  "photos": 2,
+  "desc": "Duas fotos reais do site em cartões 3D opostos, título único.",
+  "sample": {
+   "kicker": "",
+   "title": "Todas as soluções que seu negócio *precisa*",
+   "subtitle": ""
+  },
+  "kind": "site",
+  "tags": [
+   "site",
+   "marca",
+   "agência"
+  ],
+  "roles": [
+   "body"
+  ]
  }
 ]

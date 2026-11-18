@@ -440,6 +440,21 @@ def _():
     assert not (out / "content.json").exists()
 
 
+@case("vídeo de site com tarjas pretas gravadas → recorta; proporção da imagem chega ao cartão 3D; CTA usa a cor forte do site")
+def _():
+    from engine import site
+    v = TMP / "bars.mp4"
+    sh("ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i", "testsrc2=s=640x270:d=2:r=25", "-vf", "pad=640:360:0:45:black", "-pix_fmt", "yuv420p", v)
+    assert site.trim_bars(v, log=lambda *a: None)
+    pr = sh("ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=height", "-of", "csv=p=0", v)
+    assert int(pr.stdout.strip()) <= 290, pr.stdout
+    from engine import core
+    c = core.normalize_content(dict(photos=["a.png"], photo_meta=[dict(ar=2.1)]), TMP)
+    assert c["photo_meta"][0].get("ar") == 2.1, c["photo_meta"]
+    th = core.resolve_theme("brand-accent", dict(colors=dict(bg="#fff", fg="#000", accent="#3483FA", accent2="#FFE600", cta_bg="#FFE600")))
+    assert th["bg"].lower() == "#ffe600" and th["fg"] in ("#111111",), th["fg"]
+
+
 @case("portão dos agentes: bloqueia sem parecer, libera com parecer completo")
 def _():
     out = TMP / "gate" / "peca.png"

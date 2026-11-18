@@ -298,7 +298,7 @@ def site_fidelity(folder: Path, pages: list[dict], ad: Path) -> dict:
         if "nenhuma foto" in w:
             lvl = "blocker"
         iss.append(_issue(lvl, "captura-aviso", w, "cores, fontes e mídia precisam vir do site real; refazer a captura ou fornecer a mídia" if lvl == "blocker" else "conferir cores/fontes: vieram da versão celular"))
-    used = [str(p_) for pg_ in pages for p_ in ((pg_.get("content") or {}).get("photos") or [])]
+    used = [str(p_ if isinstance(p_, str) else p_.get('src', '')) for pg_ in pages for p_ in ((pg_.get("content") or {}).get("photos") or [])]
     icons = [i for pg_ in pages for i in ((pg_.get("content") or {}).get("items") or []) if isinstance(i, dict) and i.get("icon")]
     if d.get("media") and not used and not icons:
         iss.append(_issue("blocker", "reel-ignorou-midia", f"o site tem {len(d['media'])} mídia(s) colhida(s) e nenhuma entrou no reel", "usar foto/vídeo/ícones do site nas cenas (layouts site-cover/video/showcase/icons)"))

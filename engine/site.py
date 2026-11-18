@@ -311,8 +311,20 @@ def _items(s: dict, n: int) -> list:
     return out
 
 
+def _clip(m: dict):
+    """Vídeo com som real no site entra como clipe com volume (a mixagem abaixa a trilha); mudo continua string simples."""
+    return dict(src=m["file"], volume=0.9, loop=True) if m.get("sound") else m["file"]
+
+
+def _ar(m: dict) -> float:
+    try:
+        return round(max(0.4, min(3.0, float(m.get("w", 0)) / float(m.get("h", 1)))), 3) if m.get("w") and m.get("h") else 0.8
+    except Exception:  # noqa
+        return 0.8
+
+
 def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_scenes: int = 7, hero_bg: str | None = None, *,
-                 handle_at: str = "", alt_theme: str | None = None, name: str = "", author: str = "", media: list | None = None) -> list:
+                 handle_at: str = "", alt_theme: str | None = None, name: str = "", author: str = "", media: list | None = None, cta_bg: str | None = None) -> list:
     """Cenas fiéis ao site: títulos e textos completos (nada cortado com «…»), números com rótulo, sem prints como foto.
     Texto longo ganha mais tempo de tela, nunca é cortado. Hero e CTA podem usar o tema alternativo (ex.: versão escura)."""
     from . import review
@@ -329,7 +341,7 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     s0 = secs[0] if secs else {}
     ck = [dict(title=sentence(i["title"], names=True)) for i in s0.get("items", []) if i.get("title") and len(i["title"]) <= 44][:3]
     if hv:  # o vídeo do hero do próprio site abre o reel
-        scenes = [dict(layout="site-video", kicker="", title=hl(h1), subtitle=sub, photos=[hv["file"]], photo_meta=[dict(loop=True)])]
+        scenes = [dict(layout="site-video", kicker="", title=hl(h1), subtitle=sub, photos=[_clip(hv)], photo_meta=[dict(loop=True)])]
     elif hi:  # a foto real do hero, com benefícios e botão como na tela do site
         scenes = [dict(layout="site-cover", title=hl(h1), subtitle=sub, items=ck, cta=sentence(cta), photos=[hi["file"]])]
     else:
@@ -353,18 +365,23 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
             for im, it in list(zip(imgs, its))[:3]:
                 used.add(im["file"])
                 body.append(dict(layout="site-showcase", kicker=sentence(head)[:26] if len(head) <= 26 else "", title=hl(sentence(it["title"], names=True)),
-                                 subtitle=sentence(it.get("text", "")), photos=[im["file"]], _p=4))
+                                 subtitle=sentence(it.get("text", "")), photos=[im["file"]], photo_meta=[dict(ar=_ar(im))], _p=4))
             continue
-        if len(imgs) >= 2 and len(its) < 2 and not s.get("quotes"):  # galeria sem textos: uma vitrine por imagem, com o título da seção
-            for im in imgs[:2]:
+        if len(imgs) >= 2 and len(its) < 2 and not s.get("quotes"):  # galeria sem textos: duas fotos em 3D com o título da seção (uma cena só)
+            port = [m for m in imgs if _ar(m) < 1.3][:2]
+            if len(port) == 2:
+                for m in port:
+                    used.add(m["file"])
+                body.append(dict(layout="site-duo", kicker="", title=hl(head), subtitle="", photos=[m["file"] for m in port], _p=3))
+            else:
+                im = imgs[0]
                 used.add(im["file"])
-                body.append(dict(layout="site-showcase", kicker="", title=hl(head), subtitle=sentence(im.get("alt", "")) if len(im.get("alt", "")) > 8 else "",
-                                 photos=[im["file"]], _p=3))
+                body.append(dict(layout="site-showcase", kicker="", title=hl(head), subtitle="", photos=[im["file"]], photo_meta=[dict(ar=_ar(im))], _p=3))
             continue
         if vids and not s.get("quotes"):
-            for v in vids[:2]:
+            for v in vids[:1]:
                 used.add(v["file"])
-                body.append(dict(layout="site-video", kicker="Na prática", title=hl(sentence(head)), subtitle="", photos=[v["file"]], photo_meta=[dict(loop=True)], _p=3))
+                body.append(dict(layout="site-video", kicker="Na prática", title=hl(sentence(head)), subtitle="", photos=[_clip(v)], photo_meta=[dict(loop=True)], _p=3))
             continue
         if len(its) >= 3 and len(icos) >= 3:
             rows = []
@@ -389,7 +406,7 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
         scenes.append({k: v for k, v in body[i].items() if k != "_p"})
     short = hero_sub if len(hero_sub) <= 70 else (re.split(r"(?<=[.!?])\s", hero_sub)[0] if re.split(r"(?<=[.!?])\s", hero_sub)[0] else hero_sub)
     scenes.append(dict(layout="site-cta", kicker="Próximo passo", title=hl(sentence(cta)) if len(cta.split()) >= 3 else f"*{sentence(cta)}*",
-                       subtitle=short or sub, cta=sentence(cta), **tone))
+                       subtitle=short or sub, cta=sentence(cta), **({"theme": "brand-accent"} if cta_bg else tone)))
     for k, sc in enumerate(scenes):
         words = review.count_words({a: ([{x: y for x, y in i.items() if x != "icon"} for i in b] if a == "items" else b)
                                     for a, b in sc.items() if a not in ("layout", "photos", "photo_meta", "dur", "theme")})
@@ -433,6 +450,43 @@ def pick_clima(brand: dict, media: list | None, url: str = "") -> dict:
     keys = ["C", "D", "E", "F", "G", "A", "B"]
     key = keys[sum(map(ord, _host(url) or "x")) % len(keys)]  # tom diferente por site: a trilha não repete sempre a mesma
     return dict(clima=clima, music=music, transition=trans, pace=pace, sfx=sfx, key=key)
+
+
+def trim_bars(path: Path, log=print) -> bool:
+    """Vídeos de sites às vezes trazem tarjas pretas gravadas (letterbox). Detecta com ffmpeg e recorta o arquivo."""
+    import subprocess, collections
+    try:
+        r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-t", "6", "-vf", "cropdetect=24:2:0", "-f", "null", "-"], capture_output=True, text=True, timeout=90)
+        m = re.findall(r"crop=(\d+):(\d+):(\d+):(\d+)", r.stderr)
+        if not m:
+            return False
+        w, h, x, y = collections.Counter(m).most_common(1)[0][0]
+        w, h, x, y = int(w), int(h), int(x), int(y)
+        pr = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(path)], capture_output=True, text=True, timeout=30)
+        W, H = [int(v) for v in pr.stdout.strip().split(",")[:2]]
+        if h >= H * 0.95 and w >= W * 0.95:
+            return False
+        w, h = w - w % 2, h - h % 2
+        tmp = path.with_suffix(".trim.mp4")
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(path), "-vf", f"crop={w}:{h}:{x}:{y}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p", "-c:a", "copy", str(tmp)],
+                       check=True, timeout=240)
+        tmp.replace(path)
+        log(f"  tarjas pretas removidas de {path.name} ({W}x{H} → {w}x{h})")
+        return True
+    except Exception as e:  # noqa
+        log(f"! não consegui checar tarjas de {path.name} ({type(e).__name__})")
+        return False
+
+
+def has_sound(path: Path) -> bool:
+    """O vídeo do site tem som de verdade (fala/música)? Faixa muda (-91 dB) não conta."""
+    import subprocess
+    try:
+        r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-t", "20", "-af", "volumedetect", "-vn", "-f", "null", "-"], capture_output=True, text=True, timeout=60)
+        m = re.search(r"mean_volume: (-?[\d.]+) dB", r.stderr)
+        return bool(m) and float(m.group(1)) > -50
+    except Exception:  # noqa
+        return False
 
 
 def harvest_media(ctx, pg, out: Path, log=print, tag: str = "", seen: set | None = None) -> list:
@@ -485,6 +539,9 @@ def harvest_media(ctx, pg, out: Path, log=print, tag: str = "", seen: set | None
                         continue
                 name = f"{ {'video': 'video', 'image': 'img', 'icon': 'icone-img'}[k] }{tag}-{cnt[k] + 1:02d}{ext}"
                 (d / name).write_bytes(body)
+                if k == "video":
+                    trim_bars(d / name, log)
+                    m["sound"] = has_sound(d / name)
                 if k == "video" and m.get("poster"):
                     try:
                         pr = ctx.request.get(m["poster"], timeout=20000)
@@ -683,6 +740,15 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
     finally:
         br.close()
         pw.stop()
+    if not logo:  # logo não está no cabeçalho: usa a imagem larga (≥2,2:1) mais alta da página que pareça marca
+        cand = [m for m in media if m["kind"] == "icon" and m.get("w", 0) >= 300 and 2.2 <= m.get("w", 1) / max(1, m.get("h", 1)) <= 6]
+        if cand:
+            try:
+                from PIL import Image
+                Image.open(out / sorted(cand, key=lambda x: x.get("top", 0))[0]["file"]).convert("RGBA").save(out / "logo.png")
+                logo = "logo.png"
+            except Exception:  # noqa
+                pass
     if len(mdata["sections"]) >= len(data["sections"]):
         data["sections"] = mdata["sections"]
     data["media"] = media

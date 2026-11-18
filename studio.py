@@ -229,7 +229,7 @@ def cmd_reel(a):
     core.render_reel(scenes, a.theme, out, fmt=a.format, motion=motion, transition=transition, tdur=a.tdur, fps=a.fps,
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
                      pace=a.pace, speed=a.speed, stagger_scale=a.stagger_scale, intensity=a.intensity, ease=a.ease,
-                     kenburns=a.kenburns, camera=getattr(a,"camera",None), count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
+                     kenburns=a.kenburns, camera=getattr(a,"camera",None), blur=getattr(a, "blur", 1) or 1, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
                      voice=a.voice, voice_vol=a.voice_vol, duck=a.duck, fit_voice=a.fit_voice,
                      human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
                      words_file=a.words, transcribe=a.transcribe, exit=a.exit, preview=a.preview,
@@ -296,6 +296,17 @@ def cmd_entregar(a):
     return 0
 
 
+def _cta_bg(data, b):
+    """Se o rodapé/CTA do próprio site tem fundo de cor forte (ex.: amarelo do Mercado Livre), o CTA do reel usa essa cor."""
+    from engine import site as _s
+    last = [x for x in data.get("sections", []) if x.get("bg")]
+    for x in reversed(last[-2:]):
+        if _s._saturated(x["bg"]):
+            b["colors"]["cta_bg"] = x["bg"]
+            return x["bg"]
+    return None
+
+
 def cmd_site(a):
     from engine import site, logo as _logo
     from urllib.parse import urlparse
@@ -327,6 +338,9 @@ def cmd_site(a):
         brand = dict(name=name, handle=handle, colors=b["colors"], style=b.get("style", {}), font_display=b["font_display"], font_body=b["font_body"], source=res["url"])
         if res.get("logo"):
             brand["logo"] = res["logo"]
+    cb = _cta_bg(data, b)
+    if cb:
+        brand.setdefault("colors", {})["cta_bg"] = cb
     theme = a.theme or ("brand-dark" if b["dark"] else "brand-light")
     alt = None
     if theme in REG.themes:
@@ -343,7 +357,7 @@ def cmd_site(a):
         except Exception as e:  # noqa
             print(f"  ! avatar da logo não gerado ({type(e).__name__})")
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
-    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"))
+    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"), cta_bg=cb)
     (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description"), warnings=res.get("warnings", []), media=[{k: v for k, v in m.items() if k in ("kind", "file", "head", "top", "w", "h")} for m in data.get("media", [])]),
                                               ensure_ascii=False, indent=1), encoding="utf-8")
@@ -351,7 +365,7 @@ def cmd_site(a):
     sb += [f"- `{n}`" for n in res["shots"]]
     sb += ["", "## Cenas do reel ↔ origem no site", "| # | layout | título | mídia real usada |", "|---|---|---|---|"]
     for i, sc in enumerate(scenes, 1):
-        sb.append(f"| {i} | {sc['layout']} | {str(sc.get('title', '')).replace('|', '/')[:70]} | {', '.join(sc.get('photos') or [i.get('icon') for i in sc.get('items', []) if isinstance(i, dict) and i.get('icon')]) or '—'} |")
+        sb.append(f"| {i} | {sc['layout']} | {str(sc.get('title', '')).replace('|', '/')[:70]} | {', '.join([x if isinstance(x, str) else x.get('src', '') for x in (sc.get('photos') or [])] or [i.get('icon') for i in sc.get('items', []) if isinstance(i, dict) and i.get('icon')]) or '—'} |")
     sb += ["", "## Avisos da captura"] + ([f"- {w}" for w in res.get("warnings", [])] or ["- nenhum"])
     sb += ["", "Regra dos agentes: cada cena precisa corresponder a uma tela/seção acima; cor, fonte e mídia vêm do site. Se não, refazer."]
     (out / "storyboard.md").write_text("\n".join(sb), encoding="utf-8")
@@ -1009,6 +1023,7 @@ def main():
     p.add_argument("--kenburns", choices=["none", "zoom-in", "zoom-out", "pan-left", "pan-right", "pan-up", "pan-down", "drift"])
     p.add_argument("--count-up", action="store_true", dest="count_up", help="números contam de 0 até o valor")
     p.add_argument("--camera", choices=["none", "push", "orbit", "drift", "dolly"], help="câmera 3D por cena (padrão: por layout nas cenas do site; 'none' desliga)")
+    p.add_argument("--blur", type=int, default=1, help="motion blur real: subquadros por quadro (1 = desligado, 3 = recomendado; renderiza mais devagar)")
     p.add_argument("--sync", action="store_true", help="alinha movimento e transição ao --bpm")
     p.add_argument("--music", choices=["lofi", "house", "pop", "corporate", "cinematic", "hype", "ambient"], help="trilha original gerada localmente")
     p.add_argument("--sfx", choices=["light", "full"], help="efeitos sonoros: whoosh nas transições (+ pops e brilho no full)")

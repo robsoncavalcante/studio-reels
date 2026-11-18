@@ -1602,5 +1602,30 @@
   "brand": true,
   "ph_radius": "3.4cqw",
   "on_accent": "#111111"
+ },
+ {
+  "id": "brand-accent",
+  "name": "Marca · Cor de destaque",
+  "cats": [
+   "marca"
+  ],
+  "bg": "#ffffff",
+  "bg2": "#f3f4f6",
+  "fg": "#111111",
+  "accent": "#3b5bfd",
+  "accent2": "#111111",
+  "font_display": "Bricolage Grotesque",
+  "font_body": "DM Sans",
+  "dw": 800,
+  "dcase": "none",
+  "dls": "-.025em",
+  "dlh": 1.02,
+  "title_fx": "plain",
+  "decor": [],
+  "kind": "light",
+  "bg_kind": "linear",
+  "angle": "180deg",
+  "brand": true,
+  "ph_radius": "3cqw"
  }
 ]
