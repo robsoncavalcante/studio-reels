@@ -31,7 +31,7 @@ LINGUAGENS = {
     "editorial": dict(
         nome="Editorial", desc="capa de revista, molduras e respiro — para marcas com serifa, tom sóbrio ou de serviço premium",
         roles=dict(hero=["magazine-cover"], cover=["framed-photo", "arch-window"], showcase=["framed-photo", "arch-window"],
-                   duo=["collage-2"], list=["service-grid", "checklist"], stats=["big-number"], quote=["quote"], cta=["typographic", "cta-follow"]),
+                   duo=["collage-2"], list=["service-grid", "checklist", "step-process", "tips-list"], stats=["big-number"], quote=["quote"], cta=["typographic", "cta-follow"]),
         style=dict(dw=500, card_radius="1.2cqw", ph_radius="0.6cqw"), transition="set:editorial"),
     "modular": dict(
         nome="Modular / grade", desc="blocos, grade e passos numerados — para marcas de serviço com muitas ofertas e identidade sóbria",
@@ -66,7 +66,7 @@ def save_history(h: list) -> None:
 
 def signals(brand: dict, data: dict, media: list | None, scenes: list | None = None) -> dict:
     """Sinais objetivos do site que decidem a linguagem (todos entram no partido.json para auditoria)."""
-    from .site import _lum, _saturated
+    from .site import _lum, _saturated, _hls
     c = brand.get("colors", {})
     st = brand.get("style", {}) or {}
     fonts = " ".join(str(v) for v in ((data or {}).get("fonts") or {}).values())
@@ -74,7 +74,13 @@ def signals(brand: dict, data: dict, media: list | None, scenes: list | None = N
     n_img = sum(1 for m in media if m.get("kind") == "image")
     n_vid = sum(1 for m in media if m.get("kind") == "video")
     secs = [s for s in (data or {}).get("sections", []) if s.get("heading") or s.get("items")]
+    try:
+        _h_, _l_, _s_ = _hls(c.get("accent", "#888888"))
+        warm = bool(_saturated(c.get("accent", "#888888"))) and (_h_ < 68 or _h_ > 300)  # vermelho/laranja/amarelo/rosa; azul e verde frios não são "divertidos"
+    except Exception:  # noqa
+        warm = False
     return dict(
+        warm=warm,
         dark=_lum(c.get("bg", "#FFFFFF")) < 0.3,
         sat=bool(_saturated(c.get("accent", "#888888"))),
         serif=bool(SERIF.search(re.sub(r"sans-serif|-apple-system|system-ui", " ", fonts, flags=re.I))) and not SANS_HINT.search((data or {}).get("fonts", {}).get("h1", "") or ""),
@@ -176,8 +182,9 @@ def arquetipo(sig: dict, brand_key: str = "", forced: str | None = None, history
     s["premium"] += 2 if sig["serif"] else 0
     s["premium"] += 1.5 if (not sig["sat"] and not sig["heavy"] and not sig["upper"]) else 0
     s["premium"] += 1 if sig["media"] >= 5 else 0
-    s["playful"] += 2.5 if (sig["sat"] and sig["round_btn"] and not sig["dark"]) else 0
-    s["playful"] += 1 if sig["round_btn"] else 0
+    s["playful"] += 2.5 if (sig.get("warm") and sig["round_btn"] and not sig["dark"]) else 0
+    s["playful"] += 1 if (sig["round_btn"] and sig.get("warm")) else 0
+    s["premium"] += 2.5 if (sig["media"] >= 5 and not sig.get("warm") and not sig["upper"] and not sig["heavy"]) else 0
     s["energetic"] += 2 if (sig["upper"] or sig["heavy"]) else 0
     s["energetic"] += 1.5 if (sig["sat"] and sig["dark"]) else 0
     s["energetic"] += 1 if sig["videos"] >= 2 else 0

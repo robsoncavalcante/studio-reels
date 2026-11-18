@@ -427,6 +427,10 @@ def cmd_site(a):
     aq = pv["arquetipo"]
     print(f"  arquétipo de movimento: {aq['nome']} — {aq['desc']} ({aq['motivo'][:70]})")
     if not a.clima:
+        _c = dict(premium="cinematic" if site._lum(brand.get("colors", {}).get("bg", "#FFFFFF")) < .3 else "editorial", playful="energetic", corporate="clean", energetic="punch")[aq["id"]]
+        cl = {**cl, **dict(zip(("music", "transition", "pace", "sfx"), site.CLIMAS[_c])), "clima": _c}
+        if visual.LINGUAGENS[pv["linguagem"]]["transition"]:
+            cl["transition"] = visual.LINGUAGENS[pv["linguagem"]]["transition"]
         cl["pace"] = aq["pace"]
     print(f"  clima (Diretor de Movimento): {cl['clima']} · trilha {a.music or cl['music']} em {cl['key']} · transições {cl['transition']} · ritmo {cl['pace']}")
     cmd += ["--music", a.music or cl["music"], "--key", cl["key"], "--sfx", cl["sfx"], "--transition", cl["transition"], "--pace", cl["pace"],

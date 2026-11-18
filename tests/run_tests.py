@@ -432,8 +432,8 @@ def _():
 def _():
     from engine import visual, gate
     base = dict(dark=False, sat=False, serif=False, upper=False, heavy=False, round_btn=True, square_btn=False, media=8, videos=1, offers=0)
-    ml = dict(base, sat=True)
-    apple = dict(base)
+    ml = dict(base, sat=True, warm=True)
+    apple = dict(base, sat=True, media=30)
     energ = dict(base, upper=True, heavy=True, dark=True, sat=True, round_btn=False, videos=3)
     a1 = visual.arquetipo(apple, "apple", history=[])
     a2 = visual.arquetipo(ml, "ml", history=[])
@@ -500,7 +500,7 @@ def _():
     assert (out / "midia" / "video-01.mp4").exists() and len(list((out / "midia").glob("img-*.png"))) == 3
     ic = next(x for x in sc if x["layout"] == "site-icons")
     assert all(i.get("icon") and (out / i["icon"]).exists() for i in ic["items"]), ic
-    assert "clima (Diretor de Movimento)" in o and "set:energetic" in o, o[-500:]
+    assert "clima (Diretor de Movimento)" in o and "arquétipo de movimento" in o and "--ease" in o, o[-500:]
 
 
 @case("site que barra o desktop (página de erro) → usa o celular: textos, mídia e cenas reais, sem reel genérico")
