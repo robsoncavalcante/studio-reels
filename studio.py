@@ -229,7 +229,7 @@ def cmd_reel(a):
     core.render_reel(scenes, a.theme, out, fmt=a.format, motion=motion, transition=transition, tdur=a.tdur, fps=a.fps,
                      bpm=a.bpm, audio=a.audio, brand=brand, base_dir=base, sample=sample,
                      pace=a.pace, speed=a.speed, stagger_scale=a.stagger_scale, intensity=a.intensity, ease=a.ease,
-                     kenburns=a.kenburns, count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
+                     kenburns=a.kenburns, camera=getattr(a,"camera",None), count_up=a.count_up, sync=a.sync, music=a.music, sfx=a.sfx, key=a.key, music_vol=a.music_vol,
                      voice=a.voice, voice_vol=a.voice_vol, duck=a.duck, fit_voice=a.fit_voice,
                      human=a.human, parallax=a.parallax, highlight=a.highlight, captions=a.captions, stems=a.stems,
                      words_file=a.words, transcribe=a.transcribe, exit=a.exit, preview=a.preview,
@@ -989,6 +989,7 @@ def main():
     p.add_argument("--ease", help="easing (studio.py motion easings) ou cubic-bezier(...)")
     p.add_argument("--kenburns", choices=["none", "zoom-in", "zoom-out", "pan-left", "pan-right", "pan-up", "pan-down", "drift"])
     p.add_argument("--count-up", action="store_true", dest="count_up", help="números contam de 0 até o valor")
+    p.add_argument("--camera", choices=["none", "push", "orbit", "drift", "dolly"], help="câmera 3D por cena (padrão: por layout nas cenas do site; 'none' desliga)")
     p.add_argument("--sync", action="store_true", help="alinha movimento e transição ao --bpm")
     p.add_argument("--music", choices=["lofi", "house", "pop", "corporate", "cinematic", "hype", "ambient"], help="trilha original gerada localmente")
     p.add_argument("--sfx", choices=["light", "full"], help="efeitos sonoros: whoosh nas transições (+ pops e brilho no full)")

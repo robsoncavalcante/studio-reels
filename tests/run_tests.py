@@ -324,6 +324,23 @@ def _():
     assert .3 <= (m.overlap_start(0, 1, .9) - 0) <= .5 and len(m.TELLS) >= 6
 
 
+@case("câmera 3D + foco sequencial (determinístico)")
+def _():
+    from engine import core
+    items = [dict(title=f"Item {i}", text="descrição curta") for i in range(1, 5)]
+    html = core.page_html(core.slide_canvas("site-list", "criative-light", "reel", dict(kicker="K", title="Como *fazemos*", items=items),
+                                            reel=dict(motion="fade-up", scene_dur=5.0, camera="orbit", exit_at=4.5)), reel=True)
+    with core.Renderer(0.3) as r:
+        pg = r.load(html, 1080, 1920)
+        def probe(t):
+            pg.evaluate("async t=>{await __seek(t)}", t)
+            return pg.evaluate("()=>({tr:document.querySelector('.content').style.transform,fo:[...document.querySelectorAll('[data-focus]>.item')].map(e=>parseFloat(e.style.getPropertyValue('--fo')))})")
+        a, b, c = probe(2000), probe(3000), probe(2000)
+        assert "rotateY" in a["tr"], a
+        assert a == c, "câmera/foco não é determinístico (mesmo t, estados diferentes)"
+        assert a["fo"].index(max(a["fo"])) != b["fo"].index(max(b["fo"])), (a, b)  # o foco passa de um item para o seguinte
+
+
 @case("site → marca + cenas (fixture local)")
 def _():
     import http.server, socketserver, threading, functools

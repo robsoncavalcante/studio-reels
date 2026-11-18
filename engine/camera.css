@@ -1,0 +1,12 @@
+/* STUDIO REELS — camera.css: câmera 3D + foco sequencial (só no modo reel).
+   Tudo é função do tempo: __seek(t) escreve --fo/--dim/--sw e as propriedades
+   individuais scale/rotate/translate (não conflitam com as animações de entrada). */
+.reel[class*="cam-"] .content{transform-origin:50% 50%;will-change:transform}
+.reel [data-focus]{perspective:110cqw;perspective-origin:50% 50%}
+.reel [data-focus]>.item{position:relative;--fo:0;--dim:0;--sw:0}
+.reel [data-focus]>.item::after{content:"";position:absolute;inset:0;background:var(--bg);opacity:var(--dim);pointer-events:none;border-radius:inherit;z-index:3}
+.reel [data-focus]>.item::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.30) 50%,transparent 62%);
+  transform:translateX(calc((var(--sw) - .5) * 190%));opacity:calc(var(--fo) * .9)}
+.reel .cards[data-focus]>.item{box-shadow:inset 0 0 0 calc(.35cqw * var(--fo)) color-mix(in srgb,var(--accent) calc(var(--fo) * 100%),transparent)}
+.reel .dc.under,.reel .bgph{will-change:translate}

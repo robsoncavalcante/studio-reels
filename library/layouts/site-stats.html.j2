@@ -16,5 +16,5 @@
 <div class="pad col">
   {% if c.kicker %}<div class="chip"><i></i>{{ c.kicker }}</div>{% endif %}
   <div class="t fit">{{ rich(c.title) }}</div>
-  <div class="cards">{% for it in c['items'][:3] %}<div class="sc item"><div class="n">{{ it.number }}</div><div><div class="lb">{{ it.title }}</div>{% if it.text %}<div class="tx">{{ it.text }}</div>{% endif %}</div></div>{% endfor %}</div>
+  <div class="cards" data-focus="1">{% for it in c['items'][:3] %}<div class="sc item"><div class="n">{{ it.number }}</div><div><div class="lb">{{ it.title }}</div>{% if it.text %}<div class="tx">{{ it.text }}</div>{% endif %}</div></div>{% endfor %}</div>
 </div>

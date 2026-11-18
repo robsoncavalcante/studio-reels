@@ -146,6 +146,8 @@ def style_for(m: dict, reel: dict) -> tuple[list[str], str]:
     kb = reel.get("kenburns")
     if kb:
         classes.append(f"kb-{kb}")
+    if reel.get("camera") and reel["camera"] != "none":
+        classes.append(f"cam-{reel['camera']}")
     if reel.get("count_up"):
         classes.append("cu")
     if reel.get("human"):

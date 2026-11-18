@@ -477,6 +477,44 @@ window.__prep=function(){
       const p=Math.min(1,Math.max(0,(t-dl)/1.1));const e=1-Math.pow(1-p,3);
       c.el.textContent=p>=1?c.orig:c.pre+(c.val*e).toFixed(c.dec).replace('.',c.sep)+c.suf;
     });
+
+    /* ---- câmera 3D + foco sequencial (determinístico: só depende de t) ---- */
+    (function(){
+      const cm=([...cv.classList].find(c=>c.indexOf('cam-')===0)||'').slice(4);
+      const sd=parseFloat(getComputedStyle(cv).getPropertyValue('--sd'))||3.2, ts=t/1000, p=Math.min(1,Math.max(0,ts/sd));
+      const sm=x=>x*x*(3-2*x), clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+      let ty=0, ry=0, rx=0, sc=1, tx=0; const H=cv.clientHeight;
+      const groups=[...document.querySelectorAll('[data-focus]')];
+      groups.forEach(g=>{
+        const its=[...g.children].filter(e=>e.classList.contains('item'));
+        const n=its.length; if(!n) return;
+        const last=its[n-1], ld=(parseFloat(getComputedStyle(last).animationDelay)||0)+(parseFloat(getComputedStyle(last).animationDuration)||.7);
+        const t0=Math.min(sd*.55, ld+.15), t1=Math.max(t0+.6, sd-.35), slot=(t1-t0)/n;
+        const gate=sm(clamp((ts-(t0-.15))/.4,0,1));
+        let fy=0, tot=0;
+        its.forEach((el,i)=>{
+          const c=t0+slot*(i+.5), d=Math.abs(ts-c)/(slot*.62), fo=gate*(1-sm(clamp(d,0,1)));
+          const sw=clamp((ts-(c-slot*.5))/(slot*.9),0,1);
+          const lead=(i===0&&ts<t0)?0:fo;
+          el.style.setProperty('--fo',lead.toFixed(3)); el.style.setProperty('--dim',(gate*.42*(1-fo)).toFixed(3)); el.style.setProperty('--sw',sw.toFixed(3));
+          el.style.scale=(1+.045*fo).toFixed(4); el.style.rotate='0 1 0 '+(-4.5*fo).toFixed(3)+'deg'; el.style.translate='0 0 '+(3.2*fo).toFixed(3)+'cqw';
+          let top=0,e=el; while(e&&e!==cv){top+=e.offsetTop;e=e.offsetParent;}
+          const cy=top+el.offsetHeight/2-H/2; fy+=fo*cy; tot+=fo;
+        });
+        if(tot>0){ty+=-fy/Math.max(tot,.001)*.07;}
+      });
+      if(cm==='push'){sc=1+.035*sm(p); rx=1.0*Math.sin(Math.PI*p); ry=-1.2+2.4*sm(p);}
+      else if(cm==='orbit'){ry=-3+6*sm(p); rx=1.6*Math.sin(Math.PI*p); sc=1.012+.02*Math.sin(Math.PI*p); tx=-1.2+2.4*sm(p);}
+      else if(cm==='drift'){ry=1.8*Math.sin(2*Math.PI*p*.5); rx=.9*Math.cos(2*Math.PI*p*.5); sc=1.015;}
+      else if(cm==='dolly'){sc=1.05-.05*sm(p); rx=2.2*(1-sm(p)); ry=0;}
+      const W=cv.clientWidth, cl=(v,m)=>Math.max(-m,Math.min(m,v));
+      const content=cv.querySelector('.content');
+      if(content&&cm){
+        content.style.transform='perspective('+(1.25*W).toFixed(0)+'px) translate3d('+(tx*W/100).toFixed(1)+'px,'+cl(ty,H*.035).toFixed(1)+'px,0) rotateX('+rx.toFixed(3)+'deg) rotateY('+ry.toFixed(3)+'deg) scale('+sc.toFixed(4)+')';
+        const par=(-ry*.9)+'cqw';
+        cv.querySelectorAll('.dc.under,.bgph').forEach(e=>{e.style.translate=((-ry*.45)).toFixed(2)+'cqw '+(rx*.45).toFixed(2)+'cqw';});
+      }
+    })();
     return Promise.all(ps);
   };
   return true;
@@ -527,6 +565,7 @@ def head_html(reel=False) -> str:
         css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "easings.css").as_uri()}">')
         css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "motions.css").as_uri()}">')
         css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "human.css").as_uri()}">')
+        css.append(f'<link rel="stylesheet" href="{(ROOT / "engine" / "camera.css").as_uri()}">')
     return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' + "".join(css)
 
 
@@ -835,6 +874,15 @@ def tidy_sfx(events: list, same_kind_gap: float = 0.12, window: float = 0.25, ma
     return sorted(keep, key=lambda e: e["t"])
 
 
+CAMERA_DEFAULT = {"site-hero": "push", "site-stats": "orbit", "site-list": "orbit", "site-cta": "dolly"}
+
+
+def _cam_for(s: dict, camera):
+    """Câmera da cena: valor da cena > --camera > padrão do layout. 'none' desliga."""
+    c = s.get("camera") or camera or CAMERA_DEFAULT.get(s.get("layout"))
+    return None if c in (None, "none", "off") else c
+
+
 def snap_to_beat(d: float, bpm: float, beats: int = 4) -> float:
     unit = 60.0 / bpm * beats / 2  # meio compasso
     return max(unit, round(d / unit) * unit)
@@ -844,7 +892,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                 bpm=None, audio=None, brand=None, base_dir=None, sample=False, renderer=None, pager=False, verbose=True,
                 pace=None, speed=None, stagger_scale=None, intensity=None, ease=None, kenburns=None, count_up=False,
                 sync=False, music=None, sfx=None, key="A", music_vol=0.75, voice=None, voice_vol=1.0, duck=0.6, voice_start=0.0,
-                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False, cap_style=None, vocab=None):
+                human=False, parallax=False, highlight=None, captions=None, stems=None, script=None, words_file=None, transcribe=False, exit=None, preview=False, fit_voice=False, cap_style=None, vocab=None, camera=None):
     """scenes: [{layout, content, dur?}]
     music: estilo gerado localmente (lofi|house|pop|corporate|cinematic|hype|ambient) ou None (use `audio` p/ arquivo próprio)
     sfx: None | 'light' (whoosh nas transições) | 'full' (+ pops de entrada e brilho final)
@@ -916,7 +964,7 @@ def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade
                                                     pace=pace, speed=speed, stagger_scale=stagger_scale, intensity=intensity, ease=ease,
                                                     kenburns=kenburns, count_up=count_up, sync=sync, bpm=bpm,
                                                     human=human, parallax=parallax, highlight=highlight,
-                                                    exit=(exit if i < len(scenes) - 1 else None), exit_at=durs[i]),
+                                                    exit=(exit if i < len(scenes) - 1 else None), exit_at=durs[i], camera=_cam_for(s, camera)),
                                           pager=(i, len(scenes)) if pager else None), reel=True)
             clip = tmpd / f"s{i}.mp4"
             if verbose:
