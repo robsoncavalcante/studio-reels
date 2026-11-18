@@ -13,6 +13,6 @@
     <div class="t fit">{{ rich(c.title) }}</div>
   </div>
   <div class="list fit">
-    {% for it in c['items'][:5] %}<div class="it item"><div class="num-circle">{% if it.icon %}<img src="{{ it.icon }}" alt="" style="width:62%;height:62%;object-fit:contain;filter:brightness(0) invert(1)">{% else %}{{ loop.index }}{% endif %}</div><div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div></div>{% endfor %}
+    {% for it in c['items'][:5] %}<div class="it item"><div class="num-circle">{% if it.icon %}<img src="{{ it.icon }}" alt="" style="{% if (it.icon_kind or 'glyph') == 'glyph' %}width:62%;height:62%;object-fit:contain;filter:brightness(0) invert(1){% else %}width:100%;height:100%;object-fit:cover;border-radius:50%{% endif %}">{% else %}{{ loop.index }}{% endif %}</div><div><h4>{{ it.title }}</h4>{% if it.text %}<p>{{ it.text }}</p>{% endif %}</div></div>{% endfor %}
   </div>
 </div>

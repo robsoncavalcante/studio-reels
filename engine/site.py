@@ -497,26 +497,69 @@ def build_scenes(data: dict, shots: list, logo: str | None, handle: str, max_sce
     return scenes
 
 
-def icons_pool(media: list, used: set) -> list:
-    """Todos os ícones/SVGs do site e as imagens muito pequenas (até 180px): bons para figurar na frente de um item de lista."""
+def _icon_usable(path: Path) -> tuple[bool, str]:
+    """Olha o arquivo como pixel: separa ícone de verdade (silhueta em PNG transparente, logo pequeno)
+    de botão de carrossel (quadrado cinza uniforme) e devolve também o 'kind' — 'glyph' (silhueta,
+    recebe cor do tema) ou 'photo' (JPG/PNG colorido, entra natural no círculo)."""
+    try:
+        from PIL import Image
+        im = Image.open(path)
+        w, h = im.size
+        if w < 16 or h < 16:
+            return False, ""
+        if im.mode in ("RGBA", "LA"):
+            bbox = im.getbbox()
+            if not bbox:
+                return False, ""
+            bw, bh = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            if bw < max(12, w * 0.2) or bh < max(12, h * 0.2):
+                return False, ""
+            # silhueta pequena = glyph (vai branca); recorte grande colorido = foto
+            if w <= 220 and h <= 220 and len(im.getcolors(maxcolors=4096) or []) <= 32:
+                return True, "glyph"
+            return True, "photo"
+        if im.mode in ("RGB", "L"):
+            ex = im.getextrema()
+            if isinstance(ex, (list, tuple)) and ex:
+                rng = ex[1] - ex[0] if isinstance(ex[0], int) else max((mx - mn) for mn, mx in ex[:3])
+                if rng < 30:  # quase um único tom → botão de UI, cor de fundo
+                    return False, ""
+            return True, "photo"
+    except Exception:
+        return True, "photo"
+    return True, "photo"
+
+
+def icons_pool(media: list, used: set, base_dir: Path | None = None) -> list:
+    """Ícones/SVGs do site e miniaturas com conteúdo real (até 500px). Filtra botões de UI do site
+    (setas de carrossel em quadrado cinza) olhando os pixels, não o tamanho do arquivo."""
     pool = []
     for m in media:
         if m["file"] in used:
             continue
         if m["kind"] in ("icon", "svg"):
             pool.append(m)
-        elif m["kind"] == "image" and m.get("w", 0) and m.get("w", 999) <= 180 and m.get("h", 999) <= 180:
+        elif m["kind"] == "image" and m.get("w", 0) <= 520 and m.get("h", 0) <= 740:
             pool.append(m)
+    if base_dir is not None:
+        kept = []
+        for m in pool:
+            fp = base_dir / m["file"]
+            if not fp.exists():
+                continue
+            ok, kind = _icon_usable(fp)
+            if ok:
+                m["_icon_kind"] = kind
+                kept.append(m)
+        pool = kept
     return sorted(pool, key=lambda m: m.get("top", 0))
 
 
 def attach_icons(scenes: list, media: list, used: set, base_dir: Path | None = None) -> list:
-    """Nunca deixa 'bolinha vazia': ícones e miniaturas reais do site rodam pelas listas em ordem de aparição.
-    Arquivos abaixo de 3 KB (bitmaps minúsculos que a Apple espalha) ou com transparência total são rejeitados
-    e o Lucide preenche depois em `fill_lucide`."""
-    pool = icons_pool(media, used)
-    if base_dir is not None:
-        pool = [m for m in pool if (base_dir / m["file"]).exists() and (base_dir / m["file"]).stat().st_size >= 3072]
+    """Nunca deixa 'bolinha vazia': ícones, logos e miniaturas reais do site rodam pelas listas,
+    e cada item leva junto `icon_kind` ('glyph' para silhueta/alpha, 'photo' para foto colorida)
+    para o layout saber se aplica filtro branco ou mostra natural."""
+    pool = icons_pool(media, used, base_dir=base_dir)
     if not pool:
         return scenes
     pi = 0
@@ -528,6 +571,7 @@ def attach_icons(scenes: list, media: list, used: set, base_dir: Path | None = N
                 continue
             m = pool[pi % len(pool)]
             it["icon"] = m["file"]
+            it["icon_kind"] = m.get("_icon_kind", "glyph")
             used.add(m["file"])
             pi += 1
     return scenes
@@ -547,6 +591,7 @@ def fill_lucide(scenes: list, base_dir: Path) -> list:
             name, _ = lucide.pick(it.get("title", ""))
             it["icon"] = lucide.write_to(midia, name)
             it["icon_generic"] = True
+            it["icon_kind"] = "glyph"
     return scenes
 
 
