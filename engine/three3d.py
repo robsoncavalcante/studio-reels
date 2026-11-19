@@ -137,31 +137,38 @@ const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});r.s
 document.body.appendChild(r.domElement);
 const sc=new THREE.Scene();
 {const c=document.createElement('canvas');c.width=4;c.height=256;const g=c.getContext('2d'),gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,P.bg2);gr.addColorStop(1,P.bg);g.fillStyle=gr;g.fillRect(0,0,4,256);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;sc.background=t;}
-sc.fog=new THREE.Fog(new THREE.Color(P.bg),7,15);
+
 const cam=new THREE.PerspectiveCamera(32,W/H,.1,60);
 function rr(w,h,rad){const s=new THREE.Shape(),x=-w/2,y=-h/2;s.moveTo(x+rad,y);s.lineTo(x+w-rad,y);s.quadraticCurveTo(x+w,y,x+w,y+rad);s.lineTo(x+w,y+h-rad);s.quadraticCurveTo(x+w,y+h,x+w-rad,y+h);s.lineTo(x+rad,y+h);s.quadraticCurveTo(x,y+h,x,y+h-rad);s.lineTo(x,y+rad);s.quadraticCurveTo(x,y,x+rad,y);return s}
 const ring=new THREE.Group();sc.add(ring);
 const cards=[];let loaded=0;
-const R=P.raio;
+const S=1.78;
 for(let i=0;i<N;i++){
   const g=new THREE.Group();
-  const ar=Math.min(2.2,Math.max(.5,P.ars[i]));let w=1.5,h=w/ar;if(h>1.9){h=1.9;w=h*ar}
-  const sg=new THREE.ShapeGeometry(rr(w,h,.09),20);const uv=sg.attributes.uv,pos=sg.attributes.position;for(let k=0;k<uv.count;k++)uv.setXY(k,(pos.getX(k)+w/2)/w,(pos.getY(k)+h/2)/h);
+  const ar=Math.min(2.2,Math.max(.5,P.ars[i]));let w=2.45,h=w/ar;if(h>1.7){h=1.7;w=h*ar}
+  const sg=new THREE.ShapeGeometry(rr(w,h,.1),20);const uv=sg.attributes.uv,pos=sg.attributes.position;for(let k=0;k<uv.count;k++)uv.setXY(k,(pos.getX(k)+w/2)/w,(pos.getY(k)+h/2)/h);
   const tex=new THREE.TextureLoader().load('/img'+i,()=>{if(++loaded===N)window.__ready=true});tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
   const face=new THREE.Mesh(sg,new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));face.position.z=.012;
-  const back=new THREE.Mesh(new THREE.ShapeGeometry(rr(w+.05,h+.05,.11),20),new THREE.MeshBasicMaterial({color:P.rim}));
-  const sh=new THREE.Mesh(new THREE.ShapeGeometry(rr(w,h,.09),20),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.35}));sh.position.set(.05,-.07,-.02);
-  g.add(sh,back,face);
-  const a=i/N*Math.PI*2;g.userData.a=a;g.position.set(Math.sin(a)*R,0,Math.cos(a)*R);g.rotation.y=a;
-  ring.add(g);cards.push(g);
+  const back=new THREE.Mesh(new THREE.ShapeGeometry(rr(w+.06,h+.06,.12),20),new THREE.MeshBasicMaterial({color:P.rim}));
+  const sh=new THREE.Mesh(new THREE.ShapeGeometry(rr(w,h,.1),20),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.4}));sh.position.set(.06,-.09,-.03);
+  g.add(sh,back,face);ring.add(g);cards.push(g);
 }
-const ease=x=>1-Math.pow(1-x,3),sm=x=>x*x*(3-2*x);
+const ease=x=>1-Math.pow(1-x,3),sm=x=>x*x*(3-2*x),cl=(x,a,b)=>Math.min(b,Math.max(a,x));
+// rolagem vertical em coverflow: um cartão grande no centro, vizinhos inclinados acima e abaixo
+const step=(f)=>sm(cl((f-.18)/.64,0,1));
 window.__t3=(t)=>{
-  const d=P.dur,p=Math.min(1,t/d),e=ease(Math.min(1,t/1.2));
-  const turn=-sm(p)*Math.PI*2*Math.max(1,Math.round(N*P.fracao))/N; // gira uma fração da roda, suave
-  ring.rotation.y=turn+THREE.MathUtils.lerp(-.5,0,e);
-  cards.forEach((g,i)=>{const wy=ring.rotation.y+g.userData.a;const front=Math.cos(wy);g.position.y=Math.sin(t*1.4+i*1.3)*.06;g.scale.setScalar(.82+.18*Math.max(0,front));});
-  cam.position.set(0,.35+THREE.MathUtils.lerp(.5,0,e),R+THREE.MathUtils.lerp(8.2,6.2,sm(p)));cam.lookAt(0,0,R*.5);
+  const d=P.dur,p=Math.min(1,t/d),segs=N-1,u=p*segs,k=Math.min(segs-1,Math.floor(u)),c=k+step(u-k)+(p>=1?1:0)*0;
+  const cc=p>=1?segs:c;
+  cards.forEach((g,i)=>{
+    const o=i-cc,ao=Math.abs(o);
+    g.visible=ao<2.6;
+    g.position.set(0,-o*S,-Math.min(ao,1.6)*.9);
+    g.rotation.x=cl(o,-1.2,1.2)*.62;
+    g.scale.setScalar(1-Math.min(ao,1.2)*.1);
+  });
+  ring.rotation.y=Math.sin(t*.9)*.14;
+  const e=ease(Math.min(1,t/1.0));
+  cam.position.set(0,0,THREE.MathUtils.lerp(10.4,8.6,sm(p))+THREE.MathUtils.lerp(1.2,0,e));cam.lookAt(0,0,0);
   r.render(sc,cam);
 };
 window.__t3(0);
@@ -179,7 +186,7 @@ def render_cards(images, out, *, width=1080, height=1920, dur=4.5, fps=30,
     for x in imgs:
         with Image.open(x) as im:
             ars.append(round(im.width / im.height, 3))
-    params = dict(w=width, h=height, dur=dur, bg=bg, bg2=bg2, rim=rim, n=len(imgs), ars=ars, raio=1.9, voltas=1, fracao=.55)
+    params = dict(w=width, h=height, dur=dur, bg=bg, bg2=bg2, rim=rim, n=len(imgs), ars=ars)
     html = CARDS.replace("__PARAMS__", json.dumps(params)).replace("__BG__", bg)
     files = {f"/img{i}": p for i, p in enumerate(imgs)}
     return _run(html, files, out, width=width, height=height, dur=dur, fps=fps, label="clipe 3D (carrossel)", verbose=verbose)
