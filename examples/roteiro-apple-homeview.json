@@ -1,0 +1,174 @@
+{
+ "scenes": [
+  {
+   "layout": "site-video",
+   "kicker": "Apple HomeView",
+   "title": "O lar inteiro, num *só lugar*.",
+   "subtitle": "Conecta, entretém e mantém você por dentro.",
+   "photos": [
+    "midia/video-05.mp4"
+   ],
+   "photo_meta": [
+    {
+     "loop": true
+    }
+   ],
+   "dur": 5.0
+  },
+  {
+   "layout": "collage-4-grid",
+   "kicker": "Acabamentos",
+   "title": "Escolha o *seu*.",
+   "subtitle": "Quatro cores para combinar com a sua casa.",
+   "photos": [
+    "midia/img-10.jpg",
+    "midia/img-11.jpg",
+    "midia/img-12.jpg",
+    "midia/img-13.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 1.895
+    },
+    {
+     "ar": 1.895
+    },
+    {
+     "ar": 1.895
+    },
+    {
+     "ar": 1.895
+    }
+   ],
+   "dur": 4.5
+  },
+  {
+   "layout": "site-duo",
+   "title": "Informação *de relance*.",
+   "subtitle": "Tempo, agenda e fotos na tela.",
+   "photos": [
+    "midia/img-14.jpg",
+    "midia/img-07.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 1.895
+    },
+    {
+     "ar": 1.895
+    }
+   ],
+   "dur": 4.0
+  },
+  {
+   "layout": "arch-window",
+   "kicker": "Home",
+   "title": "Seus apps e widgets, *à vista*.",
+   "subtitle": "",
+   "photos": [
+    "midia/img-01.png"
+   ],
+   "photo_meta": [
+    {
+     "ar": 1.716
+    }
+   ],
+   "dur": 4.0
+  },
+  {
+   "layout": "site-video",
+   "kicker": "Áudio espacial",
+   "title": "Feito para *ouvir*.",
+   "subtitle": "Som imersivo e áudio multiroom.",
+   "photos": [
+    "midia/video-06.mp4"
+   ],
+   "photo_meta": [
+    {
+     "loop": true
+    }
+   ],
+   "dur": 4.0
+  },
+  {
+   "layout": "big-number",
+   "kicker": "Reconhecimento",
+   "number": "6",
+   "label": "pessoas reconhecidas",
+   "title": "Várias pessoas, *um só HomeView*.",
+   "subtitle": "Ele alterna entre perfis sem esforço.",
+   "dur": 4.5
+  },
+  {
+   "layout": "framed-photo",
+   "kicker": "Multiroom",
+   "title": "Um em cada *cômodo*.",
+   "subtitle": "",
+   "photos": [
+    "midia/img-05.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 2.059
+    }
+   ],
+   "dur": 4.0
+  },
+  {
+   "layout": "framed-photo",
+   "kicker": "Privacidade",
+   "title": "Seus dados são *só seus*.",
+   "subtitle": "Enclaves seguros protegem o seu conteúdo pessoal.",
+   "photos": [
+    "midia/img-09.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 2.059
+    }
+   ],
+   "dur": 4.2
+  },
+  {
+   "layout": "site-duo",
+   "title": "Apple TV 4K e HomePod mini, *juntos*.",
+   "subtitle": "",
+   "photos": [
+    "midia/icone-img-06.jpg",
+    "midia/icone-img-07.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 0.549
+    },
+    {
+     "ar": 0.549
+    }
+   ],
+   "dur": 4.2
+  },
+  {
+   "layout": "site-showcase",
+   "kicker": "Compre com a Apple",
+   "title": "Fale com um *Especialista*.",
+   "subtitle": "Compra guiada ao vivo e configuração pessoal.",
+   "photos": [
+    "midia/icone-img-08.jpg"
+   ],
+   "photo_meta": [
+    {
+     "ar": 1.31
+    }
+   ],
+   "dur": 4.2
+  },
+  {
+   "layout": "typographic",
+   "kicker": "Próximo passo",
+   "title": "Conheça o *HomeView*.",
+   "subtitle": "Saiba mais em apple.com",
+   "theme": "brand-dark",
+   "dur": 4.0
+  }
+ ]
+}

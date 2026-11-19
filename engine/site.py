@@ -934,7 +934,7 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
             log(f"! desktop bloqueado/erro ({why}) → uso a versão celular do site para textos, cores, fontes e mídia")
             warnings.append(f"desktop bloqueado: {why}")
             try:
-                pg.screenshot(path=str(out / "site-desktop-BLOQUEADO.png"))
+                pg.screenshot(path=str(out / "referencias" / "site-desktop-BLOQUEADO.png"))
             except Exception:  # noqa
                 pass
             ctx.close()
@@ -945,9 +945,9 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
             logo = _logo(ctx, pg, data, out, log)
             font_files = save_site_fonts(pg, font_bodies, _site_families(data), out, log)
             try:
-                pg.screenshot(path=str(out / "site-desktop.png"), full_page=True)
+                pg.screenshot(path=str(out / "referencias" / "site-desktop.png"), full_page=True)
             except Exception:  # noqa
-                pg.screenshot(path=str(out / "site-desktop.png"))
+                pg.screenshot(path=str(out / "referencias" / "site-desktop.png"))
             ctx.close()
         # ---- celular: telas 9:16 do site, 1080 px de largura
         ctx = br.new_context(viewport={"width": 390, "height": 693}, device_scale_factor=1080 / 390, is_mobile=True, has_touch=True, user_agent=UA_MOB, **common)
@@ -980,7 +980,8 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         for i, y in enumerate(picked, 1):
             pm.evaluate(f"window.scrollTo(0,{y})")
             pm.wait_for_timeout(750)
-            n = f"tela-{i:02d}.png"
+            n = f"referencias/tela-{i:02d}.png"
+            (out / "referencias").mkdir(exist_ok=True)
             pm.screenshot(path=str(out / n))
             names.append(n)
         # fundo do hero: a imagem real do hero, se houver; senão a tela do hero sem textos
@@ -989,16 +990,18 @@ def capture(url: str, out: Path, shots: int = 6, log=print) -> dict:
         if himg:
             try:
                 from PIL import Image
-                Image.open(out / himg["file"]).convert("RGB").save(out / "fundo-01.png")
-                hero_bg = "fundo-01.png"
+                (out / "midia").mkdir(exist_ok=True)
+                Image.open(out / himg["file"]).convert("RGB").save(out / "midia" / "fundo-01.png")
+                hero_bg = "midia/fundo-01.png"
             except Exception:  # noqa
                 hero_bg = None
         if not hero_bg:
             pm.evaluate("window.scrollTo(0,0)")
             pm.add_style_tag(content="h1,h2,h3,h4,h5,h6,p,a,button,header,nav,span,li,blockquote,label,input{visibility:hidden!important}")
             pm.wait_for_timeout(500)
-            pm.screenshot(path=str(out / "fundo-01.png"))
-            hero_bg = "fundo-01.png"
+            (out / "midia").mkdir(exist_ok=True)
+            pm.screenshot(path=str(out / "midia" / "fundo-01.png"))
+            hero_bg = "midia/fundo-01.png"
         ctx.close()
     finally:
         br.close()

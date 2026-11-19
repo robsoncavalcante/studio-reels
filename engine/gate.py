@@ -315,7 +315,7 @@ def site_fidelity(folder: Path, pages: list[dict], ad: Path) -> dict:
                 iss.append(_issue("warn", "pouca-variedade", f"só {len(set(lays))} layouts diferentes em {len(lays)} cenas", "variar layout por papel da cena"))
         except Exception:  # noqa
             pass
-    tel = sorted(Path(folder).glob("tela-*.png"))
+    tel = sorted(Path(folder).glob("referencias/tela-*.png")) or sorted(Path(folder).glob("tela-*.png"))
     if tel:
         try:
             res["sheets"]["telas_do_site"] = str(_sheet_images(tel[:8], ad / "sheet_telas_do_site.png", cols=4, w=300))

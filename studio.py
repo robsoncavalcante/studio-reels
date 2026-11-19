@@ -307,6 +307,13 @@ def _cta_bg(data, b):
     return None
 
 
+def cmd_organizar(a):
+    from engine.organize import organize
+    for l in organize(Path(a.pasta)) or ["já estava organizada"]:
+        print("  " + l)
+    return 0
+
+
 def cmd_site(a):
     from engine import site, logo as _logo
     from urllib.parse import urlparse
@@ -359,13 +366,21 @@ def cmd_site(a):
         except Exception as e:  # noqa
             print(f"  ! avatar da logo não gerado ({type(e).__name__})")
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
+    from engine.organize import organize
+    for _l in organize(out):
+        print(f"  organizado: {_l}")
     scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"), cta_bg=cb)
     from engine import visual
     bkey = slug(a.brand or site._host(res["url"]) or host)
     pv = visual.choose(bkey, brand, data, data.get("media"), forced=getattr(a, "linguagem", None))
-    if getattr(a, "video_lang", None) == "pt":
-        scenes = [site.translate_scene(x) for x in scenes]
-    scenes = visual.apply(scenes, pv["linguagem"], getattr(a, "variante", 0) or 0, name=name)
+    if getattr(a, "roteiro", None):  # roteiro autoral do Roteirista: substitui as cenas automáticas (texto e mídia já decididos)
+        _rj = json.loads(Path(a.roteiro).read_text(encoding="utf-8"))
+        scenes = _rj["scenes"] if isinstance(_rj, dict) else _rj
+        print(f"  roteiro autoral: {len(scenes)} cenas de {a.roteiro}")
+    else:
+        if getattr(a, "video_lang", None) == "pt":
+            scenes = [site.translate_scene(x) for x in scenes]
+        scenes = visual.apply(scenes, pv["linguagem"], getattr(a, "variante", 0) or 0, name=name)
     scenes = site.attach_icons(scenes, data.get("media") or [], set(), base_dir=out)
     scenes = site.fill_lucide(scenes, out)
     pv["arquetipo"] = visual.arquetipo(pv["sinais"], bkey, forced=getattr(a, "arquetipo", None))
@@ -424,6 +439,10 @@ def cmd_site(a):
     print(f"  partido visual: {visual.LINGUAGENS[pv['linguagem']]['nome']} (variante {pv['variante']}) — {'; '.join(pv['motivos'][:2])}")
     try:
         sbp = core.render_storyboard(scenes, theme, out, brand=brand, base_dir=out, title=f"{name} — storyboard")
+        import shutil as _s2
+        _md = out / "storyboard.md"
+        if _md.exists():
+            _s2.copy(str(_md), str(sbp.with_suffix(".md")))
         print(f"  storyboard visual: {sbp}  (abra para aprovar antes de pagar o render do reel)")
     except Exception as _e:  # noqa
         print(f"  ! storyboard visual não gerado ({type(_e).__name__})")
@@ -447,7 +466,7 @@ def cmd_site(a):
             "--ease", aq["ease"], "--intensity", str(aq["intensity"]), "--motion", aq["motion"]]
     if a.render:
         import shutil as _sh, time as _t
-        ver = out / "versoes"
+        ver = out / "reels"
         ver.mkdir(exist_ok=True)
         prev = out / "reel.mp4"
         if prev.exists():
@@ -469,7 +488,9 @@ def cmd_site(a):
                 sp = out / sib
                 if sp.exists():
                     _sh.copy(str(sp), str(ver / f"{sp.stem}-{new_stamp}{sp.suffix}"))
-            print(f"✓ reel: {out / 'reel.mp4'}  (cópia em {ver.name}/{copy_dest.name})")
+            from engine.organize import prune
+            prune(ver)
+            print(f"✓ reel: {out / 'reel.mp4'}  (cópia em {ver.name}/{copy_dest.name}; ficam só as 2 versões mais recentes)")
         elif r.returncode != 0:
             print("✗ o render falhou (veja acima)")
         return r.returncode
@@ -1229,12 +1250,16 @@ def main():
     p.add_argument("--out")
     p.set_defaults(fn=cmd_qa)
 
+    p = sub.add_parser("organizar", help="arruma a pasta de um site: referencias/, midia/, storyboard/, reels/ (só 2 versões)")
+    p.add_argument("pasta")
+    p.set_defaults(fn=cmd_organizar)
     p = sub.add_parser("site", help="site → marca (cores, fontes, logo) + telas do celular + reel pronto")
     p.add_argument("url")
     p.add_argument("--name", help="nome da marca (padrão: nome do site)")
     p.add_argument("--out", help="pasta de saída (padrão samples/site-<domínio>)")
     p.add_argument("--telas", type=int, default=6, help="quantas telas do celular capturar")
     p.add_argument("--cenas", type=int, default=7, help="máximo de cenas do reel")
+    p.add_argument("--roteiro", help="JSON de cenas escrito pelo Roteirista (substitui as cenas automáticas; texto e mídia já definidos)")
     p.add_argument("--video-lang", choices=["en", "pt"], default=None, help="traduz os títulos do site para pt-BR (glossário Apple/produto) antes de aplicar a linguagem visual")
     p.add_argument("--arquetipo", choices=["premium", "playful", "corporate", "energetic"], help="força a personalidade de movimento (padrão: decidida pelo site; a marca repete a mesma)")
     p.add_argument("--linguagem", choices=["cards3d", "poster", "editorial", "modular"], help="força a linguagem visual (padrão: o motor escolhe pelo site; a marca repete a mesma)")

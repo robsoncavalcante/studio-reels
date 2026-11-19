@@ -930,8 +930,10 @@ def render_storyboard(scenes: list, theme: str, out_dir: Path, *, brand: dict | 
     Serve para o Diretor de Arte aprovar o conjunto antes de pagar o render do reel."""
     from PIL import Image, ImageDraw, ImageFont
     out_dir = Path(out_dir)
-    thumbs_dir = out_dir / ".storyboard-thumbs"
-    thumbs_dir.mkdir(parents=True, exist_ok=True)
+    import tempfile, time as _t
+    thumbs_dir = Path(tempfile.mkdtemp(prefix="sbthumbs-"))
+    sb_dir = out_dir / "storyboard"
+    sb_dir.mkdir(exist_ok=True)
     thumbs = []
     with Renderer(0.5) as r:
         for i, sc in enumerate(scenes, 1):
@@ -945,7 +947,7 @@ def render_storyboard(scenes: list, theme: str, out_dir: Path, *, brand: dict | 
             except Exception as e:  # noqa
                 print(f"  ! storyboard: cena {i} ({lay}) não rasterizou ({type(e).__name__})")
     if not thumbs:
-        return out_dir / "storyboard.png"
+        return sb_dir / "storyboard.png"
     cols = 3
     tw, th_ = 540, 960
     for _, _, _, p in thumbs:
@@ -988,8 +990,12 @@ def render_storyboard(scenes: list, theme: str, out_dir: Path, *, brand: dict | 
         d.text((x, y + th_ + 6), tag, fill=(70, 70, 80), font=small)
         if head:
             d.text((x, y + th_ + 30), head, fill=(18, 18, 22), font=small)
-    out_file = out_dir / "storyboard.png"
+    out_file = sb_dir / f"storyboard-{_t.strftime('%Y%m%d-%H%M%S')}.png"
     sheet.save(out_file)
+    import shutil as _sh
+    _sh.rmtree(thumbs_dir, ignore_errors=True)
+    from engine.organize import prune
+    prune(sb_dir)
     return out_file
 
 def render_reel(scenes: list[dict], theme: str, out, *, fmt="reel", motion="fade-up", transition="smooth", tdur=None, fps=30,
