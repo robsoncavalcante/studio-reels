@@ -1,0 +1,14 @@
+{
+ "nativos": [
+  {"id": "device", "nome": "Celular hero", "comando": "python3 studio.py 3d <pasta> --look device", "entra": "captura referencias/tela-NN.png na tela, câmera aproxima, brilho varre o vidro", "quando": "app, site, mobile-first, 'veja no celular'", "ritmo": "pausa e estalo suave"},
+  {"id": "cards", "nome": "Carrossel de mídia", "comando": "python3 studio.py 3d <pasta> --look cards --imgs midia/a.jpg midia/b.jpg ...", "entra": "3–8 imagens reais do site em cartões numa roda que gira e pousa", "quando": "variedade de produto, cores, galeria, portfólio", "ritmo": "travelling"}
+ ],
+ "planejados": [
+  {"id": "produto-flutuante", "tecnica": "imagem recortada em card com paralaxe e sombra"},
+  {"id": "texto-3d", "tecnica": "TextGeometry com a fonte da marca (precisa typeface.json)"},
+  {"id": "vista-explodida", "tecnica": "peças de um GLB do cliente afastadas no eixo, rótulos projetados"},
+  {"id": "tela-flutuante", "tecnica": "interface em CanvasTexture sobre caixa arredondada com vidro"},
+  {"id": "estudio-produto", "tecnica": "GLB do cliente + PMREM + chão espelho"}
+ ],
+ "decomposicao": "look novo = (1) superfície/material (2) filtro em tela (3) lente (4) luz; não resolver tudo com filtro."
+}

@@ -94,3 +94,10 @@ Além do partido visual, o parecer precisa de `movimento` (1 linha): arquétipo 
 
 ### v6.4 — Roteirista (Screenwriter) obrigatório no reel de site
 Toda sessão de reel-de-site passa pelo Roteirista ANTES de Motion/Editor/Sound/Design. Ele escreve `roteiro.md` com uma linha por cena indicando papel narrativo, mídia real, motion e corte. Veta: duas cenas seguidas de texto puro sem mídia, ou qualquer bolinha de ícone saindo como número (sem imagem real do site). Inclua `screenwriter` em `roles` quando criar `agentes/gate.json`.
+
+
+## v7.0 · Motion 3D (nativo, sem instalar skill)
+- Agente `agents/motion-3d.md`: perícia da referência (`studio.py pericia3d`), ficha obrigatória, look de `library/looks3d.json`, rascunho + `folha3d`, um render final.
+- O Roteirista marca cenas 3D; o clipe vai para `samples/<site>/3d/` e entra no roteiro como `site-video`.
+- Referências de movimento do cliente/diretor ficam em `referencias-3d/` e mandam em câmera, luz, cor e ritmo.
+- Pastas por site: `midia/` · `referencias/` · `3d/` · `storyboard/` (2 mais recentes) · `reels/` (2 mais recentes).

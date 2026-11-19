@@ -310,19 +310,40 @@ def _cta_bg(data, b):
 def cmd_3d(a):
     from engine import three3d
     pasta = Path(a.pasta)
-    out = Path(a.out) if a.out else pasta / "3d" / "celular.mp4"
-    scr = Path(a.screen) if a.screen else next(iter(sorted((pasta / "referencias").glob("tela-*.png"))), None)
-    if not scr or not scr.exists():
-        print("✗ sem captura de tela: use --screen arquivo.png")
-        return 1
     kw = {}
     try:
         b = json.loads((pasta / "brand.json").read_text(encoding="utf-8"))["colors"]
         kw = dict(accent=b.get("accent", "#0A84FF"))
     except Exception:  # noqa
         pass
-    three3d.render_device(scr, out, dur=a.dur, width=a.width, height=a.height, **kw)
+    if a.look == "cards":
+        imgs = [(pasta / x if not Path(x).exists() else Path(x)) for x in (a.imgs or [])]
+        if not imgs:
+            imgs = sorted((pasta / "midia").glob("img-[0-9]*.jp*g"))[:6]
+        out = Path(a.out) if a.out else pasta / "3d" / "carrossel.mp4"
+        three3d.render_cards(imgs, out, dur=a.dur, width=a.width, height=a.height)
+    else:
+        out = Path(a.out) if a.out else pasta / "3d" / "celular.mp4"
+        scr = Path(a.screen) if a.screen else next(iter(sorted((pasta / "referencias").glob("tela-*.png"))), None)
+        if not scr or not scr.exists():
+            print("✗ sem captura de tela: use --screen arquivo.png")
+            return 1
+        three3d.render_device(scr, out, dur=a.dur, width=a.width, height=a.height, **kw)
     print(f"  use no roteiro: \"photos\": [\"3d/{out.name}\"]  (layout site-video)")
+    return 0
+
+
+def cmd_pericia3d(a):
+    from engine import pericia3d
+    dest = Path(a.destino or Path(a.ref).parent / "pericia")
+    print(f"  medido: {pericia3d.pericia(a.ref, dest)}\n  preencha {dest / 'FICHA.md'} antes de construir")
+    return 0
+
+
+def cmd_folha3d(a):
+    from engine import pericia3d
+    out = Path(a.saida or Path(a.video).with_suffix(".folha.jpg"))
+    print(f"  folha: {pericia3d.folha(a.video, out, a.cada)}")
     return 0
 
 
@@ -1271,10 +1292,18 @@ def main():
 
     p = sub.add_parser("3d", help="clipe 3D (three.js): celular girando com a captura do site → <pasta>/3d/celular.mp4")
     p.add_argument("pasta", help="pasta do site (ex.: samples/site-apple-com)")
+    p.add_argument("--look", choices=["device", "cards"], default="device", help="device = celular com a captura do site · cards = carrossel com imagens reais da pasta midia")
+    p.add_argument("--imgs", nargs="*", help="(look cards) imagens, relativas à pasta do site; padrão: as primeiras img-NN da midia/")
     p.add_argument("--screen", help="imagem para a tela (padrão: referencias/tela-01.png)")
     p.add_argument("--out"); p.add_argument("--dur", type=float, default=4.0)
     p.add_argument("--width", type=int, default=1080); p.add_argument("--height", type=int, default=1920)
     p.set_defaults(fn=cmd_3d)
+    p = sub.add_parser("pericia3d", help="mede uma referência 3D (vídeo ou imagem): cor, ritmo, cortes + ficha a preencher")
+    p.add_argument("ref"); p.add_argument("--destino")
+    p.set_defaults(fn=cmd_pericia3d)
+    p = sub.add_parser("folha3d", help="folha de quadros de um mp4 para revisar o movimento antes de entregar")
+    p.add_argument("video"); p.add_argument("--saida"); p.add_argument("--cada", type=float, default=0.5)
+    p.set_defaults(fn=cmd_folha3d)
     p = sub.add_parser("organizar", help="arruma a pasta de um site: referencias/, midia/, storyboard/, reels/ (só 2 versões)")
     p.add_argument("pasta")
     p.set_defaults(fn=cmd_organizar)

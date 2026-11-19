@@ -16,28 +16,16 @@
    "dur": 5.0
   },
   {
-   "layout": "collage-4-grid",
+   "layout": "site-video",
    "kicker": "Acabamentos",
    "title": "Escolha o *seu*.",
-   "subtitle": "Quatro cores para combinar com a sua casa.",
+   "subtitle": "Cores e telas para combinar com a sua casa.",
    "photos": [
-    "midia/img-10.jpg",
-    "midia/img-11.jpg",
-    "midia/img-12.jpg",
-    "midia/img-13.jpg"
+    "3d/carrossel.mp4"
    ],
    "photo_meta": [
     {
-     "ar": 1.895
-    },
-    {
-     "ar": 1.895
-    },
-    {
-     "ar": 1.895
-    },
-    {
-     "ar": 1.895
+     "loop": false
     }
    ],
    "dur": 4.5

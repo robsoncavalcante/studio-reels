@@ -9,6 +9,9 @@ O agente de Motion 3D lê esta pasta antes de criar qualquer clipe 3D e segue o 
 2. Clipe da skill do Felipe Borges (`/motion-3d-por-referencia`, instalada à parte): renderize o mp4 e copie para `samples/<site>/3d/`.
 3. No roteiro, a cena usa o clipe como vídeo: layout `site-video`, `"photos": ["3d/arquivo.mp4"]`.
 
+## Medir uma referência
+`python3 studio.py pericia3d referencias-3d/celular/exemplo.mp4` → `pericia/MEDIDO.md` + `FICHA.md`. Detalhes em `agents/motion-3d.md`.
+
 ## Licenças
 - three.js: MIT (LICENSE em library/vendor/three).
 - Skill motion-3d-por-referencia: repositório sem licença declarada → NÃO copiar o código dela para este projeto;
