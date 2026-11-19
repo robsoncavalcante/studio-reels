@@ -359,15 +359,30 @@ def cmd_site(a):
     from urllib.parse import urlparse
     host = (urlparse(a.url if "://" in a.url else "https://" + a.url).hostname or "site").replace("www.", "")
     out = Path(a.out or ROOT / "samples" / f"site-{slug(host)}")
-    print(f"Abrindo {a.url} … (rola a página, extrai textos, cores, fontes e tira as telas do celular)")
-    try:
-        res = site.capture(a.url, out, shots=a.telas)
-    except RuntimeError as e:
-        print(f"\n✗ {e}")
-        sys.exit(3)
-    data = res["data"]
     cat = json.loads((ROOT / "fonts" / "manifest.json").read_text())
-    b = site.pick_brand(data, cat, res.get("font_files"))
+    reuse = False
+    if getattr(a, "reusar", False):
+        _sj, _bj = out / "site.json", out / "brand.json"
+        if _sj.exists() and _bj.exists() and (out / "midia").is_dir():
+            _s = json.loads(_sj.read_text(encoding="utf-8"))
+            _b0 = json.loads(_bj.read_text(encoding="utf-8"))
+            _shots = sorted(f"referencias/{x.name}" for x in (out / "referencias").glob("tela-*.png")) or sorted(x.name for x in out.glob("tela-*.png"))
+            data = dict(title=_s.get("title"), h1=_s.get("h1"), description=_s.get("description"), sections=_s.get("sections", []), buttons=_s.get("buttons", []), media=_s.get("media", []), siteName=_b0.get("name"))
+            b = _s["brand"]
+            res = dict(url=_s["url"], data=data, shots=_shots, logo=_b0.get("logo") if _b0.get("logo") and not str(_b0.get("logo")).startswith("/") else None, warnings=_s.get("warnings", []), font_files=b.get("font_files"))
+            reuse = True
+            print(f"♻ reaproveitando a captura de {out} (sem abrir o site): {len(data['media'])} mídias, {len(_shots)} telas")
+        else:
+            print("  ! --reusar: não achei captura anterior (site.json/brand.json/midia) — vou capturar o site")
+    if not reuse:
+        print(f"Abrindo {a.url} … (rola a página, extrai textos, cores, fontes e tira as telas do celular)")
+        try:
+            res = site.capture(a.url, out, shots=a.telas)
+        except RuntimeError as e:
+            print(f"\n✗ {e}")
+            sys.exit(3)
+        data = res["data"]
+        b = site.pick_brand(data, cat, res.get("font_files"))
     name = a.name or data.get("siteName") or (data.get("title") or host).split("|")[0].split(" - ")[0].strip() or host
     handle = a.handle or ""
     if handle and not handle.startswith("@"):
@@ -409,7 +424,12 @@ def cmd_site(a):
     from engine.organize import organize
     for _l in organize(out):
         print(f"  organizado: {_l}")
-    scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"), cta_bg=cb)
+    try:
+        scenes = site.build_scenes(data, res["shots"], res.get("logo"), res["url"], max_scenes=max(a.cenas, 9) if data.get("media") else a.cenas, handle_at=handle, alt_theme=alt, name=name, media=data.get("media"), cta_bg=cb)
+    except Exception as e:  # noqa
+        if not (reuse and getattr(a, "roteiro", None)):
+            raise
+        scenes = []  # captura reaproveitada + roteiro autoral: as cenas automáticas não são usadas
     from engine import visual
     bkey = slug(a.brand or site._host(res["url"]) or host)
     pv = visual.choose(bkey, brand, data, data.get("media"), forced=getattr(a, "linguagem", None))
@@ -430,7 +450,8 @@ def cmd_site(a):
     pv["repeticao"] = visual.repetition(pv["layouts"], bkey, pv["linguagem"])
     (out / "partido.json").write_text(json.dumps(pv, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "partido.md").write_text(visual.partido_md(pv), encoding="utf-8")
-    visual.record(bkey, pv["linguagem"], pv["variante"], pv["layouts"], arq=pv["arquetipo"]["id"])
+    if not (reuse and not a.render):  # memória da marca só registra peças renderizadas ou capturas novas
+        visual.record(bkey, pv["linguagem"], pv["variante"], pv["layouts"], arq=pv["arquetipo"]["id"])
     (out / "brand.json").write_text(json.dumps(brand, ensure_ascii=False, indent=2), encoding="utf-8")
     (out / "content.json").write_text(json.dumps(dict(scenes=scenes), ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "site.json").write_text(json.dumps(dict(url=res["url"], title=data.get("title"), h1=data.get("h1"), brand=b, sections=data["sections"], buttons=data["buttons"], description=data.get("description"), warnings=res.get("warnings", []), media=[{k: v for k, v in m.items() if k in ("kind", "file", "head", "top", "w", "h")} for m in data.get("media", [])]),
@@ -1324,6 +1345,7 @@ def main():
     p.add_argument("--handle", help="@ do Instagram da marca para a assinatura final")
     p.add_argument("--salvar-marca", action="store_true", help="grava a marca em library/brands para usar com --brand")
     p.add_argument("--render", action="store_true", help="já renderiza o reel.mp4")
+    p.add_argument("--reusar", action="store_true", help="não abre o site de novo: reaproveita midia/, referencias/ e a marca já capturados (ciclo rápido de roteiro e storyboard)")
     p.add_argument("--rascunho", action="store_true", help="(com --render) render rápido de prévia")
     p.add_argument("--music", help="(com --render) estilo de trilha: lofi|house|pop|corporate|cinematic|hype|ambient")
     p.set_defaults(fn=cmd_site)
