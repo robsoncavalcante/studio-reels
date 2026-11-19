@@ -307,6 +307,25 @@ def _cta_bg(data, b):
     return None
 
 
+def cmd_3d(a):
+    from engine import three3d
+    pasta = Path(a.pasta)
+    out = Path(a.out) if a.out else pasta / "3d" / "celular.mp4"
+    scr = Path(a.screen) if a.screen else next(iter(sorted((pasta / "referencias").glob("tela-*.png"))), None)
+    if not scr or not scr.exists():
+        print("✗ sem captura de tela: use --screen arquivo.png")
+        return 1
+    kw = {}
+    try:
+        b = json.loads((pasta / "brand.json").read_text(encoding="utf-8"))["colors"]
+        kw = dict(accent=b.get("accent", "#0A84FF"))
+    except Exception:  # noqa
+        pass
+    three3d.render_device(scr, out, dur=a.dur, width=a.width, height=a.height, **kw)
+    print(f"  use no roteiro: \"photos\": [\"3d/{out.name}\"]  (layout site-video)")
+    return 0
+
+
 def cmd_organizar(a):
     from engine.organize import organize
     for l in organize(Path(a.pasta)) or ["já estava organizada"]:
@@ -1250,6 +1269,12 @@ def main():
     p.add_argument("--out")
     p.set_defaults(fn=cmd_qa)
 
+    p = sub.add_parser("3d", help="clipe 3D (three.js): celular girando com a captura do site → <pasta>/3d/celular.mp4")
+    p.add_argument("pasta", help="pasta do site (ex.: samples/site-apple-com)")
+    p.add_argument("--screen", help="imagem para a tela (padrão: referencias/tela-01.png)")
+    p.add_argument("--out"); p.add_argument("--dur", type=float, default=4.0)
+    p.add_argument("--width", type=int, default=1080); p.add_argument("--height", type=int, default=1920)
+    p.set_defaults(fn=cmd_3d)
     p = sub.add_parser("organizar", help="arruma a pasta de um site: referencias/, midia/, storyboard/, reels/ (só 2 versões)")
     p.add_argument("pasta")
     p.set_defaults(fn=cmd_organizar)

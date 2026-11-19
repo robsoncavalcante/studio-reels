@@ -61,6 +61,21 @@
    "dur": 4.0
   },
   {
+   "layout": "site-video",
+   "kicker": "No celular",
+   "title": "Tudo na *palma da mão*.",
+   "subtitle": "Controle a casa pelo app Casa.",
+   "photos": [
+    "3d/celular.mp4"
+   ],
+   "photo_meta": [
+    {
+     "loop": false
+    }
+   ],
+   "dur": 4.0
+  },
+  {
    "layout": "arch-window",
    "kicker": "Home",
    "title": "Seus apps e widgets, *à vista*.",
