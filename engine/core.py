@@ -992,9 +992,18 @@ def render_storyboard(scenes: list, theme: str, out_dir: Path, *, brand: dict | 
     H = pad * 2 + hdr + rows * (th_ + lbl) + (rows - 1) * gap
     sheet = Image.new("RGB", (W, H), (248, 248, 250))
     d = ImageDraw.Draw(sheet)
+    def _sysfont(bold, size):  # fonte com acentos em qualquer sistema (Mac, Linux, Windows); sem ela o PIL perde ã/ç
+        cands = (["/System/Library/Fonts/Supplemental/Arial Bold.ttf", "/Library/Fonts/Arial Bold.ttf", "/System/Library/Fonts/Helvetica.ttc", "DejaVuSans-Bold.ttf", "arialbd.ttf"]
+                 if bold else ["/System/Library/Fonts/Supplemental/Arial.ttf", "/Library/Fonts/Arial.ttf", "/System/Library/Fonts/Helvetica.ttc", "DejaVuSans.ttf", "arial.ttf"])
+        for c in cands:
+            try:
+                return ImageFont.truetype(c, size)
+            except Exception:  # noqa
+                continue
+        raise OSError("sem fonte TTF")
     try:
-        font = ImageFont.truetype(str((ROOT / "library" / "fonts" / "Inter-Bold.ttf")) if (ROOT / "library" / "fonts" / "Inter-Bold.ttf").exists() else "DejaVuSans-Bold.ttf", 34)
-        small = ImageFont.truetype("DejaVuSans.ttf", 22)
+        font = _sysfont(True, 34)
+        small = _sysfont(False, 22)
     except Exception:  # noqa
         font = ImageFont.load_default()
         small = font
