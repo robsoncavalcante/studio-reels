@@ -118,18 +118,11 @@
    "dur": 4.0
   },
   {
-   "layout": "framed-photo",
+   "layout": "typographic",
    "kicker": "Privacidade",
    "title": "Seus dados são *só seus*.",
    "subtitle": "Enclaves seguros protegem o seu conteúdo pessoal.",
-   "photos": [
-    "midia/img-09.jpg"
-   ],
-   "photo_meta": [
-    {
-     "ar": 2.059
-    }
-   ],
+   "theme": "brand-dark",
    "dur": 4.2
   },
   {

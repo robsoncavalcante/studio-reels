@@ -91,14 +91,26 @@ def rich(text) -> Markup:
     if text is None:
         return Markup("")
     out = []
-    for seg in re.split(r"(\*[^*]+\*)", str(text)):
-        if not seg:
-            continue
+    segs = [x for x in re.split(r"(\*[^*]+\*)", str(text)) if x]
+    i = 0
+    while i < len(segs):
+        seg = segs[i]
         em = seg.startswith("*") and seg.endswith("*") and len(seg) > 2
         if em:
             seg = seg[1:-1]
         h = hesc(seg).replace("\n", "<br>")
-        out.append(f"<em>{h}</em>" if em else h)
+        if em:
+            # pontuação colada no destaque ("*HomeView*.") nunca vai sozinha para a linha de baixo
+            tail = ""
+            if i + 1 < len(segs) and not segs[i + 1].startswith("*"):
+                m = re.match(r"^[.,;:!?…)»”]+", segs[i + 1])
+                if m:
+                    tail = hesc(m.group(0))
+                    segs[i + 1] = segs[i + 1][m.end():]
+            out.append(f'<span style="white-space:nowrap"><em>{h}</em>{tail}</span>' if tail else f"<em>{h}</em>")
+        else:
+            out.append(h)
+        i += 1
     return Markup("".join(out))
 
 
@@ -161,6 +173,23 @@ def resolve_theme(theme_id: str, brand: dict | None = None) -> dict:
         for k in ("bg", "bg2", "fg", "muted", "accent", "accent2", "line", "surface"):
             if colors.get(k):
                 t[k] = colors[k]
+        # tema de tom oposto ao da marca (ex.: brand-dark numa marca de fundo claro): inverte fundo e texto da própria marca,
+        # senão o "escuro" sai claro e o ritmo claro/escuro do reel some
+        try:
+            from .color import hex_rgb as _hx, rgb_hex as _rh
+            _lum = lambda c: (lambda r: (.2126 * r[0] + .7152 * r[1] + .0722 * r[2]) / 255)(_hx(c))
+            _mx = lambda a, b, k: _rh(*[round(x + (y - x) * k) for x, y in zip(_hx(a), _hx(b))])
+            bgb, fgb = colors.get("bg"), colors.get("fg")
+            if bgb and fgb and t.get("kind") in ("dark", "light") and brand.get("tema_tom") != "fixo":
+                brand_dark = _lum(bgb) < .5
+                if (t["kind"] == "dark") == (not brand_dark) and abs(_lum(bgb) - _lum(fgb)) > .4:
+                    t["bg"], t["fg"] = fgb, bgb
+                    t["bg2"] = _mx(fgb, bgb, .07)
+                    t["muted"] = _mx(fgb, bgb, .62)
+                    for k in ("line", "surface"):
+                        t.pop(k, None)
+        except Exception:
+            pass
         if brand.get("font_display"):
             t["font_display"] = brand["font_display"]
         if brand.get("font_body"):
